@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewIt Feed</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Welcome to ReviewIt</h1>
+
+    <h2>Choose a category to browse or post reviews:</h2>
+    <ul>
+        <li><a href="/reviews/category/books">r/books</a></li>
+        <li><a href="/reviews/category/music">r/music</a></li>
+        <li><a href="/reviews/category/games">r/games</a></li>
+        <li><a href="/reviews/category/movies">r/movies</a></li>
+    </ul>
+
+    <h2>Submit a Review</h2>
+    <form action="/reviews" method="POST">
+        <select name="category" required>
+            <option value="books">Books</option>
+            <option value="music">Music</option>
+            <option value="games">Games</option>
+            <option value="movies">Movies</option>
+        </select>
+
+        <input type="text" name="title" placeholder="Review title" required>
+        <textarea name="content" placeholder="Write your review" required></textarea>
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <h2>Latest Reviews</h2>
+    <ul>
+        <% reviews.forEach(review => { %>
+            <li>
+                <strong><%= review.title %></strong> in <strong>r/<%= review.category %></strong>: <%= review.content %>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+</html>

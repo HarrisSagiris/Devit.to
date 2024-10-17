@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewIt - Search Results</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Search Results for "<%= query %>"</h1>
+
+    <h2>Movies</h2>
+    <ul>
+        <% if (movies.length) { %>
+            <% movies.forEach(movie => { %>
+                <li>
+                    <h3><%= movie.Title %> (<%= movie.Year %>)</h3>
+                    <img src="<%= movie.Poster %>" alt="Movie Poster">
+                </li>
+            <% }); %>
+        <% } else { %>
+            <p>No movies found.</p>
+        <% } %>
+    </ul>
+
+    <h2>Books</h2>
+    <ul>
+        <% if (books.length) { %>
+            <% books.forEach(book => { %>
+                <li>
+                    <h3><%= book.title %> by <%= book.author_name ? book.author_name.join(', ') : 'Unknown Author' %></h3>
+                    <p>First published in <%= book.first_publish_year %></p>
+                </li>
+            <% }); %>
+        <% } else { %>
+            <p>No books found.</p>
+        <% } %>
+    </ul>
+
+    <h2>Music Tracks</h2>
+    <ul>
+        <% if (tracks.length) { %>
+            <% tracks.forEach(track => { %>
+                <li>
+                    <h3><%= track.name %> by <%= track.artists.map(artist => artist.name).join(', ') %></h3>
+                    <p>Album: <%= track.album.name %></p>
+                    <a href="<%= track.external_urls.spotify %>" target="_blank">Listen on Spotify</a>
+                </li>
+            <% }); %>
+        <% } else { %>
+            <p>No music tracks found.</p>
+        <% } %>
+    </ul>
+
+    <a href="/">Back to Home</a>
+</body>
+</html>
