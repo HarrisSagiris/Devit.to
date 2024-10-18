@@ -1,81 +1,57 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const axios = require('axios');
 const bodyParser = require('body-parser');
-const querystring = require('querystring');
-const Review = require('./models/review');
+const dotenv = require('dotenv');
+const Review = require('./models/review');  // Import the review model
+
+dotenv.config();
 
 const app = express();
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
 
-// MongoDB connection
-mongoose.connect('mongodb+srv://appleidmusic960:Dataking8@tapsidecluster.oeofi.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.log(err));
+// Connect to MongoDB
+mongoose.connect('mongodb+srv://appleidmusic960:Dataking8@tapsidecluster.oeofi.mongodb.net/', { useNewUrlParser: true });
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => console.log('Connected to MongoDB'));
 
-// Home route
+// Routes
+
+// Home page with reviews feed
 app.get('/', async (req, res) => {
-    const reviews = await Review.find();
-    res.render('index', { reviews });
-});
-
-// Search route
-app.post('/search', async (req, res) => {
-    const query = req.body.query;
-    const apiKey = process.env.OMDB_API_KEY;  // OMDb API Key
-    const spotifyClientId = process.env.SPOTIFY_CLIENT_ID;  // Spotify Client ID
-    const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET;  // Spotify Client Secret
-
     try {
-        // Fetch movies from OMDb API
-        const movieResponse = await axios.get(`http://www.omdbapi.com/?s=${query}&apikey=${apiKey}`);
-        const movies = movieResponse.data.Search || [];
-
-        // Fetch books from Open Library API
-        const bookResponse = await axios.get(`http://openlibrary.org/search.json?q=${query}`);
-        const books = bookResponse.data.docs || [];
-
-        // Fetch music from Spotify API
-        const spotifyToken = await getSpotifyToken(spotifyClientId, spotifyClientSecret);
-        const musicResponse = await axios.get(`https://api.spotify.com/v1/search?q=${query}&type=track`, {
-            headers: {
-                'Authorization': `Bearer ${spotifyToken}`
-            }
-        });
-        const tracks = musicResponse.data.tracks.items || [];
-
-        // Render search results
-        res.render('search', { query, movies, books, tracks });
-    } catch (error) {
-        console.error(error);
-        res.send("Error fetching results");
+        const reviews = await Review.find();  // Fetch all reviews
+        res.render('index', { reviews });
+    } catch (err) {
+        res.status(500).send('Error loading reviews.');
     }
 });
 
-// Add a review
+// Post a new review
 app.post('/reviews', async (req, res) => {
-    const { title, content } = req.body;
-    const review = new Review({ title, content });
-    await review.save();
-    res.redirect('/');
+    const { title, content, category } = req.body;
+    try {
+        const review = new Review({ title, content, category });
+        await review.save();  // Save review to database
+        res.redirect('/');
+    } catch (err) {
+        res.status(500).send('Error saving the review.');
+    }
 });
 
-// Function to get Spotify access token
-async function getSpotifyToken(clientId, clientSecret) {
-    const tokenResponse = await axios.post('https://accounts.spotify.com/api/token', querystring.stringify({
-        grant_type: 'client_credentials'
-    }), {
-        headers: {
-            'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    });
-    return tokenResponse.data.access_token;
-}
+// Filter reviews by category
+app.get('/reviews/category/:category', async (req, res) => {
+    const category = req.params.category;
+    try {
+        const reviews = await Review.find({ category });  // Fetch reviews for the category
+        res.render('index', { reviews });
+    } catch (err) {
+        res.status(500).send('Error loading category reviews.');
+    }
+});
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`ReviewIt server started on port ${PORT}`));
+// Start the server
+app.listen(3000, () => {
+    console.log('ReviewIt server started on port 3000');
+});
