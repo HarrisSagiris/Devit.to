@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReviewIt Feed</title>
-    <link rel="stylesheet" href="/public/style.css">
+    <link rel="stylesheet" href="/views/style.css">
 </head>
 <body>
-    <h1>Welcome to ReviewIt</h1>
+    <h1>Welcome to Reviewit</h1>
 
     <h2>Choose a category to browse or post reviews:</h2>
     <ul>
@@ -20,6 +20,7 @@
     <h2>Submit a Review</h2>
     <form action="/reviews" method="POST">
         <select name="category" required>
+            <option value="">Select a category</option>
             <option value="books">Books</option>
             <option value="music">Music</option>
             <option value="games">Games</option>
