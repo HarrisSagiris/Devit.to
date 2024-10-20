@@ -50,11 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         spotifyResultsContainer.appendChild(trackElement);
                         if (selectedSong) {
-                            trackElement.ClassicList.add('selected song by' {user});
+                            trackElement.ClassicList.add('selected song by' {user}); //error here!!
+                            //fix the css not showing in the script.js filing and also in the html file 
                         }
                     });
                 });
-        }
+        } 
     });
 
     // Submit review form
