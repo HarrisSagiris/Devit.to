@@ -50,8 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         spotifyResultsContainer.appendChild(trackElement);
                         if (selectedSong) {
-                            trackElement.ClassicList.add(`selected song by' ${user}`); //error here!!
-                            //fix the css not showing in the script.js filing and also in the html file 
+                            trackElement.ClassicList.add(`selected song by' ${user}`);
                         }
                     });
                 });
@@ -93,11 +92,76 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Register User
+document.getElementById("registerForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const username = document.getElementById("registerUsername").value;
+    const password = document.getElementById("registerPassword").value;
 
-const reviewPage = document.getElementById('reviewPage');
-reviewPage.style.display = 'none';
-if (reviewPage === null && reviewPage.style.display === 'none') {
-    console.log('error finding page');
+    const res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
+
+    if (res.status === 201) {
+        alert('Registered successfully!');
+    } else {
+        alert('Error registering');
+    }
+});
+
+// Login User
+document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const username = document.getElementById("loginUsername").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+    });
+
+    if (res.status === 200) {
+        alert('Logged in successfully!');
+        window.location.href = '/views/index.html'; // homepage after login.
+    } else {
+        alert('Error logging in');
+    }
+});
+
+// Logout User
+document.getElementById("logoutBtn").addEventListener("click", async function () {
+    const res = await fetch('/logout', {
+        method: 'POST',
+    });
+
+    if (res.status === 200) {
+        alert('Logged out!');
+        window.location.reload(); // Reload the page
+    }
+});
+// Fetch posts by category
+app.get('/reviews/category/:category', async (req, res) => {
+    const category = req.params.category;
+
+    try {
+        // Find all posts with the specific category
+        const posts = await Post.find({ category });
+        
+        if (posts.length > 0) {
+            res.status(200).json(posts);
+        } else {
+            res.status(404).send('No posts found in this category');
+        }
+    } catch (err) {
+        res.status(500).send('Error fetching posts');
+    }
+});
+
+if (password>=6) {
+    console.log(`your password is ${password} and you can proceed cause you are secure`)
 } else {
-    console.log('succesfully logged in!');
+    console.log('Please create a different password that is More or equal to 6 digits!')
 }
