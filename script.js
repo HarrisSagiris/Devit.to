@@ -31,16 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load all reviews on page load
     loadReviews();
-    // Reveiews tab
-    const reviewsTab = document.getElementById('reviews-tab');
-
 
     // Spotify search event
     spotifySearchInput.addEventListener('input', (e) => {
-        if (selectedSong) {
-            selectedSong = null;
-            spotifyResultsContainer.innerHTML = 'Succesfully selected a song';
-    }
         const query = e.target.value;
         if (query.length > 2) {
             fetch(`/spotify-search?q=${query}`)
@@ -56,11 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             spotifyResultsContainer.innerHTML = '';
                         });
                         spotifyResultsContainer.appendChild(trackElement);
-                         if (!selectedSong) {
-                             spotifyResaultsContainer.innerHTML = 'Succesfully selected a song';
-                         } else {
-                            console.log('error compiling spotify api ');
-                         }
+                        if (selectedSong) {
+                            trackElement.ClassicList.add('selected song by' {user}); //error here!!
+                            //fix the css not showing in the script.js filing and also in the html file 
                         }
                     });
                 });
@@ -101,3 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+
+
+const reviewPage = document.getElementById('reviewPage');
+reviewPage.style.display = 'none';
+if (reviewPage === null && reviewPage.style.display === 'none') {
+    console.log('error finding page');
+} else {
+    console.log('succesfully logged in!');
+}
