@@ -1,67 +1,67 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
 }
 
 .container {
-    width: 100%;
-    max-width: 900px;
+    width: 70%;
     margin: 0 auto;
+    background: #fff;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 h1 {
-    text-align: center;
-    color: #333;
+    margin: 0;
 }
 
-.form-container {
-    display: flex;
-    justify-content: space-around;
+.auth-links a {
+    text-decoration: none;
+    margin-right: 15px;
 }
 
-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-button {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px 20px;
+.auth-links button {
     border: none;
-    border-radius: 5px;
+    background-color: #ff4c4c;
+    color: white;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #0056b3;
+.form-group {
+    margin-bottom: 15px;
 }
 
-.posts {
-    margin-top: 40px;
+input, select, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
-.post {
-    background-color: white;
+#feed {
+    margin-top: 20px;
+}
+
+#reviewsContainer .review {
     padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #ddd;
 }
 
-.votes form {
-    display: inline-block;
+.review h3 {
+    margin: 0;
+}
+
+.review p {
+    margin: 5px 0;
 }

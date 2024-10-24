@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - ReviewIt</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1><%= title %></h1>
+        
+        <form action="<%= action %>" method="POST">
+            <% if (showUsername) { %>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+            <% } %>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit"><%= buttonText %></button>
+        </form>
+
+        <% if (isLogin) { %>
+            <p>Don't have an account? <a href="/register">Register here</a>.</p>
+        <% } else { %>
+            <p>Already have an account? <a href="/login">Login here</a>.</p>
+        <% } %>
+    </div>
+</body>
+</html>

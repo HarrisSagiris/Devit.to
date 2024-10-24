@@ -92,57 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Register User
-document.getElementById("registerForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const username = document.getElementById("registerUsername").value;
-    const password = document.getElementById("registerPassword").value;
-
-    const res = await fetch('/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    });
-
-    if (res.status =>200 && <=299) {
-        console.log('${res.status}')
-        alert('Registered successfully!');
-    } else {
-        alert('Error registering');
-    }
-});
-
-// Login User
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const username = document.getElementById("loginUsername").value;
-    const password = document.getElementById("loginPassword").value;
-
-    const res = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    });
-
-    if (res.status === 200) {
-        alert('Logged in successfully!');
-        window.location.href = '/views/index.html'; // homepage after login.
-    } else {
-        alert('Error logging in');
-    }
-});
-
-// Logout User
-document.getElementById("logoutBtn").addEventListener("click", async function () {
-    const res = await fetch('/logout', {
-        method: 'POST',
-    });
-
-    if (res.status === 200) {
-        alert('Logged out!');
-        window.location.reload(); // Reload the page
-    }
-});
 // Fetch posts by category
 app.get('/reviews/category/:category', async (req, res) => {
     const category = req.params.category;

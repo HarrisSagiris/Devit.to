@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewIt - Feed</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to Reviewit</h1>
+            <div class="auth-links">
+                <% if (user) { %>
+                    <p>Welcome, <%= user.username %>!</p>
+                    <form action="/logout" method="POST">
+                        <button type="submit">Logout</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login">Login</a> | <a href="/register">Register</a>
+                <% } %>
+            </div>
+        </header>
+
+        <!-- Post Form (Visible only if logged in) -->
+        <% if (user) { %>
+            <form id="postForm" method="POST">
+                <div class="form-group">
+                    <label for="category">Select Category:</label>
+                    <select name="category" id="category" required>
+                        <option value="movies">Movies</option>
+                        <option value="music">Music</option>
+                        <option value="books">Books</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" placeholder="Enter the title of the review" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Your Review:</label>
+                    <textarea id="content" name="content" placeholder="Write your review..." required></textarea>
+                </div>
+
+                <button type="submit">Post Review</button>
+            </form>
+        <% } else { %>
+            <p>Please <a href="/login">login</a> to post a review.</p>
+        <% } %>
+
+        <!-- Feed -->
+        <div id="feed">
+            <h2>Latest Reviews</h2>
+            <div id="reviewsContainer">
+                <!-- Reviews will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="/app.js"></script>
+</body>
+</html>

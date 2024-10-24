@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Posts - ReviewIt</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Posts</h1>
+            <div class="auth-links">
+                <p>Welcome, <%= user.username %>!</p>
+                <form action="/logout" method="POST">
+                    <button type="submit">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <!-- User's Posts -->
+        <div id="myPostsContainer">
+            <% if (myPosts.length > 0) { %>
+                <% myPosts.forEach(post => { %>
+                    <div class="review">
+                        <h3><%= post.title %></h3>
+                        <p><strong>Category:</strong> <%= post.category %></p>
+                        <p><strong>Review:</strong> <%= post.content %></p>
+                        <p><strong>Votes:</strong> <%= post.votes %></p>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>You haven't posted anything yet.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

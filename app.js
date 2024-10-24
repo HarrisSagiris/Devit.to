@@ -1,164 +1,119 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const bcrypt = require('bcryptjs');
 const path = require('path');
-
-// Initialize Express app
+const session = require('express-session');
+const bcrypt = require('bcrypt');
 const app = express();
 
-// MongoDB URI
-const MONGODB_URI = 'mongodb+srv://appleidmusic960:Dataking8@tapsidecluster.oeofi.mongodb.net/';
-
 // Connect to MongoDB
-mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => {
-    console.error('Failed to connect to MongoDB', err);
-});
+mongoose.connect('mongodb+srv://appleidmusic960:Dataking8@tapsidecluster.oeofi.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.log(err));
 
 // Middleware
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// Serve static files (CSS, JS)
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-// Session management
+// Session setup
 app.use(session({
-    secret: 'secretkey',
+    secret: 'secret-key',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false
 }));
 
-// View engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-
-// MongoDB Schema and Model for Users and Posts
-const UserSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+// User schema
+const userSchema = new mongoose.Schema({
+    username: { type: String, unique: true },
+    email: { type: String, unique: true },
+    password: String
 });
 
-const PostSchema = new mongoose.Schema({
+const User = mongoose.model('User', userSchema);
+
+// Post schema
+const postSchema = new mongoose.Schema({
+    category: String,
     title: String,
     content: String,
-    category: String,
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    upvotes: { type: Number, default: 0 },
-    downvotes: { type: Number, default: 0 }
+    createdAt: { type: Date, default: Date.now },
+    author: String
 });
 
-const User = mongoose.model('User', UserSchema);
-const Post = mongoose.model('Post', PostSchema);
+const Post = mongoose.model('Post', postSchema);
 
-// Root route
-app.get('/', (req, res) => {
-    res.render('index'); 
+// Routes
+
+// Index (Feed)
+app.get('/', async (req, res) => {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.render('index', { user: req.session.user, posts });
 });
 
-// Login route
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const user = await User.findOne({ username });
-        if (user && await bcrypt.compare(password, user.password)) {
-            req.session.user = user;
-            return res.redirect('/feed');
-        } else {
-            return res.send('Invalid username or password');
-        }
-    } catch (err) {
-        console.error('Login failed', err);
-        res.status(500).send('Login failed.');
-    }
+// Register
+app.get('/register', (req, res) => {
+    res.render('auth', { title: 'Register', action: '/register', buttonText: 'Register', showUsername: true, isLogin: false });
 });
 
-// Register route
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     try {
-        // Check if the username already exists
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.send('Username already exists');
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, password: hashedPassword });
-        await newUser.save();
-
-        req.session.user = newUser;
-        res.redirect('/feed');
-    } catch (err) {
-        console.error('Registration failed', err);
-        res.status(500).send('Registration failed.');
-    }
-});
-
-// Feed route (displays all posts)
-app.get('/feed', isAuthenticated, async (req, res) => {
-    try {
-        const posts = await Post.find().populate('user'); 
-        res.render('feed', { posts }); 
-    } catch (err) {
-        res.status(500).send('Error fetching posts.');
-    }
-});
-
-// Post submission route
-app.post('/post', isAuthenticated, async (req, res) => {
-    const { title, content, category } = req.body;
-    try {
-        const newPost = new Post({ title, content, category, user: req.session.user._id });
-        await newPost.save();
-        res.redirect('/feed');
-    } catch (err) {
-        console.error('Error submitting post', err);
-        res.status(500).send('Error submitting post.');
-    }
-});
-
-// Upvote/downvote route
-app.post('/vote', async (req, res) => {
-    const { postId, voteType } = req.body;
-    try {
-        const post = await Post.findById(postId);
-        if (voteType === 'upvote') {
-            post.upvotes += 1;
-        } else if (voteType === 'downvote') {
-            post.downvotes += 1;
-        }
-        await post.save();
-        res.redirect('/feed');
-    } catch (err) {
-        console.error('Error voting', err);
-        res.status(500).send('Error voting.');
-    }
-});
-
-// Middleware to check if the user is authenticated
-function isAuthenticated(req, res, next) {
-    if (req.session.user) {
-        return next();
-    } else {
+        const user = new User({ username, email, password: hashedPassword });
+        await user.save();
+        req.session.user = user;
         res.redirect('/');
+    } catch (err) {
+        res.status(500).send('Error creating account');
     }
-}
+});
 
-// Error handling (404)
-app.use((req, res) => {
-    res.status(404).send('Page not found');
+// Login
+app.get('/login', (req, res) => {
+    res.render('auth', { title: 'Login', action: '/login', buttonText: 'Login', showUsername: false, isLogin: true });
+});
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (user && await bcrypt.compare(password, user.password)) {
+        req.session.user = user;
+        res.redirect('/');
+    } else {
+        res.status(400).send('Invalid credentials');
+    }
+});
+
+// Logout
+app.post('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+// Post review
+app.post('/', async (req, res) => {
+    const { category, title, content } = req.body;
+
+    if (req.session.user) {
+        const post = new Post({
+            category,
+            title,
+            content,
+            author: req.session.user.username
+        });
+        await post.save();
+        res.redirect('/');
+    } else {
+        res.redirect('/login');
+    }
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server started on http://localhost:${PORT}`);
+app.listen(3000, () => {
+    console.log('Server started on http://localhost:3000');
 });
