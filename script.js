@@ -105,6 +105,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     });
 
     if (res.status =>200 && <=299) {
+        console.log('${res.status}')
         alert('Registered successfully!');
     } else {
         alert('Error registering');
