@@ -104,7 +104,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         body: JSON.stringify({ username, password })
     });
 
-    if (res.status === 201) {
+    if (res.status =>200 && <=299) {
         alert('Registered successfully!');
     } else {
         alert('Error registering');
