@@ -91,7 +91,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
-
+//fetch spotify song name and immage
+ const songCategory = document.getElementById('song category').value;
+ const songFetching = document.getElementById(`${selectedSong} was fetched succesfully!`);
+    if (songFetching === null) {
+        console.Console(`${selectedSong} could not be fetched`)
+    }  else {
+        console.Console(`The song ${selectedSong} was fetched sucessfully with a code of ${successCode}`);                /* check if this is correct and working in the localhost*/
+    }
+     console.log(spotifyResultsContainer);
 // Fetch posts by category
 app.get('/reviews/category/:category', async (req, res) => {
     const category = req.params.category;
