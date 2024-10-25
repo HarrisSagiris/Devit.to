@@ -123,3 +123,6 @@ if (password>=6) {
 } else {
     console.log('Please create a different password that is More or equal to 6 digits!')
 }
+    if (password === null); {
+        console.status(400);
+    }
