@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Edit Profile</h1>
+    <a href="/">Home</a>
+  </header>
+
+  <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+    <label for="username">Username:</label>
+    <input type="text" name="username" id="username" value="<%= user.username %>" required>
+
+    <label for="bio">Bio:</label>
+    <textarea name="bio" id="bio"><%= user.bio %></textarea>
+
+    <label for="profilePic">Profile Picture:</label>
+    <input type="file" name="profilePic" id="profilePic">
+
+    <button type="submit">Save Changes</button>
+  </form>
+</body>
+</html>
