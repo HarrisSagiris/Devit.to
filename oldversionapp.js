@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const path = require('path');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 
 const app = express();
 const PORT = 3000;
@@ -26,23 +24,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Email transporter for password reset
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: 'your-email@gmail.com', // replace with your email
-    pass: 'your-email-password'    // replace with your email password
-  }
-});
-
 // Routes
 app.get('/', async (req, res) => {
   const posts = await Post.find().sort({ createdAt: -1 }).populate('comments.user', 'username');
   res.render('feed', { posts, user: req.session.user });
 });
-   if (Post == 0); {
-    console.log('Your feed is empty cause you are haunted!! Just kidding its just cause nobody has uploaded anything')
-   }
+
 app.get('/register', (req, res) => res.render('register'));
 app.get('/login', (req, res) => res.render('login'));
 
@@ -75,7 +62,6 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// Create a new post
 app.post('/post', async (req, res) => {
   if (!req.session.user) return res.status(403).send('Login required');
   const { category, title, content } = req.body;
@@ -90,19 +76,6 @@ app.post('/post', async (req, res) => {
   res.redirect('/');
 });
 
-// Delete a post
-app.post('/post/:id/delete', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  const post = await Post.findById(req.params.id);
-  if (post.user.toString() === req.session.user._id) {
-    await post.delete();
-    res.redirect('/');
-  } else {
-    res.status(403).send('Unauthorized');
-  }
-});
-
-// Upvote and Downvote a post
 app.post('/post/:id/upvote', async (req, res) => {
   const post = await Post.findById(req.params.id);
   post.upvotes++;
@@ -117,7 +90,6 @@ app.post('/post/:id/downvote', async (req, res) => {
   res.json({ downvotes: post.downvotes });
 });
 
-// Add comment to post
 app.post('/post/:id/comment', async (req, res) => {
   if (!req.session.user) return res.status(403).send('Login required');
   const post = await Post.findById(req.params.id);
@@ -127,53 +99,12 @@ app.post('/post/:id/comment', async (req, res) => {
   res.json({ comments: post.comments });
 });
 
-// Reset password - request link
-app.post('/reset-password', async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (user) {
-    const token = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-    await user.save();
-
-    const resetUrl = `http://localhost:${PORT}/reset-password/${token}`;
-    await transporter.sendMail({
-      to: user.email,
-      subject: 'Password Reset',
-      text: `Reset your password here: ${resetUrl}`
-    });
-
-    res.send('Reset password link sent to your email');
-  } else {
-    res.status(404).send('Email not found');
-  }
+app.get('/my-posts', async (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  const posts = await Post.find({ user: req.session.user._id });
+  res.render('my-posts', { posts });
 });
 
-// Reset password - update password
-app.get('/reset-password/:token', async (req, res) => {
-  const user = await User.findOne({
-    resetPasswordToken: req.params.token,
-    resetPasswordExpires: { $gt: Date.now() }
-  });
-  if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
-  res.render('reset-password', { token: req.params.token });
-});
-
-app.post('/reset-password/:token', async (req, res) => {
-  const user = await User.findOne({
-    resetPasswordToken: req.params.token,
-    resetPasswordExpires: { $gt: Date.now() }
-  });
-  if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
-
-  user.password = await bcrypt.hash(req.body.password, 10);
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-  await user.save();
-  res.redirect('/login');
-});
-
-// View user profile, follow, and unfollow
 app.get('/user/:username', async (req, res) => {
   const profileUser = await User.findOne({ username: req.params.username });
   const posts = await Post.find({ user: profileUser._id });

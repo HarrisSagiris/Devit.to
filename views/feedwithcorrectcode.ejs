@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Reviewit - Your Feed</title>
+  <title>Reviewit-your feed</title>
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <style>
 body {
@@ -148,13 +147,14 @@ h2 {
     color: #ff4500;
 }
 
+
 </style>
 <body>
-  <h2>Welcome to Reviewit: The Number 1 Reviewing Platform Worldwide</h2>
+  <h2>Welcome to Reviewit: The Number 1 reviewing platform worldwide.</h2>
   <header>
     <% if (user) { %>
       <p>Welcome, <%= user.username %> | <a href="/logout">Logout</a> | <a href="/my-posts">My Posts</a></p>
-      <form id="new-post-form">
+      <form action="/post" method="post">
         <input type="text" name="title" placeholder="Title" required><br>
         <select name="category">
           <option value="Movies">Movies</option>
@@ -163,7 +163,7 @@ h2 {
           <option value="General post">General post</option>
           <option value="Songs">Songs</option>
           <option value="Programming">Programming</option>
-          <option value="Physical product">Physical product</option>
+          
         </select><br>
         <textarea name="content" placeholder="Your review" required></textarea><br>
         <button type="submit">Post</button>
@@ -172,88 +172,30 @@ h2 {
       <a href="/login">Login</a> | <a href="/register">Register</a> 
     <% } %>
   </header>
-
   <section>
     <h2>Feed</h2>
-    <div id="feed">
-      <% posts.forEach(post => { %>
-        <div class="post" id="post-<%= post._id %>">
-          <h3><%= post.title %> - <%= post.category %></h3>
-          <p><strong>by <%= post.username %></strong></p>
-          <p><%= post.content %></p>
-          <p>Upvotes: <span class="upvote-count"><%= post.upvotes %></span> | Downvotes: <span class="downvote-count"><%= post.downvotes %></span></p>
-          <% if (user) { %>
-            <button class="upvote" data-id="<%= post._id %>">Upvote</button>
-            <button class="downvote" data-id="<%= post._id %>">Downvote</button>
-            <form class="comment-form" data-id="<%= post._id %>">
-              <input type="text" name="content" placeholder="Add a comment" required>
-              <button type="submit">Comment</button>
-              <meta http-equiv="refresh" content="(1)"> <! here i want to impliment auto refresh after the comment submission...>
-            </form>
-          <% } %>
-
-          <!-- Comments Section -->
-          <h4>Replies :</h4>
-          <div class="comments" id="comments-<%= post._id %>">
-            <% post.comments.forEach(comment => { %>
-              <div class="comment">
-                <strong><%= comment.username %>:</strong> <%= comment.content %>
-              </div>
-            <% }) %>
-          </div>
-        </div>
-        <hr>
-      <% }) %>
-    </div>
+    <% posts.forEach(post => { %>
+      <div id="post-<%= post._id %>">
+        <h3><%= post.title %> - <%= post.category %></h3>
+        <p><strong>by <%= post.username %></strong></p>
+        <p><%= post.content %></p>
+        <p>Upvotes: <%= post.upvotes %> | Downvotes: <%= post.downvotes %></p>
+        <% if (user) { %>
+          <button class="upvote" data-id="<%= post._id %>">Upvote</button>
+          <button class="downvote" data-id="<%= post._id %>">Downvote</button>
+          <form class="comment-form" data-id="<%= post._id %>">
+            <input type="text" name="content" placeholder="Add a comment" required>
+            <button type="submit">Comment</button>
+          </form>
+        <% } %>
+        <h4>Comments:</h4>
+        <% post.comments.forEach(comment => { %>
+          <div class="comment"><strong><%= comment.username %>:</strong> <%= comment.content %></div>
+        <% }) %>
+      </div>
+      <hr>
+    <% }) %>
   </section>
-
-  <script>
-    $(document).ready(function() {
-      // Handle new post submission
-      $('#new-post-form').on('submit', function(event) {
-        event.preventDefault();
-        $.ajax({
-          url: '/post',
-          method: 'POST',
-          data: $(this).serialize(),
-          success: function(response) {
-            $('#feed').prepend(response); // Add the new post to the top of the feed
-            $('#new-post-form')[0].reset(); // Clear the form
-          }
-        });
-      });
-
-      // Handle comment submission
-      $(document).on('submit', '.comment-form', function(event) {
-        event.preventDefault();
-        const postId = $(this).data('id');
-        const commentData = $(this).serialize();
-        $.ajax({
-          url: `/post/${postId}/comment`,
-          method: 'POST',
-          data: commentData,
-          success: function(response) {
-            $(`#comments-${postId}`).append(response); // Append the new comment to the comments section
-          }
-        });
-      });
-
-      // Handle upvote and downvote
-      $(document).on('click', '.upvote, .downvote', function() {
-        const postId = $(this).data('id');
-        const isUpvote = $(this).hasClass('upvote');
-        const voteType = isUpvote ? 'upvote' : 'downvote';
-
-        $.ajax({
-          url: `/post/${postId}/${voteType}`,
-          method: 'POST',
-          success: function(response) {
-            $(`#post-${postId} .upvote-count`).text(response.upvotes);
-            $(`#post-${postId} .downvote-count`).text(response.downvotes);
-          }
-        });
-      });
-    });
-  </script>
+  <script src="/js/script.js"></script>
 </body>
 </html>
