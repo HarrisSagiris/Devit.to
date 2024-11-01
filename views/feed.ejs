@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Feed</title>
+  <title>Reviewit-your feed</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+<style>
+  .post{
+    text-align: center;
+    color: #fff;
+    padding : 20px;
+  }
+</style>
 <body>
+  <h2>Welcome to Reviewit: The best reviewing platform worldwide.</h2>
   <header>
     <% if (user) { %>
       <p>Welcome, <%= user.username %> | <a href="/logout">Logout</a> | <a href="/my-posts">My Posts</a></p>
@@ -14,12 +22,13 @@
           <option value="Movies">Movies</option>
           <option value="Books">Books</option>
           <option value="Games">Games</option>
+          <option value="General">General post</option>
         </select><br>
         <textarea name="content" placeholder="Your review" required></textarea><br>
         <button type="submit">Post</button>
       </form>
     <% } else { %>
-      <a href="/login">Login</a> | <a href="/register">Register</a>
+      <a href="/login">Login</a> | <a href="/register">Register</a> 
     <% } %>
   </header>
   <section>

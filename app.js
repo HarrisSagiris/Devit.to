@@ -11,7 +11,7 @@ const PORT = 3000;
 mongoose.connect('mongodb+srv://appleidmusic960:Dataking8@tapsidecluster.oeofi.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Failed to connect to MongoDB:', err));
-
+  
 // Models
 const User = require('./models/user');
 const Post = require('./models/post');
