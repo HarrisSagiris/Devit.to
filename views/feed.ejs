@@ -154,6 +154,7 @@
   <h4>version 1.0(beta)</h4>
   <h2>Welcome to Rverto: The Number 1 Reviewing Platform Worldwide</h2>
   <h2>Login or register to post/like and comment!</h2>
+  
 
   <header>
     <% if (user) { %>
@@ -161,14 +162,14 @@
       <form id="new-post-form">
         <input type="text" name="title" placeholder="Title" required><br>
         <select name="category">
+          <option value="General post">General</option>
           <option value="Movies">Movies</option>
           <option value="Books">Books</option>
           <option value="Games">Games</option>
-          <option value="General post">General post</option>
           <option value="Songs">Songs</option>
           <option value="Programming">Programming</option>
           <option value="Physical product">Physical product</option>
-          <option value="Netflix movies-movies">Netflix movies-movies</option>
+          <option value="Netflix movies-movies">Movies</option>
         </select><br>
         <textarea name="content" placeholder="Your review" required></textarea><br>
         <button type="submit">Post</button>
@@ -176,6 +177,7 @@
     <% } else { %>
       <a href="/login">Login</a> | <a href="/register">Register</a> 
     <% } %>
+    
   </header>
 
   <section>
@@ -210,6 +212,7 @@
         <hr>
       <% }) %>
     </div>
+    <h5>Copywrited by harris sagiris 2024 RVERTO©</h5>
   </section>
 
   <script>
