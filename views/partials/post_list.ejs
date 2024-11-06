@@ -1,0 +1,27 @@
+<% posts.forEach(post => { %>
+    <div class="post" id="post-<%= post._id %>">
+      <h3><%= post.title %> - <%= post.category %></h3>
+      <p><strong>by <%= post.username %></strong></p>
+      <p><%= post.content %></p>
+      <p>Upvotes: <span class="upvote-count"><%= post.upvotes %></span> | Downvotes: <span class="downvote-count"><%= post.downvotes %></span></p>
+      <% if (user) { %>
+        <button class="upvote" data-id="<%= post._id %>">Upvote</button>
+        <button class="downvote" data-id="<%= post._id %>">Downvote</button>
+        <form class="comment-form" data-id="<%= post._id %>">
+          <input type="text" name="content" placeholder="Add a comment" required>
+          <button type="submit">Comment</button>
+        </form>
+      <% } %>
+  
+      <h4>Comments:</h4>
+      <div class="comments" id="comments-<%= post._id %>">
+        <% post.comments.forEach(comment => { %>
+          <div class="comment">
+            <strong><%= comment.username %>:</strong> <%= comment.content %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+    <hr>
+  <% }) %>
+  

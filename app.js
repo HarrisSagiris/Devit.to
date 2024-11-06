@@ -17,6 +17,7 @@ mongoose.connect('mongodb+srv://appleidmusic960:Dataking8@tapsidecluster.oeofi.m
 // Models
 const User = require('./models/user');
 const Post = require('./models/post');
+const user = require('./models/user');
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -102,20 +103,58 @@ app.post('/post/:id/delete', async (req, res) => {
   }
 });
 
-// Upvote and Downvote a post
+
+//posting and upvoting(downvoting)
 app.post('/post/:id/upvote', async (req, res) => {
+  if (!req.session.user) return res.status(403).send('Login required');
+  
   const post = await Post.findById(req.params.id);
+  const userId = req.session.user._id;
+
+  // Check if the user already upvoted
+  if (post.upvotedBy.includes(userId)) {
+    return res.status(400).send('You have already upvoted this post.');
+  }
+  
+  // If the user previously downvoted, remove their downvote
+  if (post.downvotedBy.includes(userId)) {
+    post.downvotes--;
+    post.downvotedBy.pull(userId);
+  }
+
+  // Add the upvote
   post.upvotes++;
+  post.upvotedBy.push(userId);
   await post.save();
-  res.json({ upvotes: post.upvotes });
+  
+  res.json({ upvotes: post.upvotes, downvotes: post.downvotes });
 });
 
 app.post('/post/:id/downvote', async (req, res) => {
+  if (!req.session.user) return res.status(403).send('Login required');
+
   const post = await Post.findById(req.params.id);
+  const userId = req.session.user._id;
+
+  // Check if the user already downvoted
+  if (post.downvotedBy.includes(userId)) {
+    return res.status(400).send('You have already downvoted this post.');
+  }
+
+  // If the user previously upvoted, remove their upvote
+  if (post.upvotedBy.includes(userId)) {
+    post.upvotes--;
+    post.upvotedBy.pull(userId);
+  }
+
+  // Add the downvote
   post.downvotes++;
+  post.downvotedBy.push(userId);
   await post.save();
-  res.json({ downvotes: post.downvotes });
+  
+  res.json({ upvotes: post.upvotes, downvotes: post.downvotes });
 });
+
 
 // Add comment to post
 app.post('/post/:id/comment', async (req, res) => {
