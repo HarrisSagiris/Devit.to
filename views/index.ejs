@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rverto - Your Feed</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<style>
+    body {
+        background-color: #1a1a1b;
+        color: #d7dadc;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    
+    header {
+        background-color: #333;
+        padding: 10px;
+        text-align: center;
+    }
+    
+    header p, header a {
+        color: #d7dadc;
+        text-decoration: none;
+        margin: 0 5px;
+    }
+    
+    header a:hover {
+        color: #ff4500;
+    }
+    
+    h2 {
+        color: #ff4500;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    #new-post-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #252526;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px auto;
+        width: 80%;
+    }
+    
+    #new-post-form input, #new-post-form textarea, #new-post-form select, #new-post-form button {
+        width: 100%;
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #444;
+        background-color: #1a1a1b;
+        color: #d7dadc;
+    }
+    
+    #new-post-form button {
+        background-color: #ff4500;
+        color: white;
+        cursor: pointer;
+    }
+    
+    #new-post-form button:hover {
+        background-color: #d4361a;
+    }
+    
+    .post {
+        background-color: #252526;
+        margin: 10px auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        color: #d7dadc;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .post h3 {
+        color: #ff4500;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+    
+    .post p {
+        margin: 10px 0;
+    }
+    
+    .upvote, .downvote {
+        background-color: #333;
+        color: #ff4500;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 5px 5px 5px 0;
+        cursor: pointer;
+    }
+    
+    .upvote:hover, .downvote:hover {
+        background-color: #ff4500;
+        color: #fff;
+    }
+    
+    .comment-form {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .comment-form input {
+        width: 70%;
+        margin-right: 10px;
+        padding: 8px;
+        background-color: #1a1a1b;
+        border: 1px solid #444;
+        color: #d7dadc;
+    }
+    
+    .comment-form button {
+        background-color: #333;
+        color: #ff4500;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .comment-form button:hover {
+        background-color: #ff4500;
+        color: #fff;
+    }
+    
+    .comments {
+        margin-top: 15px;
+    }
+    
+    .comment {
+        background-color: #333;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 5px;
+        color: #d7dadc;
+    }
+    
+    .comment strong {
+        color: #ff4500;
+    }
+    
+    </style>
+
+<body>
+  <h4>version 1.0(beta)</h4>
+  <h2>Welcome to Rverto: The Number 1 Reviewing Platform Worldwide</h2>
+  <h2>Login or register to post/like and comment!</h2>
+  
+
+  <header>
+    <% if (user) { %>
+      <p>Welcome, <%= user.username %> | <a href="/logout">Logout</a> | <a href="/my-posts">My Posts</a></p>
+      <form id="new-post-form">
+        <input type="text" name="title" placeholder="Title" required><br>
+        <select name="category">
+          <option value="General post">General</option>
+          <option value="Movies">Movies</option>
+          <option value="Books">Books</option>
+          <option value="Games">Games</option>
+          <option value="Songs">Songs</option>
+          <option value="Programming">Programming</option>
+          <option value="Physical product">Physical product</option>
+          <option value="Netflix movies-movies">Movies</option>
+        </select><br>
+        <textarea name="content" placeholder="Your review" required></textarea><br>
+        <button type="submit">Post</button>
+      </form>
+      
+    <% } else { %>
+      <a href="/login">Login</a> | <a href="/register">Register</a> 
+    <% } %>
+    
+  </header>
+
+  <section>
+    <h2>Feed</h2>
+    <div id="feed">
+      <% posts.forEach(post => { %>
+        <div class="post" id="post-<%= post._id %>">
+          <h3><%= post.title %> - <%= post.category %></h3>
+          <p><strong>by <%= post.username %></strong></p>
+          <p><%= post.content %></p>
+          <p>Upvotes: <span class="upvote-count"><%= post.upvotes %></span> | Downvotes: <span class="downvote-count"><%= post.downvotes %></span></p>
+          <% if (user) { %>
+            <button class="upvote" data-id="<%= post._id %>">Upvote</button>
+            <button class="downvote" data-id="<%= post._id %>">Downvote</button>
+            <form class="comment-form" data-id="<%= post._id %>">
+              <input type="text" name="content" placeholder="Add a comment" required>
+              <button type="submit">Comment</button>
+              <meta http-equiv="refresh" content="(1)"> <! here i want to impliment auto refresh after the comment submission...>
+            </form>
+          <% } %>
+
+          <!-- Comments Section -->
+          <h4>Replies :</h4>
+          <div class="comments" id="comments-<%= post._id %>">
+            <% post.comments.forEach(comment => { %>
+              <div class="comment">
+                <strong><%= comment.username %>:</strong> <%= comment.content %>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+        <hr>
+      <% }) %>
+    </div>
+    <h5>Copywrited by harris sagiris 2024 RVERTO©</h5>
+  </section>
+
+  <script>
+    $(document).ready(function() {
+      // Handle new post submission
+      $('#new-post-form').on('submit', function(event) {
+        event.preventDefault();
+        $.ajax({
+          url: '/post',
+          method: 'POST',
+          data: $(this).serialize(),
+          success: function(response) {
+            $('#feed').prepend(response); // Add the new post to the top of the feed
+            $('#new-post-form')[0].reset(); // Clear the form
+          }
+        });
+      });
+
+      // Handle comment submission
+      $(document).on('submit', '.comment-form', function(event) {
+        event.preventDefault();
+        const postId = $(this).data('id');
+        const commentData = $(this).serialize();
+        $.ajax({
+          url: `/post/${postId}/comment`,
+          method: 'POST',
+          data: commentData,
+          success: function(response) {
+            $(`#comments-${postId}`).append(response); // Append the new comment to the comments section
+          }
+        });
+      });
+
+      // Handle upvote and downvote
+      $(document).on('click', '.upvote, .downvote', function() {
+        const postId = $(this).data('id');
+        const isUpvote = $(this).hasClass('upvote');
+        const voteType = isUpvote ? 'upvote' : 'downvote';
+
+        $.ajax({
+          url: `/post/${postId}/${voteType}`,
+          method: 'POST',
+          success: function(response) {
+            $(`#post-${postId} .upvote-count`).text(response.upvotes);
+            $(`#post-${postId} .downvote-count`).text(response.downvotes);
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+      $('#search-bar').on('input', function() {
+        const query = $(this).val();
+  
+        $.ajax({
+          url: '/search',
+          method: 'GET',
+          data: { q: query },
+          success: function(response) {
+            $('#feed').html(response); // Update the feed with search results
+          },
+          error: function() {
+            alert('Error retrieving search results');
+          }
+        });
+      });
+    });
+  </script>
+  
+</body>
+</html>
