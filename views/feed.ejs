@@ -232,33 +232,6 @@
         });
       });
 
-      //hopefully this is the reload version after the post submision and comment submision
-
-
-
-
-});
-
-
-      // Handle comment submission
-      document.getElementById("submit").addEventListener("click", function() {
-        // existing comment submission logic here
-      $(document).on('submit', '.comment-form', function(event) {
-        event.preventDefault();
-        const postId = $(this).data('id');
-        const commentData = $(this).serialize();
-        $.ajax({
-          url: `/post/${postId}/comment`,
-          method: 'POST',
-          data: commentData,
-          success: function(response) {
-            $(`#comments-${postId}`).append(response); // Append the new comment to the comments section
-          }
-        });
-      });
-          // Refresh the page after the comment is submitted
-    window.location.reload();
-
       // Handle upvote and downvote
       $(document).on('click', '.upvote, .downvote', function() {
         const postId = $(this).data('id');
