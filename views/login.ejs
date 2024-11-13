@@ -5,67 +5,112 @@
 </head>
 <style>
 body {
-    background-color: #222;
-    display: flex; /* Center the form horizontally */
+    background-color: #0f0f0f;
+    display: flex;
     justify-content: center;
-    align-items: center; /* Center the form vertically */
+    align-items: center;
     height: 100vh;
     margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e8e8e8;
 }
 
 .container {
-    background-color: #333;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     text-align: center;
+    width: 400px;
+    backdrop-filter: blur(10px);
 }
 
 form {
     text-align: center;
+    margin: 25px 0;
 }
 
 input, button {
-    width: 80%;
-    margin: 10px auto; /* Adjust margin as needed */
-    padding: 15px;
-    border: 1px solid #555;
-    border-radius: 5px;
-    background-color: #444;
-    color: #fff;
+    width: 85%;
+    margin: 12px auto;
+    padding: 16px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background-color: rgba(30, 30, 30, 0.8);
+    color: #e8e8e8;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ff6b4a;
+    box-shadow: 0 0 10px rgba(255, 107, 74, 0.2);
 }
 
 button {
-    background-color: #ff4500;
+    background: linear-gradient(135deg, #ff6b4a, #ff4f2c);
+    border: none;
     cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 74, 0.4);
+}
+
+button:active {
+    transform: translateY(1px);
 }
 
 a {
-    color: #007bff;
+    color: #ff6b4a;
     text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-block;
+    margin-top: 15px;
+}
+
+a:hover {
+    color: #ff4f2c;
+    text-decoration: underline;
 }
 
 .social-buttons {
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    margin: 25px 0;
+    gap: 15px;
 }
 
 .social-button {
-    width: 45%;
-    padding: 15px;
-    border: 1px solid #555;
-    border-radius: 5px;
-    background-color: #444;
-    color: #fff;
+    width: 48%;
+    padding: 12px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background-color: rgba(30, 30, 30, 0.8);
+    color: #e8e8e8;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.social-button:hover {
+    background-color: rgba(40, 40, 40, 0.9);
+    transform: translateY(-2px);
 }
 
 .social-button img {
-    width: 20px;
-    margin-right: 10px;
+    width: 24px;
+    margin-right: 12px;
+    filter: brightness(0.9);
 }
 </style>
 <body>
