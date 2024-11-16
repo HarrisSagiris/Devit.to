@@ -304,9 +304,15 @@
         border-radius: 8px;
         margin-bottom: 1rem;
         border-left: 3px solid var(--primary);
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 150px 1fr auto;
+        gap: 1rem;
         align-items: center;
+    }
+
+    .comment-username {
+        font-weight: 600;
+        color: var(--primary);
     }
 
     .comment-content {
@@ -399,6 +405,10 @@
         .nav-links a {
             margin: 0;
         }
+
+        .comment {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
@@ -480,8 +490,10 @@
                     <div class="comments" id="comments-<%= post._id %>">
                         <% post.comments.forEach(comment => { %>
                             <div class="comment" id="comment-<%= comment._id %>">
+                                <div class="comment-username">
+                                    <%= comment.username %>
+                                </div>
                                 <div class="comment-content">
-                                    <strong><%= comment.username %>:</strong>
                                     <%= comment.content %>
                                 </div>
                                 <div class="comment-actions">
@@ -679,8 +691,10 @@
                     success: function(response) {
                         const commentHtml = `
                             <div class="comment" id="comment-${response.commentId}">
+                                <div class="comment-username">
+                                    ${currentUser}
+                                </div>
                                 <div class="comment-content">
-                                    <strong>${currentUser}:</strong>
                                     ${content}
                                 </div>
                                 <div class="comment-actions">
@@ -743,8 +757,10 @@
                                                 <div class="comments" id="comments-${post._id}">
                                                     ${post.comments.map(comment => `
                                                         <div class="comment" id="comment-${comment._id}">
+                                                            <div class="comment-username">
+                                                                ${comment.username}
+                                                            </div>
                                                             <div class="comment-content">
-                                                                <strong>${comment.username}:</strong>
                                                                 ${comment.content}
                                                             </div>
                                                             <div class="comment-actions">

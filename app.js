@@ -37,6 +37,7 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'views'))); // Add this line to serve files from views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
