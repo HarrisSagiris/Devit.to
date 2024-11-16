@@ -313,6 +313,34 @@
         flex: 1;
     }
 
+    .comment-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .comment-like-btn {
+        background: none;
+        border: none;
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .comment-like-btn:hover {
+        background: rgba(255, 107, 74, 0.1);
+        color: var(--primary);
+    }
+
+    .comment-like-btn.liked {
+        color: var(--primary);
+    }
+
     .delete-comment-btn {
         background: linear-gradient(135deg, #ff4444, #cc0000);
         color: white;
@@ -456,9 +484,16 @@
                                     <strong><%= comment.username %>:</strong>
                                     <%= comment.content %>
                                 </div>
-                                <% if (user && user.username === comment.username) { %>
-                                    <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
-                                <% } %>
+                                <div class="comment-actions">
+                                    <button class="comment-like-btn <%= comment.likedBy && comment.likedBy.includes(user?.username) ? 'liked' : '' %>" 
+                                            data-comment-id="<%= comment._id %>"
+                                            data-post-id="<%= post._id %>">
+                                        ♥ <span class="like-count"><%= comment.likes || 0 %></span>
+                                    </button>
+                                    <% if (user && user.username === comment.username) { %>
+                                        <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
+                                    <% } %>
+                                </div>
                             </div>
                         <% }) %>
                     </div>
@@ -515,6 +550,44 @@
                     postModal.hide();
                     $('#new-post-form')[0].reset();
                 }
+            });
+
+            // Comment like functionality
+            $(document).on('click', '.comment-like-btn', function() {
+                if (!currentUser) {
+                    alert('Please login to like comments');
+                    return;
+                }
+                
+                const btn = $(this);
+                const commentId = btn.data('comment-id');
+                const postId = btn.data('post-id');
+                
+                $.ajax({
+                    url: `/api/posts/${postId}/comments/${commentId}/like`,
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            const likeCount = btn.find('.like-count');
+                            likeCount.text(response.likes);
+                            if (response.isLiked) {
+                                btn.addClass('liked');
+                            } else {
+                                btn.removeClass('liked');
+                            }
+                        }
+                    },
+                    error: function(err) {
+                        if (err.status === 401) {
+                            alert('Please login to like comments');
+                        } else {
+                            alert('Unable to like comment. Please try again later.');
+                        }
+                    }
+                });
             });
 
             // Delete comment functionality
@@ -610,7 +683,12 @@
                                     <strong>${currentUser}:</strong>
                                     ${content}
                                 </div>
-                                <button class="delete-comment-btn" data-post-id="${postId}" data-comment-id="${response.commentId}">Delete</button>
+                                <div class="comment-actions">
+                                    <button class="comment-like-btn" data-comment-id="${response.commentId}" data-post-id="${postId}">
+                                        ♥ <span class="like-count">0</span>
+                                    </button>
+                                    <button class="delete-comment-btn" data-post-id="${postId}" data-comment-id="${response.commentId}">Delete</button>
+                                </div>
                             </div>
                         `;
                         $(`#comments-${postId}`).append(commentHtml);
@@ -669,9 +747,16 @@
                                                                 <strong>${comment.username}:</strong>
                                                                 ${comment.content}
                                                             </div>
-                                                            ${currentUser === comment.username ? 
-                                                                `<button class="delete-comment-btn" data-post-id="${post._id}" data-comment-id="${comment._id}">Delete</button>`
-                                                                : ''}
+                                                            <div class="comment-actions">
+                                                                <button class="comment-like-btn ${comment.likedBy && comment.likedBy.includes(currentUser) ? 'liked' : ''}" 
+                                                                        data-comment-id="${comment._id}"
+                                                                        data-post-id="${post._id}">
+                                                                    ♥ <span class="like-count">${comment.likes || 0}</span>
+                                                                </button>
+                                                                ${currentUser === comment.username ? 
+                                                                    `<button class="delete-comment-btn" data-post-id="${post._id}" data-comment-id="${comment._id}">Delete</button>`
+                                                                    : ''}
+                                                            </div>
                                                         </div>
                                                     `).join('')}
                                                 </div>

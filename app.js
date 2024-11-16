@@ -244,7 +244,7 @@ app.post('/post/:id/downvote', async (req, res) => {
   }
 });
 
-// Comment system with validation
+// Comment system with validation and likes
 app.post('/post/:id/comment', async (req, res) => {
   try {
     if (!req.session.user) return res.status(403).send('Login required');
@@ -257,9 +257,11 @@ app.post('/post/:id/comment', async (req, res) => {
     }
     
     const comment = { 
-      user: req.session.user._id, 
+      user: req.session.user._id,
+      username: req.session.user.username,
       content: req.body.content,
-      upvotes: 0 
+      likes: 0,
+      likedBy: []
     };
     post.comments.push(comment);
     await post.save();
@@ -267,6 +269,62 @@ app.post('/post/:id/comment', async (req, res) => {
   } catch (error) {
     console.error('Comment error:', error);
     res.status(500).send('Error adding comment');
+  }
+});
+
+// Like/Unlike comment
+app.post('/post/:postId/comment/:commentId/like', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).send('Post not found');
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).send('Comment not found');
+
+    const userId = req.session.user.username;
+    const likedIndex = comment.likedBy.indexOf(userId);
+
+    if (likedIndex === -1) {
+      // Like comment
+      comment.likes++;
+      comment.likedBy.push(userId);
+    } else {
+      // Unlike comment
+      comment.likes--;
+      comment.likedBy.splice(likedIndex, 1);
+    }
+
+    await post.save();
+    res.json({ likes: comment.likes, liked: likedIndex === -1 });
+  } catch (error) {
+    console.error('Comment like error:', error);
+    res.status(500).send('Error processing comment like');
+  }
+});
+
+// Delete comment
+app.post('/post/:postId/comment/:commentId/delete', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).send('Post not found');
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).send('Comment not found');
+
+    if (comment.username !== req.session.user.username) {
+      return res.status(403).send('Unauthorized to delete this comment');
+    }
+
+    comment.remove();
+    await post.save();
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Comment deletion error:', error);
+    res.status(500).send('Error deleting comment');
   }
 });
 
