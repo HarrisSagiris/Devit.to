@@ -1,288 +1,703 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Rverto - Your Feed</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rverto - Your Feed</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <style>
-    body {
-        background-color: #1a1a1b;
-        color: #d7dadc;
-        font-family: Arial, sans-serif;
+    :root {
+        --primary: #ff6b4a;
+        --primary-dark: #ff4500;
+        --bg-dark: #0f0f0f;
+        --bg-light: #1a1a1a;
+        --text: #e8e8e8;
+        --border: #333;
+    }
+
+    * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
     }
-    
-    header {
-        background-color: #333;
-        padding: 10px;
-        text-align: center;
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
     }
-    
-    header p, header a {
-        color: #d7dadc;
-        text-decoration: none;
-        margin: 0 5px;
-    }
-    
-    header a:hover {
-        color: #ff4500;
-    }
-    
-    h2 {
-        color: #ff4500;
-        text-align: center;
-        margin-top: 20px;
-    }
-    
-    #new-post-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: #252526;
-        padding: 20px;
-        border-radius: 8px;
-        margin: 20px auto;
-        width: 80%;
-    }
-    
-    #new-post-form input, #new-post-form textarea, #new-post-form select, #new-post-form button {
-        width: 100%;
-        margin: 8px 0;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #444;
-        background-color: #1a1a1b;
-        color: #d7dadc;
-    }
-    
-    #new-post-form button {
-        background-color: #ff4500;
+
+    .version-banner {
+        background: linear-gradient(90deg, var(--primary), var(--primary-dark));
         color: white;
-        cursor: pointer;
+        text-align: center;
+        padding: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
-    
-    #new-post-form button:hover {
-        background-color: #d4361a;
+
+    .welcome-section {
+        text-align: center;
+        padding: 2rem 1rem;
     }
-    
-    .post {
-        background-color: #252526;
-        margin: 10px auto;
-        padding: 20px;
+
+    .welcome-section h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.2rem;
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    .search-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .search-container input,
+    .search-container select {
+        padding: 1rem;
         border-radius: 8px;
-        width: 80%;
-        color: #d7dadc;
-        position: relative;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border: 2px solid var(--border);
+        background: var(--bg-light);
+        color: var(--text);
+        font-size: 1rem;
+        transition: all 0.3s ease;
     }
-    
-    .post h3 {
-        color: #ff4500;
-        font-size: 1.2em;
-        margin-bottom: 10px;
+
+    .search-container input {
+        flex: 1;
     }
-    
-    .post p {
-        margin: 10px 0;
+
+    .search-container input:focus,
+    .search-container select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.2);
     }
-    
-    .upvote, .downvote {
-        background-color: #333;
-        color: #ff4500;
+
+    .header {
+        background: var(--bg-light);
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-content {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-links a {
+        color: var(--text);
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        color: var(--primary);
+    }
+
+    .post-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .post-form {
+        width: 90%;
+        max-width: 600px;
+        padding: 2rem;
+        background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .post-form input,
+    .post-form select,
+    .post-form textarea {
+        width: 100%;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 2px solid var(--border);
+        background: var(--bg-light);
+        color: var(--text);
+        font-size: 1rem;
+    }
+
+    .post-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .new-post-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
         border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
-        margin: 5px 5px 5px 0;
+        font-size: 2rem;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(255, 107, 74, 0.4);
+        transition: transform 0.3s ease;
+        z-index: 900;
     }
-    
-    .upvote:hover, .downvote:hover {
-        background-color: #ff4500;
-        color: #fff;
+
+    .new-post-btn::after {
+        content: 'POST YOUR REVIEW';
+        position: absolute;
+        right: 70px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        background: var(--bg-light);
+        padding: 8px 12px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    
+
+    .new-post-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .btn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 74, 0.4);
+    }
+
+    .feed {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .post {
+        background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .post:hover {
+        transform: translateY(-5px);
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .post-title {
+        color: var(--primary);
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .post-meta {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .post-content {
+        margin: 1rem 0;
+        line-height: 1.7;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .vote-btn {
+        background: linear-gradient(135deg, #2a2a2a, #222);
+        color: var(--primary);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .vote-btn:hover {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #ff4444, #cc0000);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #cc0000, #990000);
+        transform: translateY(-2px);
+    }
+
+    .comments-section {
+        margin-top: 1.5rem;
+    }
+
+    .comment {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 3px solid var(--primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .comment-content {
+        flex: 1;
+    }
+
+    .delete-comment-btn {
+        background: linear-gradient(135deg, #ff4444, #cc0000);
+        color: white;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: 1rem;
+    }
+
+    .delete-comment-btn:hover {
+        background: linear-gradient(135deg, #cc0000, #990000);
+    }
+
     .comment-form {
         display: flex;
-        align-items: center;
-        margin-top: 10px;
+        gap: 1rem;
+        margin-top: 1rem;
     }
-    
+
     .comment-form input {
-        width: 70%;
-        margin-right: 10px;
-        padding: 8px;
-        background-color: #1a1a1b;
-        border: 1px solid #444;
-        color: #d7dadc;
+        flex: 1;
+        padding: 0.8rem;
+        border-radius: 6px;
+        border: 2px solid var(--border);
+        background: var(--bg-light);
+        color: var(--text);
     }
-    
-    .comment-form button {
-        background-color: #333;
-        color: #ff4500;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 5px;
-        cursor: pointer;
+
+    .footer {
+        text-align: center;
+        padding: 2rem;
+        margin-top: 3rem;
+        color: #888;
+        font-size: 0.9rem;
     }
-    
-    .comment-form button:hover {
-        background-color: #ff4500;
-        color: #fff;
+
+    @media (max-width: 768px) {
+        .search-container {
+            flex-direction: column;
+        }
+
+        .header-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            margin: 0;
+        }
     }
-    
-    .comments {
-        margin-top: 15px;
-    }
-    
-    .comment {
-        background-color: #333;
-        padding: 10px;
-        border-radius: 5px;
-        margin-top: 5px;
-        color: #d7dadc;
-    }
-    
-    .comment strong {
-        color: #ff4500;
-    }
-    
-    </style>
+</style>
 
 <body>
-  <h4>version 1.0(beta)</h4>
-  <h2>Welcome to Rverto: The Number 1 Reviewing Platform Worldwide</h2>
-  <h2>Login or register to post/like and comment!</h2>
-  
+    <div class="version-banner">Version 1.0 (Beta)</div>
 
-  <header>
-    <% if (user) { %>
-      <p>Welcome, <%= user.username %> | <a href="/logout">Logout</a> | <a href="/my-posts">My Posts</a></p>
-      <form id="new-post-form">
-        <input type="text" name="title" placeholder="Title" required><br>
-        <select name="category">
-          <option value="General post">General</option>
-          <option value="Movies">Movies</option>
-          <option value="Books">Books</option>
-          <option value="Games">Games</option>
-          <option value="Songs">Songs</option>
-          <option value="Programming">Programming</option>
-          <option value="Physical product">Physical product</option>
-          <option value="Netflix movies-movies">Movies</option>
-        </select><br>
-        <textarea name="content" placeholder="Your review" required></textarea><br>
-        <button type="submit">Post</button>
-      </form>
-      
-    <% } else { %>
-      <a href="/login">Login</a> | <a href="/register">Register</a> 
-    <% } %>
-    
-  </header>
+    <section class="welcome-section">
+        <h1>Welcome to Rverto</h1>
+        <h2>The World's Leading Review Platform</h2>
+    </section>
 
-  <section>
-    <h2>Feed</h2>
-    <div id="feed">
-      <% posts.forEach(post => { %>
-        <div class="post" id="post-<%= post._id %>">
-          <h3><%= post.title %> - <%= post.category %></h3>
-          <p><strong>by <%= post.username %></strong></p>
-          <p><%= post.content %></p>
-          <p>Upvotes: <span class="upvote-count"><%= post.upvotes %></span> | Downvotes: <span class="downvote-count"><%= post.downvotes %></span></p>
-          <% if (user) { %>
-            <button class="upvote" data-id="<%= post._id %>">Upvote</button>
-            <button class="downvote" data-id="<%= post._id %>">Downvote</button>
-            <form class="comment-form" data-id="<%= post._id %>">
-              <input type="text" name="content" placeholder="Add a comment" required>
-              <button type="submit">Comment</button>
-              <meta http-equiv="refresh" content="(1)"> <! here i want to impliment auto refresh after the comment submission...>
-            </form>
-          <% } %>
-
-          <!-- Comments Section -->
-          <h4>Replies :</h4>
-          <div class="comments" id="comments-<%= post._id %>">
-            <% post.comments.forEach(comment => { %>
-              <div class="comment">
-                <strong><%= comment.username %>:</strong> <%= comment.content %>
-              </div>
-            <% }) %>
-          </div>
-        </div>
-        <hr>
-      <% }) %>
+    <div class="search-container">
+        <input type="text" id="search-bar" placeholder="Search reviews...">
+        <select id="search-category">
+            <option value="">All Categories</option>
+            <option value="General">General</option>
+            <option value="Movies">Movies</option>
+            <option value="Books">Books</option>
+            <option value="Games">Games</option>
+            <option value="Music">Music</option>
+            <option value="Programming">Programming</option>
+            <option value="Products">Products</option>
+            <option value="Netflix">Netflix</option>
+        </select>
     </div>
-    <h5>Copywrited by harris sagiris 2024 RVERTO©</h5>
-  </section>
 
-  <script>
-    $(document).ready(function() {
-      // Handle new post submission
-      $('#new-post-form').on('submit', function(event) {
-        event.preventDefault();
-        $.ajax({
-          url: '/post',
-          method: 'POST',
-          data: $(this).serialize(),
-          success: function(response) {
-            $('#feed').prepend(response); // Add the new post to the top of the feed
-            $('#new-post-form')[0].reset(); // Clear the form
-          }
-        });
-      });
+    <header class="header">
+        <div class="header-content">
+            <% if (user) { %>
+                <div class="nav-links">
+                    <span>Welcome, <%= user.username %></span>
+                    <a href="/views/my-posts.ejs">My Posts</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            <% } else { %>
+                <div class="nav-links">
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                </div>
+            <% } %>
+        </div>
+    </header>
 
-      // Handle comment submission
-      $(document).on('submit', '.comment-form', function(event) {
-        event.preventDefault();
-        const postId = $(this).data('id');
-        const commentData = $(this).serialize();
-        $.ajax({
-          url: `/post/${postId}/comment`,
-          method: 'POST',
-          data: commentData,
-          success: function(response) {
-            $(`#comments-${postId}`).append(response); // Append the new comment to the comments section
-          }
-        });
-      });
+    <main class="feed">
+        <% posts.forEach(post => { %>
+            <article class="post" id="post-<%= post._id %>">
+                <div class="post-header">
+                    <h3 class="post-title"><%= post.title %></h3>
+                    <span class="post-meta">
+                        <%= post.category %> | by <%= post.username %>
+                    </span>
+                </div>
+                
+                <div class="post-content">
+                    <%= post.content %>
+                </div>
 
-      // Handle upvote and downvote
-      $(document).on('click', '.upvote, .downvote', function() {
-        const postId = $(this).data('id');
-        const isUpvote = $(this).hasClass('upvote');
-        const voteType = isUpvote ? 'upvote' : 'downvote';
+                <div class="post-actions">
+                    <button class="vote-btn upvote" data-id="<%= post._id %>">
+                        ▲ <span class="upvote-count"><%= post.upvotes %></span>
+                    </button>
+                    <button class="vote-btn downvote" data-id="<%= post._id %>">
+                        ▼ <span class="downvote-count"><%= post.downvotes %></span>
+                    </button>
+                    <% if (user && user.username === post.username) { %>
+                        <button class="delete-btn" data-id="<%= post._id %>">Delete Post</button>
+                    <% } %>
+                </div>
 
-        $.ajax({
-          url: `/post/${postId}/${voteType}`,
-          method: 'POST',
-          success: function(response) {
-            $(`#post-${postId} .upvote-count`).text(response.upvotes);
-            $(`#post-${postId} .downvote-count`).text(response.downvotes);
-          }
+                <% if (user) { %>
+                    <form class="comment-form" data-id="<%= post._id %>">
+                        <input type="text" name="content" placeholder="Add a comment..." required>
+                        <button type="submit" class="btn">Comment</button>
+                    </form>
+                <% } %>
+
+                <div class="comments-section">
+                    <h4>Comments</h4>
+                    <div class="comments" id="comments-<%= post._id %>">
+                        <% post.comments.forEach(comment => { %>
+                            <div class="comment" id="comment-<%= comment._id %>">
+                                <div class="comment-content">
+                                    <strong><%= comment.username %>:</strong>
+                                    <%= comment.content %>
+                                </div>
+                                <% if (user && user.username === comment.username) { %>
+                                    <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
+                                <% } %>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </article>
+        <% }) %>
+    </main>
+
+    <% if (user) { %>
+        <button class="new-post-btn" id="new-post-btn">+</button>
+        
+        <div class="post-modal" id="post-modal">
+            <form class="post-form" id="new-post-form">
+                <input type="text" name="title" placeholder="Review Title" required>
+                <select name="category" required>
+                    <option value="General">General</option>
+                    <option value="Movies">Movies</option>
+                    <option value="Books">Books</option>
+                    <option value="Games">Games</option>
+                    <option value="Music">Music</option>
+                    <option value="Programming">Programming</option>
+                    <option value="Products">Products</option>
+                    <option value="Netflix">Netflix</option>
+                </select>
+                <textarea name="content" placeholder="Write your review..." required></textarea>
+                <button type="submit" class="btn">Post Review</button>
+                <button type="button" class="btn" id="cancel-post">Cancel</button>
+            </form>
+        </div>
+    <% } %>
+
+    <footer class="footer">
+        <p>&copy; 2024 RVERTO. All rights reserved.</p>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            const postModal = $('#post-modal');
+            const newPostBtn = $('#new-post-btn');
+            const cancelPostBtn = $('#cancel-post');
+            const currentUser = '<%= user ? user.username : "" %>';
+
+            newPostBtn.on('click', function() {
+                postModal.css('display', 'flex');
+            });
+
+            cancelPostBtn.on('click', function() {
+                postModal.hide();
+                $('#new-post-form')[0].reset();
+            });
+
+            $(window).on('click', function(e) {
+                if (e.target === postModal[0]) {
+                    postModal.hide();
+                    $('#new-post-form')[0].reset();
+                }
+            });
+
+            // Delete comment functionality
+            $(document).on('click', '.delete-comment-btn', function() {
+                const postId = $(this).data('post-id');
+                const commentId = $(this).data('comment-id');
+                
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    $.ajax({
+                        url: `/post/${postId}/comment/${commentId}`,
+                        method: 'DELETE',
+                        success: function(response) {
+                            $(`#comment-${commentId}`).fadeOut(400, function() {
+                                $(this).remove();
+                            });
+                        },
+                        error: function(err) {
+                            alert('Unable to delete comment. Please try again later.');
+                        }
+                    });
+                }
+            });
+
+            // New post submission
+            $('#new-post-form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/post',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function(err) {
+                        alert('Error posting review');
+                    }
+                });
+            });
+
+            // Delete post
+            $('.delete-btn').on('click', function() {
+                if (confirm('Are you sure you want to delete this post?')) {
+                    const postId = $(this).data('id');
+                    $.ajax({
+                        url: `/post/${postId}`,
+                        method: 'DELETE',
+                        success: function(response) {
+                            $(`#post-${postId}`).fadeOut(400, function() {
+                                $(this).remove();
+                            });
+                        },
+                        error: function(err) {
+                            alert('Unable to delete post. Please try again later or contact support if the issue persists.');
+                        }
+                    });
+                }
+            });
+
+            // Voting system
+            $('.vote-btn').on('click', function() {
+                const postId = $(this).data('id');
+                const isUpvote = $(this).hasClass('upvote');
+                const voteType = isUpvote ? 'upvote' : 'downvote';
+
+                $.ajax({
+                    url: `/post/${postId}/${voteType}`,
+                    method: 'POST',
+                    success: function(response) {
+                        $(`#post-${postId} .upvote-count`).text(response.upvotes);
+                        $(`#post-${postId} .downvote-count`).text(response.downvotes);
+                    },
+                    error: function() {
+                        alert('Please login to vote');
+                    }
+                });
+            });
+
+            // Comment submission
+            $('.comment-form').on('submit', function(e) {
+                e.preventDefault();
+                const postId = $(this).data('id');
+                const form = $(this);
+                const content = form.find('input[name="content"]').val();
+
+                $.ajax({
+                    url: `/post/${postId}/comment`,
+                    method: 'POST',
+                    data: form.serialize(),
+                    success: function(response) {
+                        const commentHtml = `
+                            <div class="comment" id="comment-${response.commentId}">
+                                <div class="comment-content">
+                                    <strong>${currentUser}:</strong>
+                                    ${content}
+                                </div>
+                                <button class="delete-comment-btn" data-post-id="${postId}" data-comment-id="${response.commentId}">Delete</button>
+                            </div>
+                        `;
+                        $(`#comments-${postId}`).append(commentHtml);
+                        form[0].reset();
+                    },
+                    error: function() {
+                        alert('Error posting comment');
+                    }
+                });
+            });
+
+            // Search functionality with debouncing
+            let searchTimeout;
+            $('#search-bar, #search-category').on('input change', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    const query = $('#search-bar').val();
+                    const category = $('#search-category').val();
+                    
+                    $.ajax({
+                        url: '/search',
+                        method: 'GET',
+                        data: { query: query, category: category },
+                        success: function(response) {
+                            $('.feed').empty();
+                            if (response.length > 0) {
+                                response.forEach(post => {
+                                    const postHtml = `
+                                        <article class="post" id="post-${post._id}">
+                                            <div class="post-header">
+                                                <h3 class="post-title">${post.title}</h3>
+                                                <span class="post-meta">
+                                                    ${post.category} | by ${post.username}
+                                                </span>
+                                            </div>
+                                            <div class="post-content">
+                                                ${post.content}
+                                            </div>
+                                            <div class="post-actions">
+                                                <button class="vote-btn upvote" data-id="${post._id}">
+                                                    ▲ <span class="upvote-count">${post.upvotes}</span>
+                                                </button>
+                                                <button class="vote-btn downvote" data-id="${post._id}">
+                                                    ▼ <span class="downvote-count">${post.downvotes}</span>
+                                                </button>
+                                                ${currentUser === post.username ? 
+                                                    `<button class="delete-btn" data-id="${post._id}">Delete Post</button>` 
+                                                    : ''}
+                                            </div>
+                                            <div class="comments-section">
+                                                <h4>Comments</h4>
+                                                <div class="comments" id="comments-${post._id}">
+                                                    ${post.comments.map(comment => `
+                                                        <div class="comment" id="comment-${comment._id}">
+                                                            <div class="comment-content">
+                                                                <strong>${comment.username}:</strong>
+                                                                ${comment.content}
+                                                            </div>
+                                                            ${currentUser === comment.username ? 
+                                                                `<button class="delete-comment-btn" data-post-id="${post._id}" data-comment-id="${comment._id}">Delete</button>`
+                                                                : ''}
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                            ${currentUser ? `
+                                                <form class="comment-form" data-id="${post._id}">
+                                                    <input type="text" name="content" placeholder="Add a comment..." required>
+                                                    <button type="submit" class="btn">Comment</button>
+                                                </form>
+                                            ` : ''}
+                                        </article>
+                                    `;
+                                    $('.feed').append(postHtml);
+                                });
+                            } else {
+                                $('.feed').append('<p>No posts found.</p>');
+                            }
+                        },
+                        error: function(err) {
+                            console.error('Search error:', err);
+                            $('.feed').html('<p>Error performing search. Please try again later.</p>');
+                        }
+                    });
+                }, 300);
+            });
         });
-      });
-    });
-  </script>
-  <script>
-    $(document).ready(function() {
-      $('#search-bar').on('input', function() {
-        const query = $(this).val();
-  
-        $.ajax({
-          url: '/search',
-          method: 'GET',
-          data: { q: query },
-          success: function(response) {
-            $('#feed').html(response); // Update the feed with search results
-          },
-          error: function() {
-            alert('Error retrieving search results');
-          }
-        });
-      });
-    });
-  </script>
-  
+    </script>
 </body>
 </html>

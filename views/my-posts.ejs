@@ -3,37 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Posts - ReviewIt</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>My Posts - Rverto</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>My Posts</h1>
-            <div class="auth-links"></div>
-                <form action="/logout" method="POST">
+            <nav>
+                <a href="/">Home</a>
+                <a href="/feed">Feed</a>
+                <form action="/logout" method="POST" style="display: inline;">
                     <button type="submit">Logout</button>
                 </form>
-            </div>
+            </nav>
         </header>
 
         <!-- User's Posts -->
         <div id="myPostsContainer">
             <% if (myPosts.length > 0) { %>
                 <% myPosts.forEach(post => { %>
-                    <div class="review">
+                    <div class="post" id="post-<%= post._id %>">
                         <h3><%= post.title %></h3>
                         <p><strong>Category:</strong> <%= post.category %></p>
-                        <p><strong>Review:</strong> <%= post.content %></p>
-                        <p><strong>Votes:</strong> <%= post.votes %></p>
+                        <p class="content"><%= post.content %></p>
+                        <div class="post-stats">
+                            <span class="votes">
+                                <button class="vote-btn upvote" data-id="<%= post._id %>">⬆️</button>
+                                <span class="upvote-count"><%= post.upvotes %></span>
+                                <button class="vote-btn downvote" data-id="<%= post._id %>">⬇️</button>
+                                <span class="downvote-count"><%= post.downvotes %></span>
+                            </span>
+                            <button class="delete-btn" data-id="<%= post._id %>">Delete</button>
+                        </div>
+                        
+                        <div class="comments" id="comments-<%= post._id %>">
+                            <% post.comments.forEach(comment => { %>
+                                <div class="comment">
+                                    <strong><%= comment.author %>:</strong>
+                                    <%= comment.content %>
+                                </div>
+                            <% }) %>
+                        </div>
+                        
+                        <form class="comment-form" data-id="<%= post._id %>">
+                            <input type="text" name="content" placeholder="Add a comment..." required>
+                            <button type="submit">Comment</button>
+                        </form>
                     </div>
                 <% }) %>
             <% } else { %>
-                <p>You haven't posted anything yet.</p>
+                <p class="no-posts">You haven't posted anything yet. <a href="/create-post">Create your first post!</a></p>
             <% } %>
         </div>
     </div>
 
-    <script src="/app.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Attach event handlers
+            attachEventHandlers();
+
+            function attachEventHandlers() {
+                $('.vote-btn').off('click').on('click', function() {
+                    const postId = $(this).data('id');
+                    const isUpvote = $(this).hasClass('upvote');
+                    const voteType = isUpvote ? 'upvote' : 'downvote';
+
+                    $.ajax({
+                        url: `/post/${postId}/${voteType}`,
+                        method: 'POST',
+                        success: function(response) {
+                            $(`#post-${postId} .upvote-count`).text(response.upvotes);
+                            $(`#post-${postId} .downvote-count`).text(response.downvotes);
+                        },
+                        error: function() {
+                            alert('Error updating vote');
+                        }
+                    });
+                });
+
+                $('.delete-btn').off('click').on('click', function() {
+                    if (confirm('Are you sure you want to delete this post?')) {
+                        const postId = $(this).data('id');
+                        $.ajax({
+                            url: `/post/${postId}`,
+                            method: 'DELETE',
+                            success: function(response) {
+                                $(`#post-${postId}`).fadeOut(400, function() {
+                                    $(this).remove();
+                                    if ($('.post').length === 0) {
+                                        $('#myPostsContainer').html('<p class="no-posts">You haven\'t posted anything yet. <a href="/create-post">Create your first post!</a></p>');
+                                    }
+                                });
+                            },
+                            error: function(err) {
+                                alert('Unable to delete post. Please try again later.');
+                            }
+                        });
+                    }
+                });
+
+                $('.comment-form').off('submit').on('submit', function(e) {
+                    e.preventDefault();
+                    const postId = $(this).data('id');
+                    const form = $(this);
+                    const content = form.find('input[name="content"]').val();
+
+                    $.ajax({
+                        url: `/post/${postId}/comment`,
+                        method: 'POST',
+                        data: form.serialize(),
+                        success: function(response) {
+                            const commentHtml = `
+                                <div class="comment">
+                                    <strong>${response.author}:</strong>
+                                    ${content}
+                                </div>
+                            `;
+                            $(`#comments-${postId}`).append(commentHtml);
+                            form[0].reset();
+                        },
+                        error: function() {
+                            alert('Error posting comment');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

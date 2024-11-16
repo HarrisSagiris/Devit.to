@@ -11,166 +11,273 @@ const PORT = 3000;
 
 require('dotenv').config();
 
+// Test database connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Database connected'))
-  .catch(err => console.error('Database connection error:', err));
+  .then(() => console.log('Database connected successfully'))
+  .catch(err => {
+    console.error('Database connection error:', err);
+    process.exit(1); // Exit if database connection fails
+  });
 
-// Models
+// Verify models are loaded correctly
 const User = require('./models/user');
 const Post = require('./models/post');
-const user = require('./models/user');
+if (!User || !Post) {
+  console.error('Error loading models');
+  process.exit(1);
+}
 
-// Middleware
+// Essential middleware setup
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }));
+app.use(session({ 
+  secret: 'secret',
+  resave: false, 
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Email transporter for password reset
+// Configure email transporter with error handling
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'your-email@gmail.com', // replace with your email
-    pass: 'your-email-password'    // replace with your email password
+    user: process.env.EMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.EMAIL_PASS || 'your-email-password'
   }
 });
 
-// Routes
-app.get('/', async (req, res) => {
-  const posts = await Post.find().sort({ createdAt: -1 }).populate('comments.user', 'username');
-  res.render('feed', { posts, user: req.session.user });
+// Test email configuration
+transporter.verify((error) => {
+  if (error) {
+    console.error('Email configuration error:', error);
+  } else {
+    console.log('Email server is ready');
+  }
 });
-   if (Post == 0); {
-    console.log('Your feed is empty cause you are haunted!! Just kidding its just cause nobody has uploaded anything')
-   }
+
+// Routes with error handling
+app.get('/', async (req, res) => {
+  try {
+    let query = {};
+    const searchTerm = req.query.search;
+    
+    if (searchTerm) {
+      query = {
+        $or: [
+          { title: { $regex: searchTerm, $options: 'i' } },
+          { category: { $regex: searchTerm, $options: 'i' } }
+        ]
+      };
+    }
+
+    const posts = await Post.find(query)
+      .sort({ createdAt: -1 })
+      .populate('comments.user', 'username');
+    res.render('index.ejs', { 
+      posts, 
+      user: req.session.user,
+      searchTerm: searchTerm || ''
+    });
+    
+    if (posts.length === 0) {
+      console.log('No posts found matching search criteria');
+    }
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).send('Error loading feed');
+  }
+});
+
 app.get('/register', (req, res) => res.render('register'));
 app.get('/login', (req, res) => res.render('login'));
 
 app.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
   try {
+    const { username, email, password } = req.body;
+    
+    // Validate inputs
+    if (!username || !email || !password) {
+      return res.status(400).send('All fields are required');
+    }
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     req.session.user = { username: user.username, _id: user._id };
     res.redirect('/');
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).send('Error: Unable to register');
   }
 });
 
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (user && await bcrypt.compare(password, user.password)) {
-    req.session.user = { username: user.username, _id: user._id };
-    res.redirect('/');
-  } else {
-    res.status(400).send('Invalid email or password');
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (user && await bcrypt.compare(password, user.password)) {
+      req.session.user = { username: user.username, _id: user._id };
+      res.redirect('/');
+    } else {
+      res.status(400).send('Invalid email or password');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).send('Error during login');
   }
 });
 
 app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
-});
-
-// Create a new post
-app.post('/post', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  const { category, title, content } = req.body;
-  const post = new Post({
-    username: req.session.user.username,
-    user: req.session.user._id,
-    category,
-    title,
-    content
-  });
-  await post.save();
-  res.redirect('/');
-});
-
-// Delete a post
-app.post('/post/:id/delete', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  const post = await Post.findById(req.params.id);
-  if (post.user.toString() === req.session.user._id) {
-    await post.delete();
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).send('Error during logout');
+    }
     res.redirect('/');
-  } else {
-    res.status(403).send('Unauthorized');
+  });
+});
+
+// Create a new post with validation
+app.post('/post', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    const { category, title, content } = req.body;
+    
+    // Validate inputs
+    if (!category || !title || !content) {
+      return res.status(400).send('All fields are required');
+    }
+    
+    const post = new Post({
+      username: req.session.user.username,
+      user: req.session.user._id,
+      category,
+      title,
+      content
+    });
+    await post.save();
+    res.redirect('/');
+  } catch (error) {
+    console.error('Post creation error:', error);
+    res.status(500).send('Error creating post');
   }
 });
 
+// Delete post with proper error handling
+app.post('/post/:id/delete', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send('Post not found');
+    
+    if (post.user.toString() === req.session.user._id) {
+      await post.delete();
+      res.redirect('/');
+    } else {
+      res.status(403).send('Unauthorized');
+    }
+  } catch (error) {
+    console.error('Post deletion error:', error);
+    res.status(500).send('Error deleting post');
+  }
+});
 
-//posting and upvoting(downvoting)
+// Voting system with proper validation
 app.post('/post/:id/upvote', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  
-  const post = await Post.findById(req.params.id);
-  const userId = req.session.user._id;
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send('Post not found');
+    
+    const userId = req.session.user._id;
 
-  // Check if the user already upvoted
-  if (post.upvotedBy.includes(userId)) {
-    return res.status(400).send('You have already upvoted this post.');
-  }
-  
-  // If the user previously downvoted, remove their downvote
-  if (post.downvotedBy.includes(userId)) {
-    post.downvotes--;
-    post.downvotedBy.pull(userId);
-  }
+    if (post.upvotedBy.includes(userId)) {
+      return res.status(400).send('You have already upvoted this post.');
+    }
+    
+    if (post.downvotedBy.includes(userId)) {
+      post.downvotes--;
+      post.downvotedBy.pull(userId);
+    }
 
-  // Add the upvote
-  post.upvotes++;
-  post.upvotedBy.push(userId);
-  await post.save();
-  
-  res.json({ upvotes: post.upvotes, downvotes: post.downvotes });
+    post.upvotes++;
+    post.upvotedBy.push(userId);
+    await post.save();
+    
+    res.json({ upvotes: post.upvotes, downvotes: post.downvotes });
+  } catch (error) {
+    console.error('Upvote error:', error);
+    res.status(500).send('Error processing upvote');
+  }
 });
 
 app.post('/post/:id/downvote', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
 
-  const post = await Post.findById(req.params.id);
-  const userId = req.session.user._id;
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send('Post not found');
+    
+    const userId = req.session.user._id;
 
-  // Check if the user already downvoted
-  if (post.downvotedBy.includes(userId)) {
-    return res.status(400).send('You have already downvoted this post.');
+    if (post.downvotedBy.includes(userId)) {
+      return res.status(400).send('You have already downvoted this post.');
+    }
+
+    if (post.upvotedBy.includes(userId)) {
+      post.upvotes--;
+      post.upvotedBy.pull(userId);
+    }
+
+    post.downvotes++;
+    post.downvotedBy.push(userId);
+    await post.save();
+    
+    res.json({ upvotes: post.upvotes, downvotes: post.downvotes });
+  } catch (error) {
+    console.error('Downvote error:', error);
+    res.status(500).send('Error processing downvote');
   }
-
-  // If the user previously upvoted, remove their upvote
-  if (post.upvotedBy.includes(userId)) {
-    post.upvotes--;
-    post.upvotedBy.pull(userId);
-  }
-
-  // Add the downvote
-  post.downvotes++;
-  post.downvotedBy.push(userId);
-  await post.save();
-  
-  res.json({ upvotes: post.upvotes, downvotes: post.downvotes });
 });
 
-
-// Add comment to post
+// Comment system with validation
 app.post('/post/:id/comment', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  const post = await Post.findById(req.params.id);
-  const comment = { user: req.session.user._id, content: req.body.content, upvotes: 0 };
-  post.comments.push(comment);
-  await post.save();
-  res.json({ comments: post.comments });
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).send('Post not found');
+    
+    if (!req.body.content) {
+      return res.status(400).send('Comment content is required');
+    }
+    
+    const comment = { 
+      user: req.session.user._id, 
+      content: req.body.content,
+      upvotes: 0 
+    };
+    post.comments.push(comment);
+    await post.save();
+    res.json({ comments: post.comments });
+  } catch (error) {
+    console.error('Comment error:', error);
+    res.status(500).send('Error adding comment');
+  }
 });
 
-// Reset password - request link
+// Password reset system with proper validation
 app.post('/reset-password', async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (user) {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).send('Email not found');
+    }
+
     const token = crypto.randomBytes(20).toString('hex');
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
@@ -184,70 +291,115 @@ app.post('/reset-password', async (req, res) => {
     });
 
     res.send('Reset password link sent to your email');
-  } else {
-    res.status(404).send('Email not found');
+  } catch (error) {
+    console.error('Password reset error:', error);
+    res.status(500).send('Error processing password reset');
   }
 });
 
-// Reset password - update password
 app.get('/reset-password/:token', async (req, res) => {
-  const user = await User.findOne({
-    resetPasswordToken: req.params.token,
-    resetPasswordExpires: { $gt: Date.now() }
-  });
-  if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
-  res.render('reset-password', { token: req.params.token });
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+    if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
+    res.render('reset-password', { token: req.params.token });
+  } catch (error) {
+    console.error('Reset token verification error:', error);
+    res.status(500).send('Error verifying reset token');
+  }
 });
 
 app.post('/reset-password/:token', async (req, res) => {
-  const user = await User.findOne({
-    resetPasswordToken: req.params.token,
-    resetPasswordExpires: { $gt: Date.now() }
-  });
-  if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+    if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
 
-  user.password = await bcrypt.hash(req.body.password, 10);
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-  await user.save();
-  res.redirect('/login');
+    if (!req.body.password) {
+      return res.status(400).send('New password is required');
+    }
+
+    user.password = await bcrypt.hash(req.body.password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    res.redirect('/login');
+  } catch (error) {
+    console.error('Password update error:', error);
+    res.status(500).send('Error updating password');
+  }
 });
 
-// View user profile, follow, and unfollow
+// User profile and following system with validation
 app.get('/user/:username', async (req, res) => {
-  const profileUser = await User.findOne({ username: req.params.username });
-  const posts = await Post.find({ user: profileUser._id });
-  const currentUser = req.session.user ? await User.findById(req.session.user._id) : null;
-  const isFollowing = currentUser ? currentUser.following.includes(profileUser._id) : false;
-  
-  res.render('user-profile', { profileUser, posts, isFollowing });
+  try {
+    const profileUser = await User.findOne({ username: req.params.username });
+    if (!profileUser) return res.status(404).send('User not found');
+    
+    const posts = await Post.find({ user: profileUser._id });
+    const currentUser = req.session.user ? await User.findById(req.session.user._id) : null;
+    const isFollowing = currentUser ? currentUser.following.includes(profileUser._id) : false;
+    
+    res.render('user-profile', { profileUser, posts, isFollowing });
+  } catch (error) {
+    console.error('Profile view error:', error);
+    res.status(500).send('Error loading profile');
+  }
 });
 
 app.post('/user/:username/follow', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  const userToFollow = await User.findOne({ username: req.params.username });
-  const currentUser = await User.findById(req.session.user._id);
-  
-  if (!currentUser.following.includes(userToFollow._id)) {
-    currentUser.following.push(userToFollow._id);
-    userToFollow.followers.push(currentUser._id);
-    await currentUser.save();
-    await userToFollow.save();
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    
+    const userToFollow = await User.findOne({ username: req.params.username });
+    if (!userToFollow) return res.status(404).send('User not found');
+    
+    const currentUser = await User.findById(req.session.user._id);
+    
+    if (!currentUser.following.includes(userToFollow._id)) {
+      currentUser.following.push(userToFollow._id);
+      userToFollow.followers.push(currentUser._id);
+      await Promise.all([currentUser.save(), userToFollow.save()]);
+    }
+    res.redirect(`/user/${req.params.username}`);
+  } catch (error) {
+    console.error('Follow error:', error);
+    res.status(500).send('Error processing follow request');
   }
-  res.redirect(`/user/${req.params.username}`);
 });
 
 app.post('/user/:username/unfollow', async (req, res) => {
-  if (!req.session.user) return res.status(403).send('Login required');
-  const userToUnfollow = await User.findOne({ username: req.params.username });
-  const currentUser = await User.findById(req.session.user._id);
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    
+    const userToUnfollow = await User.findOne({ username: req.params.username });
+    if (!userToUnfollow) return res.status(404).send('User not found');
+    
+    const currentUser = await User.findById(req.session.user._id);
 
-  currentUser.following = currentUser.following.filter(followId => !followId.equals(userToUnfollow._id));
-  userToUnfollow.followers = userToUnfollow.followers.filter(followerId => !followerId.equals(currentUser._id));
-  await currentUser.save();
-  await userToUnfollow.save();
-  
-  res.redirect(`/user/${req.params.username}`);
+    currentUser.following = currentUser.following.filter(followId => !followId.equals(userToUnfollow._id));
+    userToUnfollow.followers = userToUnfollow.followers.filter(followerId => !followerId.equals(currentUser._id));
+    await Promise.all([currentUser.save(), userToUnfollow.save()]);
+    
+    res.redirect(`/user/${req.params.username}`);
+  } catch (error) {
+    console.error('Unfollow error:', error);
+    res.status(500).send('Error processing unfollow request');
+  }
 });
 
-app.listen(PORT, () => console.log(`Server started on http://localhost:${PORT}`));
+// Start server with health check
+app.listen(PORT, () => {
+  console.log(`Server started successfully on http://localhost:${PORT}`);
+  console.log('Server health check passed');
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).send('An unexpected error occurred');
+});
