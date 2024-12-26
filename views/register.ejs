@@ -1,116 +1,240 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Register at Rverto</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Rverto - Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <style>
-body {
-    background-color: #0f0f0f;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #e8e8e8;
-}
+    :root {
+        --primary: #ff6b4a;
+        --primary-dark: #ff4500;
+        --bg-dark: #0f0f0f;
+        --bg-light: #1a1a1a;
+        --text: #e8e8e8;
+        --border: #333;
+    }
 
-.container {
-    background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
-    padding: 50px;
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    width: 400px;
-    backdrop-filter: blur(10px);
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-form {
-    text-align: center;
-    margin: 25px 0;
-}
+    body {
+        background-color: var(--bg-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        padding: 20px;
+    }
 
-input, button {
-    width: 85%;
-    margin: 12px auto;
-    padding: 16px;
-    border: 2px solid #333;
-    border-radius: 8px;
-    background-color: rgba(30, 30, 30, 0.8);
-    color: #e8e8e8;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
+    .container {
+        background: linear-gradient(145deg, #1a1a1a, #141414);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        width: 100%;
+        max-width: 420px;
+    }
 
-input:focus {
-    outline: none;
-    border-color: #ff6b4a;
-    box-shadow: 0 0 10px rgba(255, 107, 74, 0.2);
-}
+    .logo {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-button {
-    background: linear-gradient(135deg, #ff6b4a, #ff4f2c);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    text-transform: uppercase;
-    transition: transform 0.2s ease;
-}
+    .logo h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
 
-button:hover {
-    transform: translateY(-2px);
-}
+    .logo p {
+        color: #888;
+        font-size: 0.95rem;
+    }
 
-a {
-    color: #ff6b4a;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
 
-a:hover {
-    color: #ff4f2c;
-}
+    .input-group {
+        position: relative;
+    }
 
-.social-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin: 25px 0;
-    gap: 15px;
-}
+    .input-group input {
+        width: 100%;
+        padding: 16px;
+        padding-left: 45px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background-color: rgba(20, 20, 20, 0.8);
+        color: var(--text);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
 
-.social-button {
-    width: 45%;
-    padding: 16px;
-    border: 2px solid #333;
-    border-radius: 8px;
-    background-color: rgba(30, 30, 30, 0.8);
-    color: #e8e8e8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
+    .input-group i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
 
-.social-button:hover {
-    background-color: rgba(40, 40, 40, 0.8);
-    border-color: #ff6b4a;
-}
+    .input-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(255, 107, 74, 0.1);
+    }
 
-.social-button img {
-    width: 24px;
-    margin-right: 12px;
-    filter: brightness(0) invert(1);
-}
-  </style>
+    button {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 74, 0.2);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 24px 0;
+        color: #666;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #333;
+    }
+
+    .divider span {
+        padding: 0 16px;
+        font-size: 0.9rem;
+    }
+
+    .social-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .social-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background: transparent;
+        color: var(--text);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .social-button:hover {
+        border-color: var(--primary);
+        background: rgba(255, 107, 74, 0.1);
+    }
+
+    .login-link {
+        text-align: center;
+        font-size: 0.95rem;
+    }
+
+    .login-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        margin-left: 5px;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    .terms {
+        text-align: center;
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 24px;
+    }
+
+    .terms a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .terms a:hover {
+        text-decoration: underline;
+    }
+</style>
 <body>
-  <h2>Register</h2>
-  <form action="/register" method="post">
-    <input type="text" name="username" placeholder="Username" required><br>
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-  </form>
-  <a href="/login">Already have an account? Login</a>
+    <div class="container">
+        <div class="logo">
+            <h1>Rverto</h1>
+            <p>Join the community today</p>
+        </div>
+
+        <form action="/register" method="post">
+            <div class="input-group">
+                <i>👤</i>
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <i>📧</i>
+                <input type="email" name="email" placeholder="Email address" required>
+            </div>
+            <div class="input-group">
+                <i>🔒</i>
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="divider">
+            <span>or continue with</span>
+        </div>
+
+        <div class="social-buttons">
+            <button class="social-button">
+                <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
+                Google
+            </button>
+            <button class="social-button">
+                <img src="https://github.com/favicon.ico" alt="GitHub" width="20">
+                GitHub
+            </button>
+        </div>
+
+        <div class="login-link">
+            Already have an account?<a href="/login">Sign in</a>
+        </div>
+
+        <div class="terms">
+            By signing up, you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,125 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login to Rverto</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to Rverto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <style>
-body {
-    background-color: #0f0f0f;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #e8e8e8;
-}
+    :root {
+        --primary: #ff6b4a;
+        --primary-dark: #ff4500;
+        --bg-dark: #0f0f0f;
+        --bg-light: #1a1a1a;
+        --text: #e8e8e8;
+        --border: #333;
+    }
 
-.container {
-    background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
-    padding: 50px;
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    width: 400px;
-    backdrop-filter: blur(10px);
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-form {
-    text-align: center;
-    margin: 25px 0;
-}
+    body {
+        background-color: var(--bg-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        padding: 20px;
+    }
 
-input, button {
-    width: 85%;
-    margin: 12px auto;
-    padding: 16px;
-    border: 2px solid #333;
-    border-radius: 8px;
-    background-color: rgba(30, 30, 30, 0.8);
-    color: #e8e8e8;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
+    .container {
+        background: linear-gradient(145deg, #1a1a1a, #141414);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        width: 100%;
+        max-width: 420px;
+    }
 
-input:focus {
-    outline: none;
-    border-color: #ff6b4a;
-    box-shadow: 0 0 10px rgba(255, 107, 74, 0.2);
-}
+    .logo {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-button {
-    background: linear-gradient(135deg, #ff6b4a, #ff4f2c);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+    .logo h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 107, 74, 0.4);
-}
+    .logo p {
+        color: #888;
+        font-size: 0.95rem;
+    }
 
-button:active {
-    transform: translateY(1px);
-}
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
 
-a {
-    color: #ff6b4a;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
-    display: inline-block;
-    margin-top: 15px;
-}
+    input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background-color: var(--bg-dark);
+        color: var(--text);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
 
-a:hover {
-    color: #ff4f2c;
-    text-decoration: underline;
-}
+    input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(255, 107, 74, 0.2);
+    }
 
-.social-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin: 25px 0;
-    gap: 15px;
-}
+    button {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
 
-.social-button {
-    width: 48%;
-    padding: 12px;
-    border: 2px solid #333;
-    border-radius: 8px;
-    background-color: rgba(30, 30, 30, 0.8);
-    color: #e8e8e8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 74, 0.4);
+    }
 
-.social-button:hover {
-    background-color: rgba(40, 40, 40, 0.9);
-    transform: translateY(-2px);
-}
+    button:active {
+        transform: translateY(0);
+    }
 
-.social-button img {
-    width: 24px;
-    margin-right: 12px;
-    filter: brightness(0.9);
-}
+    a {
+        display: block;
+        text-align: center;
+        color: var(--primary);
+        text-decoration: none;
+        margin-top: 20px;
+        font-size: 0.95rem;
+        transition: color 0.2s ease;
+    }
+
+    a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
 </style>
 <body>
-  <h2>Login</h2>
-  <form action="/login" method="post">
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
-  <a href="/register">Don't have an account? Register</a>
+    <div class="container">
+        <div class="logo">
+            <h1>Rverto</h1>
+            <p>Welcome back! Please login to continue</p>
+        </div>
+        <form action="/login" method="post">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <a href="/register">Don't have an account? Register</a>
+    </div>
 </body>
 </html>
