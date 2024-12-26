@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); // Changed to bcrypt
 const session = require('express-session');
 const path = require('path');
 const nodemailer = require('nodemailer');
@@ -183,7 +183,7 @@ app.post('/register', async (req, res) => {
       return res.status(400).send('All fields are required');
     }
     
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10); // Changed to bcrypt
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     req.session.user = { username: user.username, _id: user._id };
@@ -198,11 +198,22 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (user && await bcrypt.compare(password, user.password)) {
-      req.session.user = { username: user.username, _id: user._id };
-      res.redirect('/');
-    } else {
-      res.status(400).send('Invalid email or password');
+    
+    if (!user) {
+      return res.status(400).send('Invalid email or password');
+    }
+
+    try {
+      const validPassword = await bcrypt.compare(password, user.password); // Changed to bcrypt
+      if (validPassword) {
+        req.session.user = { username: user.username, _id: user._id };
+        res.redirect('/');
+      } else {
+        res.status(400).send('Invalid email or password');
+      }
+    } catch (verifyError) {
+      console.error('Password verification error:', verifyError);
+      res.status(500).send('Error during login');
     }
   } catch (error) {
     console.error('Login error:', error);
@@ -461,7 +472,7 @@ app.post('/reset-password/:token', async (req, res) => {
       return res.status(400).send('New password is required');
     }
 
-    user.password = await bcrypt.hash(req.body.password, 10);
+    user.password = await bcrypt.hash(req.body.password, 10); // Changed to bcrypt
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
