@@ -439,7 +439,8 @@
         <div class="header-content">
             <% if (user) { %>
                 <div class="nav-links">
-                    <span>Welcome back, <%= user.username %></span>
+                    <span>Welcome back, <span id="username-display"><%= user.username %></span></span>
+                    <a href="#" id="change-username">Change Username</a>
                     <a href="/views/my-posts.ejs">My Posts</a>
                     <a href="/logout">Logout</a>
                 </div>
@@ -481,6 +482,7 @@
                 <% if (user) { %>
                     <form class="comment-form" data-id="<%= post._id %>">
                         <input type="text" name="content" placeholder="Add a comment..." required>
+                        <input type="hidden" name="username" value="<%= user.username %>">
                         <button type="submit" class="btn">Comment</button>
                     </form>
                 <% } %>
@@ -547,6 +549,33 @@
             const newPostBtn = $('#new-post-btn');
             const cancelPostBtn = $('#cancel-post');
             const currentUser = '<%= user ? user.username : "" %>';
+
+            // Username change functionality
+            $('#change-username').on('click', function(e) {
+                e.preventDefault();
+                const newUsername = prompt('Enter your new username:');
+                if (newUsername) {
+                    $.ajax({
+                        url: '/change-username',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ newUsername }),
+                        success: function(response) {
+                            if (response.success) {
+                                $('#username-display').text(newUsername);
+                                alert('Username changed successfully!');
+                                location.reload(); // Reload to update all username references
+                            } else {
+                                alert(response.message || 'Failed to change username');
+                            }
+                        },
+                        error: function(xhr, status, err) {
+                            console.error('Error:', err);
+                            alert('Error changing username. Please try again.');
+                        }
+                    });
+                }
+            });
 
             newPostBtn.on('click', function() {
                 postModal.css('display', 'flex');
@@ -683,16 +712,20 @@
                 const postId = $(this).data('id');
                 const form = $(this);
                 const content = form.find('input[name="content"]').val();
+                const username = form.find('input[name="username"]').val();
 
                 $.ajax({
                     url: `/post/${postId}/comment`,
                     method: 'POST',
-                    data: form.serialize(),
+                    data: {
+                        content: content,
+                        username: username
+                    },
                     success: function(response) {
                         const commentHtml = `
                             <div class="comment" id="comment-${response.commentId}">
                                 <div class="comment-username">
-                                    ${currentUser}
+                                    ${username}
                                 </div>
                                 <div class="comment-content">
                                     ${content}

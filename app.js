@@ -95,6 +95,85 @@ app.get('/', async (req, res) => {
 app.get('/register', (req, res) => res.render('register'));
 app.get('/login', (req, res) => res.render('login'));
 
+// Add route for edit profile page
+app.get('/profile/edit', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    const user = await User.findById(req.session.user._id);
+    if (!user) return res.status(404).send('User not found');
+    res.render('edit-profile', { user });
+  } catch (error) {
+    console.error('Error loading edit profile:', error);
+    res.status(500).send('Error loading edit profile page');
+  }
+});
+
+// Add route to handle username update
+app.post('/change-username', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.json({ success: false, message: 'Login required' });
+    }
+    
+    const { newUsername } = req.body;
+    if (!newUsername) {
+      return res.json({ success: false, message: 'Username is required' });
+    }
+
+    // Check if username is already taken
+    const existingUser = await User.findOne({ 
+      username: newUsername, 
+      _id: { $ne: req.session.user._id } 
+    });
+    
+    if (existingUser) {
+      return res.json({ success: false, message: 'Username already taken' });
+    }
+
+    // Update username in User collection
+    const user = await User.findById(req.session.user._id);
+    const oldUsername = user.username;
+    user.username = newUsername;
+    await user.save();
+
+    // Update username in session
+    req.session.user.username = newUsername;
+
+    // Update username in all posts
+    await Post.updateMany(
+      { username: oldUsername },
+      { username: newUsername }
+    );
+
+    // Update username in all comments
+    await Post.updateMany(
+      { 'comments.username': oldUsername },
+      { $set: { 'comments.$[elem].username': newUsername } },
+      { arrayFilters: [{ 'elem.username': oldUsername }] }
+    );
+
+    // Update username in comment likes
+    await Post.updateMany(
+      { 'comments.likedBy': oldUsername },
+      { $set: { 'comments.$[].likedBy.$[username]': newUsername } },
+      { arrayFilters: [{ 'username': oldUsername }] }
+    );
+
+    res.json({ 
+      success: true, 
+      message: 'Username updated successfully',
+      username: newUsername
+    });
+
+  } catch (error) {
+    console.error('Error updating username:', error);
+    res.json({ 
+      success: false, 
+      message: 'Error updating username. Please try again.'
+    });
+  }
+});
+
 app.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
