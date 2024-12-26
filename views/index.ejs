@@ -439,7 +439,7 @@
         <div class="header-content">
             <% if (user) { %>
                 <div class="nav-links">
-                    <span>Welcome, <%= user.username %></span>
+                    <span>Welcome back, <%= user.username %></span>
                     <a href="/views/my-posts.ejs">My Posts</a>
                     <a href="/logout">Logout</a>
                 </div>
@@ -652,7 +652,7 @@
                             });
                         },
                         error: function(err) {
-                            alert('Unable to delete post. Please try again later or contact support if the issue persists.');
+                            alert('Unable to delete post. This feature will be enabled on the next version');
                         }
                     });
                 }
@@ -719,83 +719,34 @@
             $('#search-bar, #search-category').on('input change', function() {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(function() {
-                    const query = $('#search-bar').val();
+                    const query = $('#search-bar').val().toLowerCase();
                     const category = $('#search-category').val();
                     
-                    $.ajax({
-                        url: '/search',
-                        method: 'GET',
-                        data: { query: query, category: category },
-                        success: function(response) {
-                            $('.feed').empty();
-                            if (response.length > 0) {
-                                response.forEach(post => {
-                                    const postHtml = `
-                                        <article class="post" id="post-${post._id}">
-                                            <div class="post-header">
-                                                <h3 class="post-title">${post.title}</h3>
-                                                <span class="post-meta">
-                                                    ${post.category} | by ${post.username}
-                                                </span>
-                                            </div>
-                                            <div class="post-content">
-                                                ${post.content}
-                                            </div>
-                                            <div class="post-actions">
-                                                <button class="vote-btn upvote" data-id="${post._id}">
-                                                    ▲ <span class="upvote-count">${post.upvotes}</span>
-                                                </button>
-                                                <button class="vote-btn downvote" data-id="${post._id}">
-                                                    ▼ <span class="downvote-count">${post.downvotes}</span>
-                                                </button>
-                                                ${currentUser === post.username ? 
-                                                    `<button class="delete-btn" data-id="${post._id}">Delete Post</button>` 
-                                                    : ''}
-                                            </div>
-                                            <div class="comments-section">
-                                                <h4>Comments</h4>
-                                                <div class="comments" id="comments-${post._id}">
-                                                    ${post.comments.map(comment => `
-                                                        <div class="comment" id="comment-${comment._id}">
-                                                            <div class="comment-username">
-                                                                ${comment.username}
-                                                            </div>
-                                                            <div class="comment-content">
-                                                                ${comment.content}
-                                                            </div>
-                                                            <div class="comment-actions">
-                                                                <button class="comment-like-btn ${comment.likedBy && comment.likedBy.includes(currentUser) ? 'liked' : ''}" 
-                                                                        data-comment-id="${comment._id}"
-                                                                        data-post-id="${post._id}">
-                                                                    ♥ <span class="like-count">${comment.likes || 0}</span>
-                                                                </button>
-                                                                ${currentUser === comment.username ? 
-                                                                    `<button class="delete-comment-btn" data-post-id="${post._id}" data-comment-id="${comment._id}">Delete</button>`
-                                                                    : ''}
-                                                            </div>
-                                                        </div>
-                                                    `).join('')}
-                                                </div>
-                                            </div>
-                                            ${currentUser ? `
-                                                <form class="comment-form" data-id="${post._id}">
-                                                    <input type="text" name="content" placeholder="Add a comment..." required>
-                                                    <button type="submit" class="btn">Comment</button>
-                                                </form>
-                                            ` : ''}
-                                        </article>
-                                    `;
-                                    $('.feed').append(postHtml);
-                                });
-                            } else {
-                                $('.feed').append('<p>No posts found.</p>');
-                            }
-                        },
-                        error: function(err) {
-                            console.error('Search error:', err);
-                            $('.feed').html('<p>Error performing search. Please try again later.</p>');
+                    $('.post').each(function() {
+                        const post = $(this);
+                        const title = post.find('.post-title').text().toLowerCase();
+                        const content = post.find('.post-content').text().toLowerCase();
+                        const postCategory = post.find('.post-meta').text().split('|')[0].trim();
+                        
+                        const matchesQuery = !query || title.includes(query) || content.includes(query);
+                        const matchesCategory = !category || postCategory === category;
+                        
+                        if (matchesQuery && matchesCategory) {
+                            post.show();
+                        } else {
+                            post.hide();
                         }
                     });
+                    
+                    // Show message if no results found
+                    const visiblePosts = $('.post:visible').length;
+                    if (visiblePosts === 0) {
+                        if ($('.no-results').length === 0) {
+                            $('.feed').append('<p class="no-results">No posts found matching your search criteria.</p>');
+                        }
+                    } else {
+                        $('.no-results').remove();
+                    }
                 }, 300);
             });
         });
