@@ -151,6 +151,7 @@
         font-size: 0.9rem;
         cursor: pointer;
         transition: all 0.3s ease;
+        text-decoration: none;
     }
 
     .social-button:hover {
@@ -218,14 +219,18 @@
         </div>
 
         <div class="social-buttons">
-            <button class="social-button">
-                <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
-                Google
-            </button>
-            <button class="social-button">
-                <img src="https://github.com/favicon.ico" alt="GitHub" width="20">
-                GitHub
-            </button>
+            <form action="/auth/google" method="get" style="width: 100%;">
+                <button type="submit" class="social-button">
+                    <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
+                    Google
+                </button>
+            </form>
+            <form action="/auth/github" method="get" style="width: 100%;">
+                <button type="submit" class="social-button">
+                    <img src="https://github.com/favicon.ico" alt="GitHub" width="20">
+                    GitHub
+                </button>
+            </form>
         </div>
 
         <div class="login-link">

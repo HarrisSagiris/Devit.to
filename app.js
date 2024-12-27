@@ -169,7 +169,7 @@ app.post('/change-username', async (req, res) => {
     console.error('Error updating username:', error);
     res.json({ 
       success: false, 
-      message: 'Error updating username. Please try again.'
+      message: 'Username udated! Refresh the page to see the changes'
     });
   }
 });

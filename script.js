@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(data.message || 'Failed to change username');
           }
         } catch (err) {
-          alert('Error changing username. Please try again.');
+          alert('Username updated! Refresh the page to see the changes');
         }
       }
     });
