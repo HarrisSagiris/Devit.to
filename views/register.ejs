@@ -5,15 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Rverto - Create Account</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <style>
     :root {
-        --primary: #ff6b4a;
-        --primary-dark: #ff4500;
-        --bg-dark: #0f0f0f;
-        --bg-light: #1a1a1a;
-        --text: #e8e8e8;
-        --border: #333;
+        --primary: #0a95ff;
+        --primary-hover: #0074cc;
+        --bg: #f8f9f9;
+        --bg-card: #ffffff;
+        --text: #242729;
+        --text-muted: #6a737c;
+        --border: #e3e6e8;
+        --error: #f44336;
+        --success: #4CAF50;
     }
 
     * {
@@ -23,45 +27,59 @@
     }
 
     body {
-        background-color: var(--bg-dark);
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        background-color: var(--bg);
         min-height: 100vh;
-        font-family: 'Inter', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         color: var(--text);
-        padding: 20px;
+        position: relative;
     }
 
     .container {
-        background: linear-gradient(145deg, #1a1a1a, #141414);
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         width: 100%;
         max-width: 420px;
+        background: var(--bg-card);
+        padding: 2.8rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid var(--border);
+        animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .logo {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 2rem;
     }
 
     .logo h1 {
         font-size: 2.5rem;
-        color: var(--primary);
-        margin-bottom: 10px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
     }
 
     .logo p {
-        color: #888;
-        font-size: 0.95rem;
+        color: var(--text-muted);
+        font-size: 1rem;
     }
 
     form {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 1rem;
     }
 
     .input-group {
@@ -70,52 +88,56 @@
 
     .input-group input {
         width: 100%;
-        padding: 16px;
-        padding-left: 45px;
-        border: 2px solid var(--border);
-        border-radius: 12px;
-        background-color: rgba(20, 20, 20, 0.8);
-        color: var(--text);
+        padding: 1rem 1rem 1rem 2.8rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
         font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .input-group i {
-        position: absolute;
-        left: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #666;
+        color: var(--text);
+        transition: all 0.2s ease;
     }
 
     .input-group input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(255, 107, 74, 0.1);
+        box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
+    }
+
+    .input-group i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
     }
 
     button {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        background: var(--primary);
         color: white;
-        padding: 16px;
         border: none;
-        border-radius: 12px;
+        padding: 0.8rem;
+        border-radius: 6px;
         font-size: 1rem;
-        font-weight: 600;
+        font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
+        margin-top: 0.8rem;
     }
 
     button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 107, 74, 0.2);
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(10, 149, 255, 0.2);
+    }
+
+    button:active {
+        transform: translateY(0);
     }
 
     .divider {
         display: flex;
         align-items: center;
-        margin: 24px 0;
-        color: #666;
+        margin: 1.5rem 0;
+        color: var(--text-muted);
     }
 
     .divider::before,
@@ -123,63 +145,64 @@
         content: "";
         flex: 1;
         height: 1px;
-        background: #333;
+        background: var(--border);
     }
 
     .divider span {
-        padding: 0 16px;
+        padding: 0 1rem;
         font-size: 0.9rem;
     }
 
     .social-buttons {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 24px;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .social-button {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        padding: 12px;
-        border: 2px solid var(--border);
-        border-radius: 12px;
-        background: transparent;
+        gap: 0.5rem;
+        padding: 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg-card);
         color: var(--text);
         font-size: 0.9rem;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         text-decoration: none;
     }
 
     .social-button:hover {
+        background: var(--bg);
         border-color: var(--primary);
-        background: rgba(255, 107, 74, 0.1);
     }
 
     .login-link {
         text-align: center;
-        font-size: 0.95rem;
+        color: var(--text-muted);
+        font-size: 1rem;
     }
 
     .login-link a {
         color: var(--primary);
         text-decoration: none;
         font-weight: 500;
-        margin-left: 5px;
+        margin-left: 0.3rem;
     }
 
     .login-link a:hover {
-        text-decoration: underline;
+        color: var(--primary-hover);
     }
 
     .terms {
         text-align: center;
         font-size: 0.8rem;
-        color: #666;
-        margin-top: 24px;
+        color: var(--text-muted);
+        margin-top: 1.5rem;
     }
 
     .terms a {
@@ -188,7 +211,23 @@
     }
 
     .terms a:hover {
-        text-decoration: underline;
+        color: var(--primary-hover);
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            margin: 1rem;
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+        }
+
+        input {
+            padding: 1rem 1rem 1rem 2.8rem;
+        }
     }
 </style>
 <body>
@@ -200,38 +239,19 @@
 
         <form action="/register" method="post">
             <div class="input-group">
-                <i>👤</i>
                 <input type="text" name="username" placeholder="Username" required>
+                <i class="fas fa-user"></i>
             </div>
             <div class="input-group">
-                <i>📧</i>
                 <input type="email" name="email" placeholder="Email address" required>
+                <i class="fas fa-envelope"></i>
             </div>
             <div class="input-group">
-                <i>🔒</i>
                 <input type="password" name="password" placeholder="Password" required>
+                <i class="fas fa-lock"></i>
             </div>
             <button type="submit">Create Account</button>
         </form>
-
-        <div class="divider">
-            <span>or continue with</span>
-        </div>
-
-        <div class="social-buttons">
-            <form action="/auth/google" method="get" style="width: 100%;">
-                <button type="submit" class="social-button">
-                    <img src="https://www.google.com/favicon.ico" alt="Google" width="20">
-                    Google
-                </button>
-            </form>
-            <form action="/auth/github" method="get" style="width: 100%;">
-                <button type="submit" class="social-button">
-                    <img src="https://github.com/favicon.ico" alt="GitHub" width="20">
-                    GitHub
-                </button>
-            </form>
-        </div>
 
         <div class="login-link">
             Already have an account?<a href="/login">Sign in</a>

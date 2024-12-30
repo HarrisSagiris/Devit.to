@@ -6,19 +6,24 @@
     <title>Rverto - Your Feed</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <style>
     :root {
-        --primary: #ff4500;
-        --primary-hover: #ff5414;
-        --bg: #030303;
-        --bg-card: #1a1a1b;
-        --text: #d7dadc;
-        --text-muted: #818384;
-        --border: #343536;
+        --primary: #0a95ff;
+        --primary-hover: #0074cc;
+        --bg: #f8f9f9;
+        --bg-card: #ffffff;
+        --text: #242729;
+        --text-muted: #6a737c;
+        --border: #e3e6e8;
         --upvote: #4CAF50;
         --downvote: #f44336;
+        --header-bg: #f8f9f9;
+        --nav-bg: #ffffff;
+        --link: #0074cc;
+        --link-hover: #0a95ff;
+        --code-bg: #f6f6f6;
     }
 
     * {
@@ -30,30 +35,32 @@
     body {
         background-color: var(--bg);
         color: var(--text);
-        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         line-height: 1.5;
     }
 
     .version-banner {
-        background: var(--primary);
-        color: white;
+        background: #eff0f1;
+        color: var(--text);
         text-align: center;
         padding: 4px;
         font-size: 12px;
         font-weight: 500;
+        border-bottom: 1px solid var(--border);
     }
 
     .header {
-        background: var(--bg-card);
-        padding: 8px 20px;
+        background: var(--nav-bg);
+        padding: 8px 16px;
         border-bottom: 1px solid var(--border);
         position: sticky;
         top: 0;
         z-index: 100;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
     .header-content {
-        max-width: 984px;
+        max-width: 1264px;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
@@ -63,73 +70,82 @@
     .logo {
         font-size: 24px;
         font-weight: 700;
-        color: var(--primary);
+        color: var(--text);
         text-decoration: none;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 16px;
     }
 
     .nav-links a {
         color: var(--text);
         text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 13px;
         font-weight: 500;
         transition: all 0.2s;
     }
 
     .nav-links a:hover {
-        background: rgba(255,255,255,0.1);
+        background: var(--bg);
+        color: var(--link);
     }
 
     .search-container {
-        max-width: 984px;
-        margin: 16px auto;
-        padding: 0 24px;
+        max-width: 1264px;
+        margin: 24px auto;
+        padding: 0 16px;
         display: flex;
         gap: 12px;
     }
 
     .search-container input {
         flex: 1;
-        padding: 10px 16px;
-        border-radius: 4px;
+        padding: 8px 12px;
+        border-radius: 3px;
         border: 1px solid var(--border);
         background: var(--bg-card);
         color: var(--text);
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .search-container select {
-        padding: 10px 16px;
-        border-radius: 4px;
+        padding: 8px 12px;
+        border-radius: 3px;
         border: 1px solid var(--border);
         background: var(--bg-card);
         color: var(--text);
-        font-size: 14px;
+        font-size: 13px;
         min-width: 150px;
     }
 
     .feed {
-        max-width: 984px;
+        max-width: 1264px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 0 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
     }
 
     .post {
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 4px;
-        margin-bottom: 16px;
+        border-radius: 3px;
         overflow: hidden;
     }
 
     .post-votes {
-        background: rgba(0,0,0,0.1);
-        padding: 8px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
         min-width: 40px;
+        border-right: 1px solid var(--border);
     }
 
     .vote-btn {
@@ -139,77 +155,22 @@
         cursor: pointer;
         padding: 4px;
         font-size: 24px;
-        transition: all 0.2s ease;
+        transition: all 0.2s;
     }
 
-    .vote-btn.upvote {
-        transform: scale(1);
+    .vote-btn:hover {
+        color: var(--link);
     }
 
-    .vote-btn.upvote:hover {
-        color: var(--upvote);
-        transform: scale(1.2);
-    }
-
-    .vote-btn.upvote.active {
-        color: var(--upvote);
-        animation: upvote-pulse 0.4s ease;
-    }
-
-    .vote-btn.downvote {
-        transform: scale(1);
-    }
-
-    .vote-btn.downvote:hover {
-        color: var(--downvote);
-        transform: scale(1.2);
-    }
-
-    .vote-btn.downvote.active {
-        color: var(--downvote);
-        animation: downvote-pulse 0.4s ease;
-    }
-
-    @keyframes upvote-pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.4); }
-        100% { transform: scale(1); }
-    }
-
-    @keyframes downvote-pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.4); }
-        100% { transform: scale(1); }
+    .vote-btn.active {
+        color: var(--primary);
     }
 
     .vote-count {
-        font-weight: bold;
-        font-size: 14px;
+        font-weight: 600;
+        font-size: 13px;
         margin: 4px 0;
-        transition: all 0.2s ease;
-    }
-
-    .upvote-count {
-        color: var(--upvote);
-        animation: vote-pop 0.3s ease;
-    }
-
-    .downvote-count {
-        color: var(--downvote);
-        animation: vote-pop 0.3s ease;
-    }
-
-    @keyframes vote-pop {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
-
-    .vote-separator {
-        width: 20px;
-        height: 1px;
-        background: var(--border);
-        margin: 4px 0;
+        color: var(--text);
     }
 
     .post-content-wrapper {
@@ -229,24 +190,30 @@
         font-size: 12px;
         color: var(--text-muted);
         margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .post-title {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 500;
-        color: var(--text);
+        color: var(--link);
         margin-bottom: 8px;
+        line-height: 1.4;
     }
 
     .post-content {
-        font-size: 14px;
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--text);
         margin-bottom: 16px;
     }
 
     .post-actions {
         display: flex;
         gap: 16px;
-        font-size: 12px;
+        font-size: 13px;
         color: var(--text-muted);
     }
 
@@ -256,42 +223,48 @@
         color: var(--text-muted);
         cursor: pointer;
         padding: 4px 8px;
-        border-radius: 2px;
-        font-size: 12px;
+        border-radius: 3px;
+        font-size: 13px;
         display: flex;
         align-items: center;
         gap: 4px;
     }
 
     .post-actions button:hover {
-        background: rgba(255,255,255,0.05);
+        background: var(--bg);
+        color: var(--link);
     }
 
     .comments-section {
         padding: 16px;
         border-top: 1px solid var(--border);
+        background: var(--bg);
     }
 
     .comment {
         margin-bottom: 16px;
-        padding-left: 16px;
-        border-left: 2px solid var(--border);
+        padding: 12px;
+        border-radius: 3px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
     }
 
     .comment-header {
         font-size: 12px;
         color: var(--text-muted);
-        margin-bottom: 4px;
+        margin-bottom: 8px;
     }
 
     .comment-username {
-        color: var(--text);
+        color: var(--link);
         font-weight: 500;
     }
 
     .comment-content {
         font-size: 14px;
+        line-height: 1.6;
         margin-bottom: 8px;
+        color: var(--text);
     }
 
     .comment-actions {
@@ -309,6 +282,12 @@
         display: flex;
         align-items: center;
         gap: 4px;
+        border-radius: 3px;
+    }
+
+    .comment-like-btn:hover {
+        background: var(--bg);
+        color: var(--link);
     }
 
     .comment-like-btn.liked {
@@ -324,11 +303,11 @@
     .comment-form input {
         flex: 1;
         padding: 8px 12px;
-        border-radius: 4px;
+        border-radius: 3px;
         border: 1px solid var(--border);
         background: var(--bg-card);
         color: var(--text);
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .btn {
@@ -336,11 +315,12 @@
         color: white;
         border: none;
         padding: 8px 16px;
-        border-radius: 4px;
+        border-radius: 3px;
         font-weight: 500;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 13px;
         transition: background 0.2s;
+        box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
     }
 
     .btn:hover {
@@ -351,24 +331,24 @@
         position: fixed;
         bottom: 24px;
         right: 24px;
-        width: 48px;
-        height: 48px;
-        border-radius: 24px;
+        padding: 12px 24px;
+        border-radius: 3px;
         background: var(--primary);
         color: white;
         border: none;
-        font-size: 24px;
+        font-size: 14px;
+        font-weight: 500;
         cursor: pointer;
         display: flex;
         align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        transition: transform 0.2s;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: all 0.2s;
     }
 
     .new-post-btn:hover {
-        transform: scale(1.05);
         background: var(--primary-hover);
+        transform: translateY(-1px);
     }
 
     .post-modal {
@@ -378,7 +358,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.8);
+        background: rgba(12,13,14,0.5);
         justify-content: center;
         align-items: center;
         z-index: 1000;
@@ -386,42 +366,42 @@
 
     .post-form {
         background: var(--bg-card);
-        border-radius: 8px;
+        border-radius: 3px;
         border: 1px solid var(--border);
         padding: 24px;
         width: 90%;
-        max-width: 600px;
+        max-width: 800px;
         position: relative;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .post-form input,
     .post-form select,
     .post-form textarea {
         width: 100%;
-        padding: 12px;
+        padding: 8px 12px;
         margin-bottom: 16px;
-        border-radius: 4px;
+        border-radius: 3px;
         border: 1px solid var(--border);
         background: var(--bg);
         color: var(--text);
         font-size: 14px;
+        font-family: inherit;
     }
 
     .post-form textarea {
-        min-height: 150px;
+        min-height: 200px;
         resize: vertical;
-    }
-
-    .post-form .btn {
-        margin-right: 8px;
     }
 
     .footer {
         text-align: center;
-        padding: 24px;
+        padding: 32px 16px;
         color: var(--text-muted);
         font-size: 12px;
+        background: var(--nav-bg);
         border-top: 1px solid var(--border);
+        margin-top: 48px;
     }
 
     @media (max-width: 768px) {
@@ -432,18 +412,28 @@
         .header-content {
             flex-direction: column;
             gap: 12px;
+            padding: 12px 0;
         }
 
         .nav-links {
-            display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
         }
 
         .post-form {
             width: 95%;
             margin: 10px;
+        }
+
+        .post-content-wrapper {
+            flex-direction: column;
+        }
+
+        .post-votes {
+            flex-direction: row;
+            justify-content: center;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
         }
     }
 </style>
@@ -458,7 +448,7 @@
                 <div class="nav-links">
                     <span>Welcome , <span id="username-display"><%= user.username %></span></span>
                     <a href="#" id="change-username">Change Username</a>
-                    <!--<a href="/views/my-posts.ejs">My Posts</a>impliment later...-->
+                    <a href="/my-posts">My Posts</a>
                     <a href="/logout">Logout</a>
                 </div>
             <% } else { %>
@@ -469,6 +459,215 @@
             <% } %>
         </div>
     </header>
+    <div class="sidebar" id="stats-dropdown">
+        <div class="dropdown-toggle">
+            <span>📊 Trending</span>
+            <button class="toggle-btn">▼</button>
+        </div>
+        <div class="dropdown-content">
+            <div class="sidebar-section">
+                <h2>🔥 Trending Posts</h2>
+                <div class="hot-posts">
+                    <% 
+                    // Sort posts by upvotes in descending order
+                    const hotPosts = [...posts].sort((a, b) => b.upvotes - a.upvotes).slice(0, 3);
+                    hotPosts.forEach((post, index) => { 
+                    %>
+                        <div class="hot-post">
+                            <div class="hot-post-rank">#<%= index + 1 %></div>
+                            <div class="hot-post-content">
+                                <h4><%= post.title %></h4>
+                                <div class="hot-post-meta">
+                                    <span class="hot-post-votes">⬆️ <%= post.upvotes %></span>
+                                    <span class="hot-post-category"><%= post.category %></span>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>📊 Popular Categories</h2>
+                <div class="hot-categories">
+                    <%
+                    const categories = {};
+                    posts.forEach(post => {
+                        categories[post.category] = (categories[post.category] || 0) + post.upvotes;
+                    });
+                    
+                    Object.entries(categories)
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, 3)
+                        .forEach(([category, upvotes]) => {
+                    %>
+                        <div class="hot-category">
+                            <span class="category-name"><%= category %></span>
+                            <span class="category-score">⬆️ <%= upvotes %></span>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            right: 16px;
+            top: 80px;
+            width: 280px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-content {
+            padding: 16px;
+            display: none;
+        }
+
+        .sidebar.active .dropdown-content {
+            display: block;
+        }
+
+        .sidebar.active .toggle-btn {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section h2 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--text);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hot-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hot-post {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .hot-post:hover {
+            background-color: var(--bg);
+            border-color: var(--border);
+            transform: translateX(4px);
+        }
+
+        .hot-post-rank {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 24px;
+            text-align: center;
+            background: var(--bg);
+            padding: 3px 6px;
+            border-radius: 6px;
+        }
+
+        .hot-post-content h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: var(--text);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .hot-post-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .hot-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .hot-category {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .hot-category:hover {
+            transform: translateX(4px);
+            border-color: var(--primary);
+        }
+
+        .category-name {
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .category-score {
+            color: var(--upvote);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+
+    <script>
+        document.querySelector('.dropdown-toggle').addEventListener('click', function() {
+            document.getElementById('stats-dropdown').classList.toggle('active');
+        });
+    </script>
 
     <div class="search-container">
         <input type="text" id="search-bar" placeholder="Search reviews...">
@@ -496,7 +695,6 @@
                         <span class="vote-count downvote-count"><%= post.downvotes %></span>
                         <button class="vote-btn downvote" data-id="<%= post._id %>">⬇️</button>
                     </div>
-                    
                     <div class="post-main">
                         <div class="post-header">
                             <div class="post-meta">
@@ -554,7 +752,7 @@
     </main>
 
     <% if (user) { %>
-        <button class="new-post-btn" id="new-post-btn">+</button>
+        <button class="new-post-btn" id="new-post-btn">+ New Post</button>
         
         <div class="post-modal" id="post-modal">
             <form class="post-form" id="new-post-form">
@@ -593,28 +791,86 @@
             // Username change functionality
             $('#change-username').on('click', function(e) {
                 e.preventDefault();
-                const newUsername = prompt('Enter your new username:');
-                if (newUsername) {
-                    $.ajax({
-                        url: '/change-username',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ newUsername }),
-                        success: function(response) {
-                            if (response.success) {
-                                $('#username-display').text(newUsername);
-                                alert('Username changed successfully!');
-                                location.reload();
-                            } else {
-                                alert(response.message || 'Username already taken');
+                
+                // Create and show modal
+                const modal = $(`
+                    <div class="username-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+                        <div class="username-form" style="background: var(--bg-card); padding: 24px; border-radius: 8px; width: 90%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            <h3 style="margin-bottom: 16px; color: var(--text);">Change Username</h3>
+                            <input type="text" id="new-username-input" placeholder="Enter new username" style="width: 100%; padding: 8px 12px; margin-bottom: 16px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text);">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <button class="cancel-username-btn btn" style="background: var(--bg);">Cancel</button>
+                                <button class="submit-username-btn btn">Update Username</button>
+                            </div>
+                        </div>
+                    </div>
+                `).appendTo('body');
+
+                // Handle cancel
+                modal.find('.cancel-username-btn').on('click', function() {
+                    modal.remove();
+                });
+
+                // Handle submit
+                modal.find('.submit-username-btn').on('click', function() {
+                    const newUsername = modal.find('#new-username-input').val();
+                    if (newUsername) {
+                        $.ajax({
+                            url: '/change-username',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ newUsername }),
+                            success: function(response) {
+                                if (response.success) {
+                                    const alert = $(`
+                                        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                                    background: var(--bg-card); padding: 20px; border-radius: 8px;
+                                                    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000;
+                                                    text-align: center; min-width: 300px;">
+                                            <h4 style="margin-bottom: 15px; color: var(--text);">Username Updated!</h4>
+                                            <p style="margin-bottom: 15px; color: var(--text-muted);">Refreshing page to see changes...</p>
+                                            <div class="loading-dots">
+                                                <span style="animation: pulse 1s infinite">.</span>
+                                                <span style="animation: pulse 1s infinite .2s">.</span>
+                                                <span style="animation: pulse 1s infinite .4s">.</span>
+                                            </div>
+                                        </div>
+                                    `).appendTo('body');
+
+                                    modal.remove();
+                                    setTimeout(() => {
+                                        alert.remove();
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    alert(response.message || 'Username already taken');
+                                }
+                            },
+                            error: function() {
+                                const alert = $(`
+                                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                                background: var(--bg-card); padding: 20px; border-radius: 8px;
+                                                box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000;
+                                                text-align: center; min-width: 300px;">
+                                        <h4 style="margin-bottom: 15px; color: var(--text);">Username Updated!</h4>
+                                        <p style="margin-bottom: 15px; color: var(--text-muted);">Refreshing page to see changes...</p>
+                                        <div class="loading-dots">
+                                            <span style="animation: pulse 1s infinite">.</span>
+                                            <span style="animation: pulse 1s infinite .2s">.</span>
+                                            <span style="animation: pulse 1s infinite .4s">.</span>
+                                        </div>
+                                    </div>
+                                `).appendTo('body');
+
+                                modal.remove();
+                                setTimeout(() => {
+                                    alert.remove();
+                                    location.reload();
+                                }, 2000);
                             }
-                        },
-                        error: function(xhr, status, err) {
-                            console.error('Error:', err);
-                            alert('Successfully changed username, please refresh the page to see the changes');
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
 
             newPostBtn.on('click', function() {

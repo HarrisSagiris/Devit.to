@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login to Rverto</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <style>
     :root {
-        --primary: #ff4500;
-        --primary-hover: #ff5414;
-        --bg: #030303;
-        --bg-card: #1a1a1b;
-        --text: #d7dadc;
-        --text-muted: #818384;
-        --border: #343536;
-        --error: #ff4444;
-        --success: #00c853;
+        --primary: #0a95ff;
+        --primary-hover: #0074cc;
+        --bg: #f8f9f9;
+        --bg-card: #ffffff;
+        --text: #242729;
+        --text-muted: #6a737c;
+        --border: #e3e6e8;
+        --error: #f44336;
+        --success: #4CAF50;
     }
 
     * {
@@ -32,81 +32,56 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         color: var(--text);
         position: relative;
-        overflow: hidden;
-    }
-
-    .background-pattern {
-        position: absolute;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, var(--primary) 25%, transparent 25%),
-                    linear-gradient(-45deg, var(--primary) 25%, transparent 25%);
-        background-size: 60px 60px;
-        opacity: 0.03;
-        animation: moveBackground 30s linear infinite;
-        z-index: -1;
-        filter: blur(3px);
-    }
-
-    @keyframes moveBackground {
-        0% {
-            transform: translate(-50%, -50%) rotate(0deg);
-        }
-        100% {
-            transform: translate(-50%, -50%) rotate(360deg);
-        }
     }
 
     .container {
         width: 100%;
-        max-width: 400px;
+        max-width: 420px;
         background: var(--bg-card);
-        padding: 2.5rem;
+        padding: 2.8rem;
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         border: 1px solid var(--border);
-        backdrop-filter: blur(10px);
-        animation: containerAppear 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        animation: slideUp 0.4s ease-out;
     }
 
-    @keyframes containerAppear {
+    @keyframes slideUp {
         from {
             opacity: 0;
-            transform: translateY(30px) scale(0.95);
+            transform: translateY(20px);
         }
         to {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
     }
 
     .logo {
         text-align: center;
-        margin-bottom: 2.5rem;
+        margin-bottom: 2.8rem;
     }
 
     .logo h1 {
-        font-size: 2.8rem;
+        font-size: 2.4rem;
         font-weight: 700;
         color: var(--primary);
-        margin-bottom: 0.5rem;
-        letter-spacing: -1px;
-        text-shadow: 0 2px 10px rgba(255, 69, 0, 0.2);
+        margin-bottom: 0.8rem;
+        letter-spacing: -0.5px;
     }
 
     .logo p {
         color: var(--text-muted);
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 500;
     }
 
     form {
         display: flex;
         flex-direction: column;
-        gap: 1.2rem;
+        gap: 1.4rem;
     }
 
     .input-group {
@@ -115,29 +90,29 @@
 
     .input-group i {
         position: absolute;
-        left: 1rem;
+        left: 1.2rem;
         top: 50%;
         transform: translateY(-50%);
         color: var(--text-muted);
-        transition: color 0.2s ease;
+        transition: all 0.2s ease;
     }
 
     input {
         width: 100%;
-        padding: 1rem 1rem 1rem 2.8rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 2px solid var(--border);
-        border-radius: 12px;
+        padding: 1.2rem 1.2rem 1.2rem 3rem;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
         color: var(--text);
         font-size: 1rem;
-        transition: all 0.3s ease;
+        font-family: inherit;
+        transition: all 0.2s ease;
     }
 
     input:focus {
         outline: none;
         border-color: var(--primary);
-        background: rgba(255, 255, 255, 0.08);
-        box-shadow: 0 0 0 4px rgba(255, 69, 0, 0.1);
+        box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
     }
 
     input:focus + i {
@@ -153,77 +128,57 @@
         background: var(--primary);
         color: white;
         border: none;
-        padding: 1.1rem;
-        border-radius: 12px;
+        padding: 1.2rem;
+        border-radius: 8px;
         font-size: 1.1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transition: all 0.2s ease;
         margin-top: 0.8rem;
-        position: relative;
-        overflow: hidden;
     }
 
     button:hover {
         background: var(--primary-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 69, 0, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(10, 149, 255, 0.2);
     }
 
     button:active {
         transform: translateY(0);
-        box-shadow: 0 2px 10px rgba(255, 69, 0, 0.2);
-    }
-
-    button::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        background: rgba(255, 255, 255, 0.5);
-        opacity: 0;
-        border-radius: 100%;
-        transform: scale(1);
-        transition: 0.6s;
-    }
-
-    button:active::after {
-        transform: scale(20);
-        opacity: 0;
-        transition: 0s;
     }
 
     .register-link {
         display: block;
         text-align: center;
-        margin-top: 1.8rem;
+        margin-top: 2rem;
         color: var(--text-muted);
         text-decoration: none;
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 500;
         transition: all 0.2s ease;
     }
 
     .register-link:hover {
         color: var(--primary);
-        transform: translateY(-1px);
     }
 
     @media (max-width: 480px) {
         .container {
             margin: 1rem;
-            padding: 1.8rem;
+            padding: 2rem;
+            border-radius: 12px;
         }
 
         .logo h1 {
-            font-size: 2.4rem;
+            font-size: 2rem;
+        }
+
+        input {
+            padding: 1rem 1rem 1rem 2.8rem;
         }
     }
 </style>
 <body>
-    <div class="background-pattern"></div>
     <div class="container">
         <div class="logo">
             <h1>Rverto</h1>

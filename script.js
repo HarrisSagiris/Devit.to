@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // My Posts Link
+  const myPostsBtn = document.getElementById('my-posts-btn');
+  if (myPostsBtn) {
+    myPostsBtn.addEventListener('click', () => {
+      window.location.href = '/my-posts';
+    });
+  }
+
   // Change username
   const changeUsernameBtn = document.getElementById('change-username');
   if (changeUsernameBtn) {

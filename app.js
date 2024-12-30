@@ -92,6 +92,54 @@ app.get('/', async (req, res) => {
   }
 });
 
+// Add route for my posts page
+app.get('/my-posts', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/login'); // Redirect to login if not authenticated
+    }
+    
+    const posts = await Post.find({ user: req.session.user._id })
+      .sort({ createdAt: -1 })
+      .populate('comments.user', 'username');
+      
+    res.render('my-posts', { 
+      posts,
+      user: req.session.user,
+      showCreatePost: true // Add flag to show create post form
+    });
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+    res.status(500).send('Error loading my posts');
+  }
+});
+
+// Add route for creating post from my-posts page
+app.post('/my-posts/create', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).send('Login required');
+    const { category, title, content } = req.body;
+    
+    // Validate inputs
+    if (!category || !title || !content) {
+      return res.status(400).send('All fields are required');
+    }
+    
+    const post = new Post({
+      username: req.session.user.username,
+      user: req.session.user._id,
+      category,
+      title,
+      content
+    });
+    await post.save();
+    res.redirect('/my-posts');
+  } catch (error) {
+    console.error('Post creation error:', error);
+    res.status(500).send('Error creating post');
+  }
+});
+
 app.get('/register', (req, res) => res.render('register'));
 app.get('/login', (req, res) => res.render('login'));
 
