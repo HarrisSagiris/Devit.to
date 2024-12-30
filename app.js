@@ -20,10 +20,8 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   });
 
 // Verify models are loaded correctly
-const path = require('path');
-
-const User = require(path.join(__dirname, 'models', 'User'));
-const Post = require(path.join(__dirname, 'models', 'Post'));
+const User = require('./models/User');
+const Post = require('./models/Post'); 
 if (!User || !Post) {
   console.error('Error loading models');
   process.exit(1);
