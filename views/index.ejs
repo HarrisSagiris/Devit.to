@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,23 +7,110 @@
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <style>
-    :root {
-        --primary: #0a95ff;
-        --primary-hover: #0074cc;
-        --bg: #f8f9f9;
+    /* Theme variables */
+    html[data-theme="light"] {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --bg: #f9fafb;
         --bg-card: #ffffff;
-        --text: #242729;
-        --text-muted: #6a737c;
-        --border: #e3e6e8;
-        --upvote: #4CAF50;
-        --downvote: #f44336;
-        --header-bg: #f8f9f9;
+        --text: #1f2937;
+        --text-muted: #6b7280;
+        --border: #e5e7eb;
+        --upvote: #10b981;
+        --downvote: #ef4444;
+        --header-bg: #ffffff;
         --nav-bg: #ffffff;
-        --link: #0074cc;
-        --link-hover: #0a95ff;
-        --code-bg: #f6f6f6;
+        --link: #4f46e5;
+        --link-hover: #6366f1;
+        --code-bg: #f3f4f6;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    html[data-theme="dark"] {
+        --primary: #818cf8;
+        --primary-hover: #6366f1;
+        --bg: #111827;
+        --bg-card: #1f2937;
+        --text: #f9fafb;
+        --text-muted: #9ca3af;
+        --border: #374151;
+        --upvote: #34d399;
+        --downvote: #f87171;
+        --header-bg: #1f2937;
+        --nav-bg: #1f2937;
+        --link: #818cf8;
+        --link-hover: #6366f1;
+        --code-bg: #374151;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+    }
+
+    /* Theme switch styles */
+    .theme-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        margin: 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .theme-switch::before {
+        content: "🌞";
+        font-size: 16px;
+    }
+
+    .theme-switch::after {
+        content: "🌙";
+        font-size: 16px;
+    }
+
+    .theme-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--bg-card);
+        border: 2px solid var(--primary);
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 2px;
+        bottom: 2px;
+        background-color: var(--primary);
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(30px);
+        background-color: var(--bg-card);
     }
 
     * {
@@ -37,30 +124,31 @@
         color: var(--text);
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         line-height: 1.5;
+        transition: background-color 0.3s, color 0.3s;
     }
 
     .version-banner {
-        background: #eff0f1;
-        color: var(--text);
+        background: linear-gradient(to right, var(--primary), var(--primary-hover));
+        color: white;
         text-align: center;
-        padding: 4px;
-        font-size: 12px;
+        padding: 8px;
+        font-size: 14px;
         font-weight: 500;
-        border-bottom: 1px solid var(--border);
     }
 
     .header {
         background: var(--nav-bg);
-        padding: 8px 16px;
+        padding: 1rem;
         border-bottom: 1px solid var(--border);
         position: sticky;
         top: 0;
         z-index: 100;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow);
+        transition: background-color 0.3s;
     }
 
     .header-content {
-        max-width: 1264px;
+        max-width: 1200px;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
@@ -68,83 +156,118 @@
     }
 
     .logo {
-        font-size: 24px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: var(--text);
+        color: var(--primary);
         text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .nav-links {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 1.5rem;
     }
 
     .nav-links a {
         color: var(--text);
         text-decoration: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 13px;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
         font-weight: 500;
         transition: all 0.2s;
     }
 
     .nav-links a:hover {
         background: var(--bg);
-        color: var(--link);
+        color: var(--primary);
+    }
+
+    .nav-links .for-developers-btn {
+        background: var(--primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .nav-links .for-developers-btn:hover {
+        background: var(--primary-hover);
+        color: white;
     }
 
     .search-container {
-        max-width: 1264px;
-        margin: 24px auto;
-        padding: 0 16px;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
         display: flex;
-        gap: 12px;
+        gap: 1rem;
+    }
+
+    .search-container input,
+    .search-container select {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text);
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .search-container input:focus,
+    .search-container select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 
     .search-container input {
         flex: 1;
-        padding: 8px 12px;
-        border-radius: 3px;
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text);
-        font-size: 13px;
     }
 
     .search-container select {
-        padding: 8px 12px;
-        border-radius: 3px;
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        color: var(--text);
-        font-size: 13px;
-        min-width: 150px;
+        min-width: 180px;
     }
 
     .feed {
-        max-width: 1264px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0 16px;
+        padding: 0 1rem;
         display: grid;
         grid-template-columns: minmax(0, 1fr);
-        gap: 24px;
+        gap: 1.5rem;
     }
 
     .post {
         background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 3px;
+        border-radius: 1rem;
         overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .post:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .post-content-wrapper {
+        display: flex;
     }
 
     .post-votes {
-        padding: 16px;
+        padding: 1.5rem;
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-width: 40px;
+        min-width: 80px;
+        background: var(--bg);
         border-right: 1px solid var(--border);
     }
 
@@ -153,13 +276,15 @@
         border: none;
         color: var(--text-muted);
         cursor: pointer;
-        padding: 4px;
-        font-size: 24px;
+        padding: 0.5rem;
+        font-size: 1.5rem;
         transition: all 0.2s;
+        border-radius: 0.5rem;
     }
 
     .vote-btn:hover {
-        color: var(--link);
+        background: var(--bg-card);
+        color: var(--primary);
     }
 
     .vote-btn.active {
@@ -168,52 +293,49 @@
 
     .vote-count {
         font-weight: 600;
-        font-size: 13px;
-        margin: 4px 0;
+        font-size: 1rem;
+        margin: 0.5rem 0;
         color: var(--text);
     }
 
-    .post-content-wrapper {
-        display: flex;
-    }
-
     .post-main {
-        padding: 16px;
+        padding: 1.5rem;
         flex: 1;
     }
 
     .post-header {
-        margin-bottom: 12px;
+        margin-bottom: 1rem;
     }
 
     .post-meta {
-        font-size: 12px;
+        font-size: 0.875rem;
         color: var(--text-muted);
-        margin-bottom: 8px;
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.5rem;
     }
 
     .post-title {
-        font-size: 17px;
-        font-weight: 500;
-        color: var(--link);
-        margin-bottom: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.75rem;
         line-height: 1.4;
     }
 
     .post-content {
-        font-size: 15px;
+        font-size: 1rem;
         line-height: 1.6;
         color: var(--text);
-        margin-bottom: 16px;
+        margin-bottom: 1.5rem;
     }
 
     .post-actions {
         display: flex;
-        gap: 16px;
-        font-size: 13px;
+        gap: 1rem;
+        font-size: 0.875rem;
         color: var(--text-muted);
     }
 
@@ -222,55 +344,61 @@
         border: none;
         color: var(--text-muted);
         cursor: pointer;
-        padding: 4px 8px;
-        border-radius: 3px;
-        font-size: 13px;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 0.5rem;
+        transition: all 0.2s;
     }
 
     .post-actions button:hover {
         background: var(--bg);
-        color: var(--link);
+        color: var(--primary);
     }
 
     .comments-section {
-        padding: 16px;
+        padding: 1.5rem;
         border-top: 1px solid var(--border);
         background: var(--bg);
     }
 
     .comment {
-        margin-bottom: 16px;
-        padding: 12px;
-        border-radius: 3px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 0.75rem;
         background: var(--bg-card);
         border: 1px solid var(--border);
+        transition: transform 0.2s;
+    }
+
+    .comment:hover {
+        transform: translateX(4px);
     }
 
     .comment-header {
-        font-size: 12px;
+        font-size: 0.875rem;
         color: var(--text-muted);
-        margin-bottom: 8px;
+        margin-bottom: 0.5rem;
     }
 
     .comment-username {
-        color: var(--link);
+        color: var(--primary);
         font-weight: 500;
     }
 
     .comment-content {
-        font-size: 14px;
+        font-size: 0.875rem;
         line-height: 1.6;
-        margin-bottom: 8px;
+        margin-bottom: 0.75rem;
         color: var(--text);
     }
 
     .comment-actions {
         display: flex;
-        gap: 12px;
-        font-size: 12px;
+        gap: 1rem;
+        font-size: 0.75rem;
     }
 
     .comment-like-btn {
@@ -278,16 +406,17 @@
         border: none;
         color: var(--text-muted);
         cursor: pointer;
-        padding: 2px 4px;
+        padding: 0.25rem 0.5rem;
         display: flex;
         align-items: center;
-        gap: 4px;
-        border-radius: 3px;
+        gap: 0.25rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s;
     }
 
     .comment-like-btn:hover {
         background: var(--bg);
-        color: var(--link);
+        color: var(--primary);
     }
 
     .comment-like-btn.liked {
@@ -295,60 +424,70 @@
     }
 
     .comment-form {
-        margin-top: 16px;
+        margin-top: 1rem;
         display: flex;
-        gap: 8px;
+        gap: 0.75rem;
     }
 
     .comment-form input {
         flex: 1;
-        padding: 8px 12px;
-        border-radius: 3px;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
         border: 1px solid var(--border);
         background: var(--bg-card);
         color: var(--text);
-        font-size: 13px;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .comment-form input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 
     .btn {
         background: var(--primary);
         color: white;
         border: none;
-        padding: 8px 16px;
-        border-radius: 3px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
         font-weight: 500;
         cursor: pointer;
-        font-size: 13px;
-        transition: background 0.2s;
-        box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
+        font-size: 0.875rem;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .btn:hover {
         background: var(--primary-hover);
+        transform: translateY(-1px);
     }
 
     .new-post-btn {
         position: fixed;
-        bottom: 24px;
-        right: 24px;
-        padding: 12px 24px;
-        border-radius: 3px;
+        bottom: 2rem;
+        right: 2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
         background: var(--primary);
         color: white;
         border: none;
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 500;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        gap: 0.5rem;
+        box-shadow: var(--shadow-lg);
         transition: all 0.2s;
     }
 
     .new-post-btn:hover {
         background: var(--primary-hover);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
     }
 
     .post-modal {
@@ -358,7 +497,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(12,13,14,0.5);
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
         justify-content: center;
         align-items: center;
         z-index: 1000;
@@ -366,27 +506,34 @@
 
     .post-form {
         background: var(--bg-card);
-        border-radius: 3px;
-        border: 1px solid var(--border);
-        padding: 24px;
+        padding: 2rem;
         width: 90%;
         max-width: 800px;
         position: relative;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: var(--shadow-lg);
     }
 
     .post-form input,
     .post-form select,
     .post-form textarea {
         width: 100%;
-        padding: 8px 12px;
-        margin-bottom: 16px;
-        border-radius: 3px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
         border: 1px solid var(--border);
         background: var(--bg);
         color: var(--text);
-        font-size: 14px;
+        font-size: 0.875rem;
         font-family: inherit;
+        transition: all 0.2s;
+    }
+
+    .post-form input:focus,
+    .post-form select:focus,
+    .post-form textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 
     .post-form textarea {
@@ -396,12 +543,12 @@
 
     .footer {
         text-align: center;
-        padding: 32px 16px;
+        padding: 3rem 1rem;
         color: var(--text-muted);
-        font-size: 12px;
+        font-size: 0.875rem;
         background: var(--nav-bg);
         border-top: 1px solid var(--border);
-        margin-top: 48px;
+        margin-top: 4rem;
     }
 
     @media (max-width: 768px) {
@@ -411,8 +558,8 @@
 
         .header-content {
             flex-direction: column;
-            gap: 12px;
-            padding: 12px 0;
+            gap: 1rem;
+            padding: 1rem 0;
         }
 
         .nav-links {
@@ -422,7 +569,7 @@
 
         .post-form {
             width: 95%;
-            margin: 10px;
+            margin: 1rem;
         }
 
         .post-content-wrapper {
@@ -435,242 +582,89 @@
             border-right: none;
             border-bottom: 1px solid var(--border);
         }
+
+        .new-post-btn {
+            bottom: 1rem;
+            right: 1rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .post {
+        animation: slideUp 0.4s ease-out;
+    }
+
+    .comment {
+        animation: fadeIn 0.3s ease-out;
     }
 </style>
 
 <body>
-    <!-- Rest of the HTML remains exactly the same -->
-    <div class="version-banner">Rverto Version 1.0 (Beta)</div>
+    <div class="version-banner">🚀 Welcome to Rverto - Share everything!</div>
 
     <header class="header">
         <div class="header-content">
+            <a href="/" class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Rverto
+            </a>
             <% if (user) { %>
                 <div class="nav-links">
-                    <span>Welcome , <span id="username-display"><%= user.username %></span></span>
+                    <span>Welcome, <strong><%= user.username %></strong></span>
                     <a href="#" id="change-username">Change Username</a>
-                    <a href="/my-posts">My Posts</a>
+                    <a href="/my-posts">My Reputation</a>
+                    <a href="fordevelopers.html" class="for-developers-btn">About us</a>
                     <a href="/logout">Logout</a>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.875rem; color: var(--text-muted);">Theme:</span>
+                        <label class="theme-switch" title="Switch between light and dark theme">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
             <% } else { %>
                 <div class="nav-links">
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.875rem; color: var(--text-muted);">Theme:</span>
+                        <label class="theme-switch" title="Switch between light and dark theme">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
             <% } %>
         </div>
     </header>
-    <div class="sidebar" id="stats-dropdown">
-        <div class="dropdown-toggle">
-            <span>📊 Trending</span>
-            <button class="toggle-btn">▼</button>
-        </div>
-        <div class="dropdown-content">
-            <div class="sidebar-section">
-                <h2>🔥 Trending Posts</h2>
-                <div class="hot-posts">
-                    <% 
-                    // Sort posts by upvotes in descending order
-                    const hotPosts = [...posts].sort((a, b) => b.upvotes - a.upvotes).slice(0, 3);
-                    hotPosts.forEach((post, index) => { 
-                    %>
-                        <div class="hot-post">
-                            <div class="hot-post-rank">#<%= index + 1 %></div>
-                            <div class="hot-post-content">
-                                <h4><%= post.title %></h4>
-                                <div class="hot-post-meta">
-                                    <span class="hot-post-votes">⬆️ <%= post.upvotes %></span>
-                                    <span class="hot-post-category"><%= post.category %></span>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <h2>📊 Popular Categories</h2>
-                <div class="hot-categories">
-                    <%
-                    const categories = {};
-                    posts.forEach(post => {
-                        categories[post.category] = (categories[post.category] || 0) + post.upvotes;
-                    });
-                    
-                    Object.entries(categories)
-                        .sort(([,a], [,b]) => b - a)
-                        .slice(0, 3)
-                        .forEach(([category, upvotes]) => {
-                    %>
-                        <div class="hot-category">
-                            <span class="category-name"><%= category %></span>
-                            <span class="category-score">⬆️ <%= upvotes %></span>
-                        </div>
-                    <% }); %>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        .sidebar {
-            position: fixed;
-            right: 16px;
-            top: 80px;
-            width: 280px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-toggle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            cursor: pointer;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .toggle-btn {
-            background: none;
-            border: none;
-            font-size: 14px;
-            color: var(--text);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .dropdown-content {
-            padding: 16px;
-            display: none;
-        }
-
-        .sidebar.active .dropdown-content {
-            display: block;
-        }
-
-        .sidebar.active .toggle-btn {
-            transform: rotate(180deg);
-        }
-
-        .sidebar-section {
-            margin-bottom: 24px;
-        }
-
-        .sidebar-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .sidebar-section h2 {
-            font-size: 16px;
-            margin-bottom: 16px;
-            color: var(--text);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .hot-posts {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .hot-post {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-
-        .hot-post:hover {
-            background-color: var(--bg);
-            border-color: var(--border);
-            transform: translateX(4px);
-        }
-
-        .hot-post-rank {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-            min-width: 24px;
-            text-align: center;
-            background: var(--bg);
-            padding: 3px 6px;
-            border-radius: 6px;
-        }
-
-        .hot-post-content h4 {
-            font-size: 14px;
-            margin-bottom: 4px;
-            color: var(--text);
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .hot-post-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .hot-categories {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .hot-category {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: var(--bg);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            transition: all 0.2s ease;
-        }
-
-        .hot-category:hover {
-            transform: translateX(4px);
-            border-color: var(--primary);
-        }
-
-        .category-name {
-            font-weight: 500;
-            font-size: 13px;
-        }
-
-        .category-score {
-            color: var(--upvote);
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        @media (max-width: 1200px) {
-            .sidebar {
-                display: none;
-            }
-        }
-    </style>
-
-    <script>
-        document.querySelector('.dropdown-toggle').addEventListener('click', function() {
-            document.getElementById('stats-dropdown').classList.toggle('active');
-        });
-    </script>
 
     <div class="search-container">
-        <input type="text" id="search-bar" placeholder="Search reviews...">
+        <input type="text" id="search-bar" placeholder="Search reviews by title, content, or category...">
         <select id="search-category">
             <option value="">All Categories</option>
             <option value="General">General</option>
@@ -689,16 +683,15 @@
             <article class="post" id="post-<%= post._id %>">
                 <div class="post-content-wrapper">
                     <div class="post-votes">
-                        <button class="vote-btn upvote" data-id="<%= post._id %>">⬆️</button>
+                        <button class="vote-btn upvote <%= post.upvotedBy?.includes(user?._id) ? 'active' : '' %>" data-id="<%= post._id %>">⬆️</button>
                         <span class="vote-count upvote-count"><%= post.upvotes %></span>
-                        <div class="vote-separator"></div>
                         <span class="vote-count downvote-count"><%= post.downvotes %></span>
-                        <button class="vote-btn downvote" data-id="<%= post._id %>">⬇️</button>
+                        <button class="vote-btn downvote <%= post.downvotedBy?.includes(user?._id) ? 'active' : '' %>" data-id="<%= post._id %>">⬇️</button>
                     </div>
                     <div class="post-main">
                         <div class="post-header">
                             <div class="post-meta">
-                                Posted in <%= post.category %> by <%= post.username %>
+                                Posted in <%= post.category %> by <%= post.username %> • <%= new Date(post.createdAt).toLocaleString() %>
                             </div>
                             <h3 class="post-title"><%= post.title %></h3>
                             <div class="post-content">
@@ -752,7 +745,12 @@
     </main>
 
     <% if (user) { %>
-        <button class="new-post-btn" id="new-post-btn">+ New Post</button>
+        <button class="new-post-btn" id="new-post-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            New Post
+        </button>
         
         <div class="post-modal" id="post-modal">
             <form class="post-form" id="new-post-form">
@@ -768,21 +766,35 @@
                     <option value="Netflix">Netflix</option>
                 </select>
                 <textarea name="content" placeholder="Write your review..." required></textarea>
-                <button type="submit" class="btn">Post Review</button>
-                <button type="button" class="btn" id="cancel-post">Cancel</button>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn" id="cancel-post" style="background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">Cancel</button>
+                    <button type="submit" class="btn">Post Review</button>
+                </div>
             </form>
         </div>
     <% } %>
 
     <footer class="footer">
         <p>&copy; 2024 RVERTO. All rights reserved.</p>
-        <p>Liscenced under devharris distribution</p>
+        <p>Licensed under devharris distribution</p>
     </footer>
 
-    <!-- JavaScript remains exactly the same -->
     <script>
         $(document).ready(function() {
-            // All the existing JavaScript code remains unchanged
+            // Theme switching functionality
+            const themeToggle = $('#theme-toggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeToggle.prop('checked', currentTheme === 'dark');
+
+            themeToggle.on('change', function() {
+                const newTheme = this.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+
+            // All JavaScript functionality remains the same
             const postModal = $('#post-modal');
             const newPostBtn = $('#new-post-btn');
             const cancelPostBtn = $('#cancel-post');
@@ -794,12 +806,12 @@
                 
                 // Create and show modal
                 const modal = $(`
-                    <div class="username-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-                        <div class="username-form" style="background: var(--bg-card); padding: 24px; border-radius: 8px; width: 90%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                            <h3 style="margin-bottom: 16px; color: var(--text);">Change Username</h3>
-                            <input type="text" id="new-username-input" placeholder="Enter new username" style="width: 100%; padding: 8px 12px; margin-bottom: 16px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text);">
-                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                                <button class="cancel-username-btn btn" style="background: var(--bg);">Cancel</button>
+                    <div class="username-modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000;">
+                        <div class="username-form" style="background: var(--bg-card); padding: 2rem; border-radius: 1rem; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg);">
+                            <h3 style="margin-bottom: 1rem; color: var(--text);">Change Username</h3>
+                            <input type="text" id="new-username-input" placeholder="Enter new username" style="width: 100%; padding: 0.75rem 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg); color: var(--text);">
+                            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                                <button class="cancel-username-btn btn" style="background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">Cancel</button>
                                 <button class="submit-username-btn btn">Update Username</button>
                             </div>
                         </div>
@@ -824,11 +836,11 @@
                                 if (response.success) {
                                     const alert = $(`
                                         <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                                                    background: var(--bg-card); padding: 20px; border-radius: 8px;
-                                                    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000;
+                                                    background: var(--bg-card); padding: 2rem; border-radius: 1rem;
+                                                    box-shadow: var(--shadow-lg); z-index: 2000;
                                                     text-align: center; min-width: 300px;">
-                                            <h4 style="margin-bottom: 15px; color: var(--text);">Username Updated!</h4>
-                                            <p style="margin-bottom: 15px; color: var(--text-muted);">Refreshing page to see changes...</p>
+                                            <h4 style="margin-bottom: 1rem; color: var(--text);">Username Updated!</h4>
+                                            <p style="margin-bottom: 1rem; color: var(--text-muted);">Refreshing page to see changes...</p>
                                             <div class="loading-dots">
                                                 <span style="animation: pulse 1s infinite">.</span>
                                                 <span style="animation: pulse 1s infinite .2s">.</span>
@@ -847,26 +859,7 @@
                                 }
                             },
                             error: function() {
-                                const alert = $(`
-                                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                                                background: var(--bg-card); padding: 20px; border-radius: 8px;
-                                                box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 2000;
-                                                text-align: center; min-width: 300px;">
-                                        <h4 style="margin-bottom: 15px; color: var(--text);">Username Updated!</h4>
-                                        <p style="margin-bottom: 15px; color: var(--text-muted);">Refreshing page to see changes...</p>
-                                        <div class="loading-dots">
-                                            <span style="animation: pulse 1s infinite">.</span>
-                                            <span style="animation: pulse 1s infinite .2s">.</span>
-                                            <span style="animation: pulse 1s infinite .4s">.</span>
-                                        </div>
-                                    </div>
-                                `).appendTo('body');
-
-                                modal.remove();
-                                setTimeout(() => {
-                                    alert.remove();
-                                    location.reload();
-                                }, 2000);
+                                alert('Error updating username');
                             }
                         });
                     }

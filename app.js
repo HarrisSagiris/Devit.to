@@ -39,6 +39,11 @@ app.use(express.static(path.join(__dirname, 'views'))); // Add this line to serv
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Add route for developers page
+app.get('/fordevelopers', (req, res) => {
+  res.render('fordevelopers');
+});
+
 // Routes with error handling
 app.get('/', async (req, res) => {
   try {

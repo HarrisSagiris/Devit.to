@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Rverto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a95ff;
+            --primary-hover: #0074cc;
+            --bg: #f8f9f9;
+            --bg-card: #ffffff;
+            --text: #242729;
+            --text-muted: #6a737c;
+            --border: #e3e6e8;
+            --error: #f44336;
+            --success: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .hero-section p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .value-card {
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .value-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: linear-gradient(145deg, var(--bg-card), #f5f5f5);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .team-member h3 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        .join-button {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white !important;
+            border-radius: 6px;
+            font-size: 1rem !important;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .join-button:hover {
+            background: var(--primary-hover);
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-code"></i>
+                Rverto
+            </a>
+            <div class="nav-links">
+                <a href="/">My Feed</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card hero-section">
+            <h1>Welcome to Rverto</h1>
+            <p>A platform for everyone to connect, share ideas, and build amazing things together.</p>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Our Mission</h2>
+            <p>At Rverto, we believe in the power of community. Whether you're a developer, artist, entrepreneur, or just someone with great ideas, our platform is designed to bring people together. Share your thoughts, collaborate on projects, and be part of a vibrant community that celebrates creativity and innovation in all its forms.</p>
+        </div>
+
+        <h2 class="section-title">Our Values</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <h3>Creativity</h3>
+                <p>We celebrate unique ideas and encourage thinking outside the box.</p>
+            </div>
+            <div class="value-card">
+                <h3>Community</h3>
+                <p>We believe in the power of people coming together to support and inspire each other.</p>
+            </div>
+            <div class="value-card">
+                <h3>Inclusivity</h3>
+                <p>Everyone's voice matters. We welcome diverse perspectives and ideas from all backgrounds.</p>
+            </div>
+        </div>
+        <div class="card">
+            <h2 class="section-title">Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <h3>Harris Sagiris</h3>
+                    <p>Founder & Lead Developer</p>
+                    <p><i class="fas fa-code"></i> Full-stack Developer</p>
+                    <p><i class="fas fa-brain"></i> The vision</p>
+                    <div class="social-links">
+                        <a href="https://github.com/HarrisSagiris" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://instagram.com/harris_sgrs" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <h3>Maria Giatra</h3>
+                    <p>Lead Designer & Developer</p>
+                    <p><i class="fas fa-palette"></i> UI/UX Expert</p>
+                    <div class="social-links">
+                        <a href="https://github.com/marakigia" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://instagram.com/marak1_gtr" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

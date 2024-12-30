@@ -6,182 +6,186 @@
     <title>Login to Rverto</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<style>
-    :root {
-        --primary: #0a95ff;
-        --primary-hover: #0074cc;
-        --bg: #f8f9f9;
-        --bg-card: #ffffff;
-        --text: #242729;
-        --text-muted: #6a737c;
-        --border: #e3e6e8;
-        --error: #f44336;
-        --success: #4CAF50;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        background-color: var(--bg);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        color: var(--text);
-        position: relative;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 420px;
-        background: var(--bg-card);
-        padding: 2.8rem;
-        border-radius: 16px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        border: 1px solid var(--border);
-        animation: slideUp 0.4s ease-out;
-    }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
+    <style>
+        :root {
+            --primary: #0a95ff;
+            --primary-hover: #0074cc;
+            --bg: #f8f9f9;
+            --bg-card: #ffffff;
+            --text: #242729;
+            --text-muted: #6a737c;
+            --border: #e3e6e8;
+            --error: #f44336;
+            --success: #4CAF50;
+            --shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }
 
-    .logo {
-        text-align: center;
-        margin-bottom: 2.8rem;
-    }
+        body {
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+        }
 
-    .logo h1 {
-        font-size: 2.4rem;
-        font-weight: 700;
-        color: var(--primary);
-        margin-bottom: 0.8rem;
-        letter-spacing: -0.5px;
-    }
-
-    .logo p {
-        color: var(--text-muted);
-        font-size: 1.1rem;
-        font-weight: 500;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.4rem;
-    }
-
-    .input-group {
-        position: relative;
-    }
-
-    .input-group i {
-        position: absolute;
-        left: 1.2rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        transition: all 0.2s ease;
-    }
-
-    input {
-        width: 100%;
-        padding: 1.2rem 1.2rem 1.2rem 3rem;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        color: var(--text);
-        font-size: 1rem;
-        font-family: inherit;
-        transition: all 0.2s ease;
-    }
-
-    input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
-    }
-
-    input:focus + i {
-        color: var(--primary);
-    }
-
-    input::placeholder {
-        color: var(--text-muted);
-        font-weight: 500;
-    }
-
-    button {
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 1.2rem;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin-top: 0.8rem;
-    }
-
-    button:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(10, 149, 255, 0.2);
-    }
-
-    button:active {
-        transform: translateY(0);
-    }
-
-    .register-link {
-        display: block;
-        text-align: center;
-        margin-top: 2rem;
-        color: var(--text-muted);
-        text-decoration: none;
-        font-size: 1rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-
-    .register-link:hover {
-        color: var(--primary);
-    }
-
-    @media (max-width: 480px) {
         .container {
-            margin: 1rem;
-            padding: 2rem;
-            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            padding: 2.8rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2.8rem;
         }
 
         .logo h1 {
-            font-size: 2rem;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .logo p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            transition: all 0.2s ease;
         }
 
         input {
-            padding: 1rem 1rem 1rem 2.8rem;
+            width: 100%;
+            padding: 1.2rem 1.2rem 1.2rem 3rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
         }
-    }
-</style>
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
+        }
+
+        input:focus + i {
+            color: var(--primary);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.8rem;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(10, 149, 255, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .register-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .register-link:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            input {
+                padding: 1rem 1rem 1rem 2.8rem;
+            }
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <div class="logo">
-            <h1>Rverto</h1>
+            <h1><i class="fas fa-code"></i>Rverto</h1>
             <p>Welcome back to the community</p>
         </div>
         <form action="/login" method="post">

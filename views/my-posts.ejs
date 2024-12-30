@@ -4,316 +4,433 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Posts - Rverto</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f9fafb;
+            --bg-card: #ffffff;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --upvote: #10b981;
+            --downvote: #ef4444;
+            --header-bg: #ffffff;
+            --nav-bg: #ffffff;
+            --link: #4f46e5;
+            --link-hover: #6366f1;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: var(--nav-bg);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-links a, .nav-links button {
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links button:hover {
+            background: var(--bg);
+            color: var(--primary);
+        }
+
+        .create-post-btn {
+            background: var(--primary) !important;
+            color: white !important;
+        }
+
+        .create-post-btn:hover {
+            background: var(--primary-hover) !important;
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px 0;
-            border-bottom: 2px solid #e0e0e0;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        h1 {
-            margin: 0;
-            color: #333;
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
         }
 
-        nav {
-            display: flex;
-            gap: 20px;
-            align-items: center;
+        .stat-card h3 {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
         }
 
-        nav a {
-            text-decoration: none;
-            color: #555;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        nav a:hover {
-            background-color: #e0e0e0;
-        }
-
-        .create-post-btn {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .create-post-btn:hover {
-            background-color: #45a049;
-        }
-
-        nav button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            background-color: #f44336;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        nav button:hover {
-            background-color: #d32f2f;
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
         }
 
         .post {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .post:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
         }
 
         .post-title {
-            margin-top: 0;
-            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .category-badge {
+            background: var(--bg);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
 
         .post-content {
-            margin-bottom: 20px;
-        }
-
-        .category-text {
-            background-color: #e0e0e0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        .post-edit-form input,
-        .post-edit-form select,
-        .post-edit-form textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .post-edit-form textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .edit-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .post-actions button,
-        .edit-buttons button {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .edit-btn {
-            background-color: #2196F3;
-            color: white;
-        }
-
-        .edit-btn:hover {
-            background-color: #1976D2;
-        }
-
-        .delete-btn {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .delete-btn:hover {
-            background-color: #d32f2f;
-        }
-
-        .save-edit-btn {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .save-edit-btn:hover {
-            background-color: #45a049;
-        }
-
-        .cancel-edit-btn {
-            background-color: #757575;
-            color: white;
-        }
-
-        .cancel-edit-btn:hover {
-            background-color: #616161;
+            color: var(--text);
+            margin-bottom: 1rem;
         }
 
         .post-stats {
-            margin: 15px 0;
-            color: #666;
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
 
-        .votes span {
-            margin-right: 15px;
+        .post-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
         }
 
-        .comments {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .edit-btn {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .delete-btn {
+            background: var(--downvote);
+            color: white;
+        }
+
+        .comments-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
         }
 
         .comment {
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #f5f5f5;
-            border-radius: 4px;
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
 
         .no-posts {
             text-align: center;
-            padding: 40px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 3rem;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
         }
 
         .no-posts a {
-            color: #2196F3;
+            color: var(--primary);
             text-decoration: none;
         }
 
         .no-posts a:hover {
             text-decoration: underline;
         }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+        }
+
+        .search-bar {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>My Posts</h1>
-            <nav>
-                <a href="/">Feed</a>
-                <a href="create-post" class="create-post-btn">Create New Post</a>
-                <form action="/logout" method="POST" style="display: inline;">
-                    <button type="submit">Logout</button>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">Rverto</a>
+            <nav class="nav-links">
+                <a href="/" class="create-post-btn">My Feed</a>
                 </form>
             </nav>
-        </header>
+        </div>
+    </header>
 
-        <!-- User's Posts -->
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Posts</h3>
+                <div class="value"><%= posts.length %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Upvotes</h3>
+                <div class="value"><%= posts.reduce((sum, post) => sum + post.upvotes, 0) %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Comments</h3>
+                <div class="value"><%= posts.reduce((sum, post) => sum + post.comments.length, 0) %></div>
+            </div>
+            <div class="stat-card">
+                <h3>Most Popular Category</h3>
+                <div class="value">
+                    <%= posts.length ? posts.reduce((acc, post) => {
+                        acc[post.category] = (acc[post.category] || 0) + 1;
+                        return acc;
+                    }, {})[0] : 'N/A' %>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <input type="text" class="search-bar" placeholder="Search your posts...">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="General">General</option>
+                <option value="Movies">Movies</option>
+                <option value="Books">Books</option>
+                <option value="Games">Games</option>
+                <option value="Music">Music</option>
+                <option value="Programming">Programming</option>
+                <option value="Products">Products</option>
+                <option value="Netflix">Netflix</option>
+            </select>
+            <select id="sortBy">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="popular">Most Popular</option>
+                <option value="comments">Most Comments</option>
+            </select>
+        </div>
+
         <div id="myPostsContainer">
             <% if (posts && posts.length > 0) { %>
                 <% posts.forEach(post => { %>
                     <div class="post" id="post-<%= post._id %>">
                         <div class="post-content" id="content-<%= post._id %>">
-                            <h3 class="post-title" id="title-<%= post._id %>"><%= post.title %></h3>
-                            <p><strong>Category:</strong> <span class="category-text"><%= post.category %></span></p>
-                            <p class="content-text"><%= post.content %></p>
-                        </div>
-                        
-                        <div class="post-edit-form" id="edit-form-<%= post._id %>" style="display: none;">
-                            <input type="text" class="edit-title" value="<%= post.title %>" required>
-                            <select class="edit-category">
-                                <option value="Question" <%= post.category === 'Question' ? 'selected' : '' %>>Question</option>
-                                <option value="Discussion" <%= post.category === 'Discussion' ? 'selected' : '' %>>Discussion</option>
-                                <option value="Resource" <%= post.category === 'Resource' ? 'selected' : '' %>>Resource</option>
-                            </select>
-                            <textarea class="edit-content" required><%= post.content %></textarea>
-                            <div class="edit-buttons">
-                                <button class="save-edit-btn" data-id="<%= post._id %>">Save</button>
-                                <button class="cancel-edit-btn" data-id="<%= post._id %>">Cancel</button>
+                            <div class="post-header">
+                                <h2 class="post-title" id="title-<%= post._id %>"><%= post.title %></h2>
+                                <span class="category-badge"><%= post.category %></span>
+                            </div>
+                            <p class="post-content content-text"><%= post.content %></p>
+                            <div class="post-stats">
+                                <span>👍 <%= post.upvotes %> upvotes</span>
+                                <span>👎 <%= post.downvotes %> downvotes</span>
+                                <span>💬 <%= post.comments.length %> comments</span>
+                                <span>📅 <%= new Date(post.createdAt).toLocaleDateString() %></span>
                             </div>
                         </div>
-
-                        <div class="post-actions">
-                            <button class="edit-btn" data-id="<%= post._id %>">Edit</button>
-                            <button class="delete-btn" data-id="<%= post._id %>">Delete</button>
-                        </div>
-
-                        <div class="post-stats">
-                            <span class="votes">
-                                <span class="upvote-count"><%= post.upvotes %> upvotes</span>
-                                <span class="downvote-count"><%= post.downvotes %> downvotes</span>
-                            </span>
-                        </div>
                         
-                        <div class="comments" id="comments-<%= post._id %>">
-                            <h4>Comments (<%= post.comments.length %>)</h4>
-                            <% post.comments.forEach(comment => { %>
+                        <div class="post-actions">
+                            <button class="btn edit-btn" data-id="<%= post._id %>">Edit</button>
+                            <button class="btn delete-btn" data-id="<%= post._id %>">Delete</button>
+                        </div>
+
+                        <div class="comments-section">
+                            <h4>Recent Comments</h4>
+                            <% post.comments.slice(-3).forEach(comment => { %>
                                 <div class="comment">
-                                    <strong><%= comment.author %>:</strong>
+                                    <div class="comment-header">
+                                        <span><%= comment.author %></span>
+                                        <span><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                                    </div>
                                     <%= comment.content %>
                                 </div>
                             <% }) %>
+                            <% if (post.comments.length > 3) { %>
+                                <button class="btn view-all-comments" data-id="<%= post._id %>">
+                                    View all <%= post.comments.length %> comments
+                                </button>
+                            <% } %>
                         </div>
                     </div>
                 <% }) %>
             <% } else { %>
-                <p class="no-posts">You haven't posted anything yet. <a href="/create-post">Create your first post!</a></p>
+                <div class="no-posts">
+                    <h2>No Posts Yet</h2>
+                    <p>Share your thoughts and experiences with the community!</p>
+                    <a href="/create-post" class="btn create-post-btn">Create Your First Post</a>
+                </div>
             <% } %>
         </div>
     </div>
 
     <script>
         $(document).ready(function() {
-            // Edit post
+            // Search functionality
+            $('.search-bar').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.post').each(function() {
+                    const title = $(this).find('.post-title').text().toLowerCase();
+                    const content = $(this).find('.content-text').text().toLowerCase();
+                    $(this).toggle(title.includes(searchTerm) || content.includes(searchTerm));
+                });
+            });
+
+            // Category filter
+            $('#categoryFilter').on('change', function() {
+                const category = $(this).val();
+                $('.post').each(function() {
+                    const postCategory = $(this).find('.category-badge').text();
+                    $(this).toggle(!category || postCategory === category);
+                });
+            });
+
+            // Sort functionality
+            $('#sortBy').on('change', function() {
+                const sortBy = $(this).val();
+                const posts = $('.post').get();
+                
+                posts.sort((a, b) => {
+                    switch(sortBy) {
+                        case 'newest':
+                            return new Date($(b).find('.post-stats span:last').text()) - 
+                                   new Date($(a).find('.post-stats span:last').text());
+                        case 'oldest':
+                            return new Date($(a).find('.post-stats span:last').text()) - 
+                                   new Date($(b).find('.post-stats span:last').text());
+                        case 'popular':
+                            return parseInt($(b).find('.post-stats span:first').text()) - 
+                                   parseInt($(a).find('.post-stats span:first').text());
+                        case 'comments':
+                            return parseInt($(b).find('.post-stats span:nth-child(3)').text()) - 
+                                   parseInt($(a).find('.post-stats span:nth-child(3)').text());
+                    }
+                });
+
+                $('#myPostsContainer').append(posts);
+            });
+
+            // Edit & Delete functionality remains the same
             $('.edit-btn').click(function() {
                 const postId = $(this).data('id');
                 $(`#content-${postId}`).hide();
                 $(`#edit-form-${postId}`).show();
             });
 
-            // Cancel edit
-            $('.cancel-edit-btn').click(function() {
-                const postId = $(this).data('id');
-                $(`#edit-form-${postId}`).hide();
-                $(`#content-${postId}`).show();
-            });
-
-            // Save edit
-            $('.save-edit-btn').click(function() {
-                const postId = $(this).data('id');
-                const title = $(`#edit-form-${postId} .edit-title`).val();
-                const category = $(`#edit-form-${postId} .edit-category`).val();
-                const content = $(`#edit-form-${postId} .edit-content`).val();
-
-                $.ajax({
-                    url: `/post/${postId}`,
-                    method: 'PUT',
-                    data: { title, category, content },
-                    success: function(response) {
-                        $(`#title-${postId}`).text(title);
-                        $(`#post-${postId} .category-text`).text(category);
-                        $(`#post-${postId} .content-text`).text(content);
-                        $(`#edit-form-${postId}`).hide();
-                        $(`#content-${postId}`).show();
-                    },
-                    error: function() {
-                        alert('Error updating post');
-                    }
-                });
-            });
-
-            // Delete post
             $('.delete-btn').click(function() {
                 if (confirm('Are you sure you want to delete this post?')) {
                     const postId = $(this).data('id');
@@ -324,7 +441,13 @@
                             $(`#post-${postId}`).fadeOut(400, function() {
                                 $(this).remove();
                                 if ($('.post').length === 0) {
-                                    $('#myPostsContainer').html('<p class="no-posts">You haven\'t posted anything yet. <a href="/create-post">Create your first post!</a></p>');
+                                    $('#myPostsContainer').html(`
+                                        <div class="no-posts">
+                                            <h2>No Posts Yet</h2>
+                                            <p>Share your thoughts and experiences with the community!</p>
+                                            <a href="/create-post" class="btn create-post-btn">Create Your First Post</a>
+                                        </div>
+                                    `);
                                 }
                             });
                         },
