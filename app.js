@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // Changed port to 10000
 
 require('dotenv').config();
 
@@ -20,8 +20,8 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   });
 
 // Verify models are loaded correctly
-const User = require(path.join(__dirname, 'models', 'User'));
-const Post = require(path.join(__dirname, 'models', 'Post'));
+const User = require('./models/User');
+const Post = require('./models/Post');
 if (!User || !Post) {
   console.error('Error loading models');
   process.exit(1);
