@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs'); // Changed from bcrypt to bcryptjs
 const session = require('express-session');
 const path = require('path');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 10000; // Changed port to 10000
@@ -40,24 +38,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views'))); // Add this line to serve files from views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Configure email transporter with error handling
-const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-email-password'
-  }
-});
-
-// Test email configuration
-transporter.verify((error) => {
-  if (error) {
-    console.error('Email configuration error:', error);
-  } else {
-    console.log('Email server is ready');
-  }
-});
 
 // Routes with error handling
 app.get('/', async (req, res) => {
@@ -464,70 +444,6 @@ app.post('/post/:postId/comment/:commentId/delete', async (req, res) => {
   } catch (error) {
     console.error('Comment deletion error:', error);
     res.status(500).send('Error deleting comment');
-  }
-});
-
-// Password reset system with proper validation
-app.post('/reset-password', async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(404).send('Email not found');
-    }
-
-    const token = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-    await user.save();
-
-    const resetUrl = `http://localhost:${PORT}/reset-password/${token}`;
-    await transporter.sendMail({
-      to: user.email,
-      subject: 'Password Reset',
-      text: `Reset your password here: ${resetUrl}`
-    });
-
-    res.send('Reset password link sent to your email');
-  } catch (error) {
-    console.error('Password reset error:', error);
-    res.status(500).send('Error processing password reset');
-  }
-});
-
-app.get('/reset-password/:token', async (req, res) => {
-  try {
-    const user = await User.findOne({
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() }
-    });
-    if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
-    res.render('reset-password', { token: req.params.token });
-  } catch (error) {
-    console.error('Reset token verification error:', error);
-    res.status(500).send('Error verifying reset token');
-  }
-});
-
-app.post('/reset-password/:token', async (req, res) => {
-  try {
-    const user = await User.findOne({
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() }
-    });
-    if (!user) return res.status(400).send('Password reset token is invalid or has expired.');
-
-    if (!req.body.password) {
-      return res.status(400).send('New password is required');
-    }
-
-    user.password = await bcryptjs.hash(req.body.password, 10); // Changed to bcryptjs
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-    res.redirect('/login');
-  } catch (error) {
-    console.error('Password update error:', error);
-    res.status(500).send('Error updating password');
   }
 });
 
