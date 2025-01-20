@@ -31,11 +31,10 @@ if (!User || !Post) {
 // Essential middleware setup
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(session({
+app.use(session({ 
   secret: 'secret',
-  resave: false,
+  resave: false, 
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
