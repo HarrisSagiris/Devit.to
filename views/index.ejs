@@ -701,6 +701,35 @@
         margin-top: 4rem;
     }
 
+    /* New follow button styles */
+    .follow-btn {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-left: 0.5rem;
+    }
+
+    .follow-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .follow-btn.following {
+        background: var(--primary);
+        color: white;
+    }
+
+    .followers-count {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-left: 0.5rem;
+    }
+
     @media (max-width: 768px) {
         .search-container {
             flex-direction: column;
@@ -885,7 +914,18 @@
                     <div class="post-main">
                         <div class="post-header">
                             <div class="post-meta">
-                                Posted in <%= post.category %> by <%= post.username %> • <%= new Date(post.createdAt).toLocaleString() %>
+                                Posted in <%= post.category %> by 
+                                <span class="user-info">
+                                    <%= post.username %>
+                                    <span class="followers-count">(<%= post.authorFollowers || 0 %> followers)</span>
+                                    <% if (user && user.username !== post.username) { %>
+                                        <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
+                                                data-username="<%= post.username %>">
+                                            <%= user.following?.includes(post.username) ? 'Following' : 'Follow' %>
+                                        </button>
+                                    <% } %>
+                                </span>
+                                • <%= new Date(post.createdAt).toLocaleString() %>
                             </div>
                             <h3 class="post-title"><%= post.title %></h3>
                             <div class="post-content">
@@ -915,7 +955,16 @@
                         <% post.comments.forEach(comment => { %>
                             <div class="comment" id="comment-<%= comment._id %>">
                                 <div class="comment-header">
-                                    <span class="comment-username"><%= comment.username %></span>
+                                    <span class="comment-username">
+                                        <%= comment.username %>
+                                        <span class="followers-count">(<%= comment.authorFollowers || 0 %> followers)</span>
+                                        <% if (user && user.username !== comment.username) { %>
+                                            <button class="follow-btn <%= user.following?.includes(comment.username) ? 'following' : '' %>"
+                                                    data-username="<%= comment.username %>">
+                                                <%= user.following?.includes(comment.username) ? 'Following' : 'Follow' %>
+                                            </button>
+                                        <% } %>
+                                    </span>
                                 </div>
                                 <div class="comment-content">
                                     <%= comment.content %>
@@ -1026,6 +1075,45 @@
                 const newTheme = this.checked ? 'dark' : 'light';
                 document.documentElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
+            });
+
+            // Follow button functionality
+            $(document).on('click', '.follow-btn', function() {
+                if (!currentUser) {
+                    alert('Please login to follow users');
+                    return;
+                }
+
+                const btn = $(this);
+                const username = btn.data('username');
+
+                $.ajax({
+                    url: '/api/follow',
+                    method: 'POST',
+                    data: JSON.stringify({ username }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Update all instances of this user's follow button
+                            $(`.follow-btn[data-username="${username}"]`).each(function() {
+                                const followBtn = $(this);
+                                if (response.isFollowing) {
+                                    followBtn.addClass('following').text('Following');
+                                } else {
+                                    followBtn.removeClass('following').text('Follow');
+                                }
+                            });
+
+                            // Update all instances of this user's followers count
+                            const newCount = response.followersCount;
+                            $(`.user-info:contains("${username}") .followers-count`).text(`(${newCount} followers)`);
+                            $(`.comment-username:contains("${username}") .followers-count`).text(`(${newCount} followers)`);
+                        }
+                    },
+                    error: function(err) {
+                        alert('Error updating follow status');
+                    }
+                });
             });
 
             // All JavaScript functionality remains the same
