@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rverto - Your Feed</title>
+    <title>Devit.to - Your Feed</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -620,7 +620,7 @@
 </style>
 
 <body>
-    <div class="version-banner">🚀 Welcome to Rverto - Share everything!</div>
+    <div class="version-banner">🚀 Welcome to Devit.to - The developer platform!</div>
 
     <header class="header">
         <div class="header-content">
@@ -630,13 +630,13 @@
                     <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Rverto
+                Devit.to
             </a>
             <% if (user) { %>
                 <div class="nav-links">
                     <span>Welcome, <strong><%= user.username %></strong></span>
                     <a href="#" id="change-username">Change Username</a>
-                    <a href="/my-posts">My Reputation</a>
+                    <a href="/my-posts">Reputation</a>
                     <a href="fordevelopers.html" class="for-developers-btn">About us</a>
                     <a href="/logout">Logout</a>
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -664,17 +664,17 @@
     </header>
 
     <div class="search-container">
-        <input type="text" id="search-bar" placeholder="Search reviews by title, content, or category...">
+        <input type="text" id="search-bar" placeholder="Search posts by title, content, or category...">
         <select id="search-category">
             <option value="">All Categories</option>
             <option value="General">General</option>
-            <option value="Movies">Movies</option>
-            <option value="Books">Books</option>
-            <option value="Games">Games</option>
-            <option value="Music">Music</option>
-            <option value="Programming">Programming</option>
-            <option value="Products">Products</option>
-            <option value="Netflix">Netflix</option>
+            <option value="Javascript/Typescript">Javascript/Typescript</option>
+            <option value="c++">c++</option>
+            <option value="Gaming">Gaming</option>
+            <option value="Python">Python</option>
+            <option value="php">php</option>
+            <option value="tech">tech</option>
+            <option value="AI">AI</option>
         </select>
     </div>
 
@@ -754,29 +754,29 @@
         
         <div class="post-modal" id="post-modal">
             <form class="post-form" id="new-post-form">
-                <input type="text" name="title" placeholder="Review Title" required>
+                <input type="text" name="title" placeholder="Post title" required>
                 <select name="category" required>
                     <option value="General">General</option>
-                    <option value="Movies">Movies</option>
-                    <option value="Books">Books</option>
-                    <option value="Games">Games</option>
-                    <option value="Music">Music</option>
-                    <option value="Programming">Programming</option>
-                    <option value="Products">Products</option>
-                    <option value="Netflix">Netflix</option>
+                    <option value="Javascript/Typescript">Javascript/Typescript</option>
+                    <option value="c++">c++</option>
+                    <option value="Gaming">Gaming</option>
+                    <option value="Python">Python</option>
+                    <option value="php">php</option>
+                    <option value="Tech">Tech</option>
+                    <option value="AI">AI</option>
                 </select>
-                <textarea name="content" placeholder="Write your review..." required></textarea>
+                <textarea name="content" placeholder="Describe your post..." required></textarea>
                 <div style="display: flex; gap: 1rem; justify-content: flex-end;">
                     <button type="button" class="btn" id="cancel-post" style="background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">Cancel</button>
-                    <button type="submit" class="btn">Post Review</button>
+                    <button type="submit" class="btn">Post</button>
                 </div>
             </form>
         </div>
     <% } %>
 
     <footer class="footer">
-        <p>&copy; 2024 RVERTO. All rights reserved.</p>
-        <p>Licensed under devharris distribution</p>
+        <p>&copy; 2025 DEVIT.TO. All rights reserved.</p>
+        <p>Licensed under @devharris</p>
     </footer>
 
     <script>
