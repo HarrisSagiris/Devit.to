@@ -18,6 +18,7 @@
             --error: #f44336;
             --success: #4CAF50;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --github-black: #24292e;
         }
 
         * {
@@ -122,6 +123,10 @@
             cursor: pointer;
             transition: all 0.2s ease;
             margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         button:hover {
@@ -147,6 +152,55 @@
             color: var(--primary);
         }
 
+        .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .github-button {
+            background: var(--github-black);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .github-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .oauth-divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .oauth-divider span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 480px) {
             .container {
                 margin: 1rem;
@@ -169,6 +223,15 @@
         <div class="logo">
             <h1>Devit.to</h1>
             <p>Welcome back to the community</p>
+        </div>
+        <div class="oauth-buttons">
+            <a href="/auth/github" class="github-button">
+                <i class="fab fa-github"></i>
+                Continue with GitHub
+            </a>
+        </div>
+        <div class="oauth-divider">
+            <span>OR</span>
         </div>
         <form action="/login" method="post">
             <div class="input-group">

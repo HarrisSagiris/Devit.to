@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bcryptjs = require('bcryptjs'); // Changed from bcrypt to bcryptjs
+const bcryptjs = require('bcryptjs');
 const session = require('express-session');
 const path = require('path');
-const axios = require('axios'); // Add axios for GitHub API calls
+const axios = require('axios');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github2').Strategy;
 
 const app = express();
-const PORT = process.env.PORT || 10000; // Changed port to 10000
+const PORT = process.env.PORT || 10000;
 
 require('dotenv').config();
 
@@ -15,7 +17,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .then(() => console.log('Database connected successfully'))
   .catch(err => {
     console.error('Database connection error:', err);
-    process.exit(1); // Exit if database connection fails
+    process.exit(1);
   });
 
 // Verify models are loaded correctly
@@ -34,14 +36,70 @@ app.use(session({
   resave: false, 
   saveUninitialized: false,
   cookie: { 
-    secure: false, // Changed to false to work with both HTTP and HTTPS
+    secure: false,
     sameSite: 'lax'
   }
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'views'))); // Add this line to serve files from views directory
+app.use(express.static(path.join(__dirname, 'views')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Passport config
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+
+// GitHub Strategy
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "/auth/github/callback"
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      let user = await User.findOne({ githubId: profile.id });
+      
+      if (!user) {
+        user = await User.create({
+          username: profile.username,
+          email: profile.emails ? profile.emails[0].value : `${profile.username}@github.com`,
+          password: await bcryptjs.hash(Math.random().toString(36), 10),
+          githubId: profile.id,
+          githubToken: accessToken
+        });
+      }
+      
+      return done(null, user);
+    } catch (err) {
+      return done(err, null);
+    }
+  }
+));
+
+// Auth routes
+app.get('/auth/github',
+  passport.authenticate('github', { scope: ['user:email'] })
+);
+
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  (req, res) => {
+    req.session.user = { username: req.user.username, _id: req.user._id };
+    res.redirect('/');
+  }
+);
 
 // Add route for developers page
 app.get('/fordevelopers', (req, res) => {
@@ -116,7 +174,7 @@ app.get('/', async (req, res) => {
 app.get('/my-posts', async (req, res) => {
   try {
     if (!req.session.user) {
-      return res.redirect('/login'); // Redirect to login if not authenticated
+      return res.redirect('/login');
     }
     
     const posts = await Post.find({ user: req.session.user._id })
@@ -126,7 +184,7 @@ app.get('/my-posts', async (req, res) => {
     res.render('my-posts', { 
       posts,
       user: req.session.user,
-      showCreatePost: true // Add flag to show create post form
+      showCreatePost: true
     });
   } catch (error) {
     console.error('Error fetching user posts:', error);
@@ -251,7 +309,7 @@ app.post('/register', async (req, res) => {
       return res.status(400).send('All fields are required');
     }
     
-    const hashedPassword = await bcryptjs.hash(password, 10); // Changed to bcryptjs
+    const hashedPassword = await bcryptjs.hash(password, 10);
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     req.session.user = { username: user.username, _id: user._id };
@@ -272,7 +330,7 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-      const validPassword = await bcryptjs.compare(password, user.password); // Changed to bcryptjs
+      const validPassword = await bcryptjs.compare(password, user.password);
       if (validPassword) {
         req.session.user = { username: user.username, _id: user._id };
         res.redirect('/');
