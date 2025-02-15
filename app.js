@@ -33,7 +33,10 @@ app.use(session({
   secret: 'secret',
   resave: false, 
   saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
+  cookie: { 
+    secure: false, // Changed to false to work with both HTTP and HTTPS
+    sameSite: 'lax'
+  }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views'))); // Add this line to serve files from views directory
