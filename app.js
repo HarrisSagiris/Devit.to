@@ -45,6 +45,11 @@ app.get('/fordevelopers', (req, res) => {
   res.render('fordevelopers');
 });
 
+// Add route for GitHub integration page
+app.get('/github', (req, res) => {
+  res.render('github');
+});
+
 // Routes with error handling
 app.get('/', async (req, res) => {
   try {
