@@ -258,35 +258,43 @@
     </div>
 
     <script>
-        // Using the GNews API which has a free tier and allows public access
-        const API_KEY = 'ed9896c7473695a06444e6aeb886eead'; // Replace with your GNews API key
-        const API_URL = `https://gnews.io/api/v4/search?q=programming,technology,developer&lang=en&country=us&max=10&apikey=${API_KEY}`;
+        // Using the HackerNews API which is free and doesn't require an API key
+        const fetchTopStories = async () => {
+            try {
+                const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
+                const storyIds = await response.json();
+                const top10Ids = storyIds.slice(0, 10);
+                
+                const stories = await Promise.all(
+                    top10Ids.map(id => 
+                        fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+                        .then(response => response.json())
+                    )
+                );
 
-        fetch(API_URL)
-            .then(response => response.json())
-            .then(data => {
                 const newsContainer = document.getElementById('news-container');
                 newsContainer.innerHTML = '';
 
-                data.articles.forEach(article => {
-                    const date = new Date(article.publishedAt).toLocaleDateString('en-US', {
+                stories.forEach(story => {
+                    const date = new Date(story.time * 1000).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                     });
+                    
                     const card = `
                         <div class="news-card">
-                            <img class="news-image" src="${article.image || 'default-image.jpg'}" alt="${article.title}" onerror="this.src='https://via.placeholder.com/400x240?text=No+Image+Available'">
+                            <img class="news-image" src="https://picsum.photos/seed/${story.id}/400/240" alt="Tech News Image" onerror="this.src='https://via.placeholder.com/400x240?text=No+Image+Available'">
                             <div class="news-content">
-                                <span class="news-source">${article.source.name}</span>
-                                <h2 class="news-title">${article.title}</h2>
-                                <p class="news-description">${article.description || 'No description available'}</p>
+                                <span class="news-source">Hacker News</span>
+                                <h2 class="news-title">${story.title}</h2>
+                                <p class="news-description">Posted by ${story.by} • ${story.score} points</p>
                                 <div class="news-meta">
                                     <span class="news-date">
                                         <i class="far fa-calendar-alt"></i>
                                         ${date}
                                     </span>
-                                    <a href="${article.url}" target="_blank" class="read-more">
+                                    <a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" target="_blank" class="read-more">
                                         Read Article
                                         <i class="fas fa-external-link-alt" style="margin-left: 5px;"></i>
                                     </a>
@@ -306,8 +314,7 @@
                     `;
                     newsContainer.innerHTML += card;
                 });
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching news:', error);
                 document.getElementById('news-container').innerHTML = `
                     <div class="loading" style="color: #ff4444;">
@@ -315,7 +322,10 @@
                         <span>Unable to load news at this time. Please try again later.</span>
                     </div>
                 `;
-            });
+            }
+        };
+
+        fetchTopStories();
 
         function handleVote(button, type) {
             const countSpan = button.querySelector('.vote-count');
