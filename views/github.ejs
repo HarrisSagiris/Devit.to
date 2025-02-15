@@ -17,6 +17,8 @@
             --border: #404040;
             --shadow: 0 4px 12px rgba(0,0,0,0.3);
             --gradient: linear-gradient(135deg, #0a95ff, #00b4d8);
+            --upvote: #10b981;
+            --downvote: #ef4444;
         }
 
         * {
@@ -187,6 +189,44 @@
             color: var(--primary);
         }
 
+        .vote-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .vote-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .upvote {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--upvote);
+        }
+
+        .upvote:hover {
+            background: var(--upvote);
+            color: white;
+        }
+
+        .downvote {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--downvote);
+        }
+
+        .downvote:hover {
+            background: var(--downvote);
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2.5rem;
@@ -250,6 +290,16 @@
                                         <i class="fas fa-external-link-alt" style="margin-left: 5px;"></i>
                                     </a>
                                 </div>
+                                <div class="vote-buttons">
+                                    <button class="vote-btn upvote" onclick="handleVote(this, 'up')">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span class="vote-count">0</span>
+                                    </button>
+                                    <button class="vote-btn downvote" onclick="handleVote(this, 'down')">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span class="vote-count">0</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -265,6 +315,31 @@
                     </div>
                 `;
             });
+
+        function handleVote(button, type) {
+            const countSpan = button.querySelector('.vote-count');
+            let count = parseInt(countSpan.textContent);
+            
+            if (button.classList.contains('active')) {
+                count = type === 'up' ? count - 1 : count + 1;
+                button.classList.remove('active');
+            } else {
+                count = type === 'up' ? count + 1 : count - 1;
+                button.classList.add('active');
+                
+                // Remove active class from opposite button
+                const oppositeButton = button.parentElement.querySelector(
+                    type === 'up' ? '.downvote' : '.upvote'
+                );
+                if (oppositeButton.classList.contains('active')) {
+                    oppositeButton.classList.remove('active');
+                    const oppositeCount = oppositeButton.querySelector('.vote-count');
+                    oppositeCount.textContent = parseInt(oppositeCount.textContent) + (type === 'up' ? 1 : -1);
+                }
+            }
+            
+            countSpan.textContent = count;
+        }
     </script>
 </body>
 </html>
