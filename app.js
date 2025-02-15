@@ -8,8 +8,6 @@ const app = express();
 const PORT = process.env.PORT || 10000; // Changed port to 10000
 //add cookie session 
 
-:
-
 require('dotenv').config();
 
 // Test database connection
