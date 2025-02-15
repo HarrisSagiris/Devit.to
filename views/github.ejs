@@ -184,7 +184,7 @@
         </div>
 
         <% if (!user) { %>
-            <a href="/auth/github" class="github-button">
+            <a href="https://github.com/login/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=http://localhost:10000/auth/github/callback&scope=repo" class="github-button">
                 <i class="fab fa-github"></i>
                 Connect with GitHub
             </a>
@@ -199,6 +199,10 @@
     </div>
 
     <script>
+        const GITHUB_CLIENT_ID = 'YOUR_CLIENT_ID';
+        const GITHUB_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+        const REDIRECT_URI = 'http://localhost:10000/auth/github/callback';
+
         <%- `
             ${user ? `
                 fetch('/api/github/repos')
@@ -249,6 +253,37 @@
                     });
             ` : ''}
         ` %>
+
+        // Handle OAuth callback
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            fetch('https://github.com/login/oauth/access_token', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    client_id: GITHUB_CLIENT_ID,
+                    client_secret: GITHUB_CLIENT_SECRET,
+                    code: code,
+                    redirect_uri: REDIRECT_URI
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.access_token) {
+                    // Store the token and redirect
+                    localStorage.setItem('github_token', data.access_token);
+                    window.location.href = '/github';
+                }
+            })
+            .catch(error => {
+                console.error('Error during GitHub authentication:', error);
+            });
+        }
     </script>
 </body>
 </html>
