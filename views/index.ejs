@@ -765,6 +765,35 @@
     .comment {
         animation: fadeIn 0.2s ease-out;
     }
+
+    /* iOS Add to Home Screen Prompt */
+    .ios-prompt {
+        display: none;
+        text-align: center;
+        padding: 1rem;
+        margin: 2rem auto;
+        max-width: 600px;
+        background: var(--bg-card);
+        border-radius: 1rem;
+        box-shadow: var(--shadow);
+    }
+
+    .ios-prompt h3 {
+        color: var(--text);
+        margin-bottom: 1rem;
+    }
+
+    .ios-prompt p {
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    .ios-prompt img {
+        max-width: 300px;
+        margin: 1rem auto;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow);
+    }
 </style>
 <body>
     <div class="version-banner">🚀 Welcome to Devit.to - The developer platform!</div>
@@ -935,6 +964,46 @@
             </form>
         </div>
     <% } %>
+    <div id="ios-prompt" class="ios-prompt" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 1rem; border-radius: 1rem; box-shadow: var(--shadow-lg); width: 90%; max-width: 400px; z-index: 999;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="flex-shrink: 0;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 15V3M12 15L8 11M12 15L16 11M3 15V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <p style="margin: 0; color: var(--text); font-weight: 500;">Add to Home Screen</p>
+                <p style="margin: 0; font-size: 0.875rem; color: var(--text-muted);">Install Devit.to for the best experience</p>
+            </div>
+            <button id="close-ios-prompt" style="margin-left: auto; background: none; border: none; padding: 0.5rem; cursor: pointer; color: var(--text-muted);">✕</button>
+        </div>
+    </div>
+
+    <script>
+        // Check if the device is iOS and the app is not already installed
+        let isIos = () => {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        let isInStandaloneMode = () => {
+            return ('standalone' in window.navigator) && (window.navigator.standalone);
+        }
+
+        // Show prompt only on iOS devices when not in standalone mode
+        if (isIos() && !isInStandaloneMode()) {
+            // Show the prompt after a delay
+            setTimeout(() => {
+                document.getElementById('ios-prompt').style.display = 'block';
+            }, 2000);
+
+            // Handle close button
+            document.getElementById('close-ios-prompt').addEventListener('click', () => {
+                document.getElementById('ios-prompt').style.display = 'none';
+                // Store in localStorage that user has dismissed the prompt
+                localStorage.setItem('ios-prompt-dismissed', 'true');
+            });
+        }
+    </script>
 
     <footer class="footer">
         <p>&copy; 2025 DEVIT.TO. All rights reserved.</p>
