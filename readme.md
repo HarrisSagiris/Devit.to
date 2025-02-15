@@ -50,4 +50,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 For questions, contributions or support:
 - Licensed under @devharris 👨‍💻
-- Submit issues or pull requests to this repository 🔧
+- Fork the repo and submit a Pull Request !! 🔧
