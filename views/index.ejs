@@ -1164,15 +1164,33 @@
                                 }, 3000);
                             }
                         },
-                        error: function(err) {
+                        error: function(xhr) {
+                            // Check if post exists first
+                            if (!$(`#post-${postId}`).length) {
+                                const errorMessage = $('<div class="alert alert-error">This post has already been deleted or does not exist.</div>')
+                                    .hide()
+                                    .insertBefore('.feed')
+                                    .fadeIn(400);
+                                    
+                                setTimeout(() => {
+                                    errorMessage.fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                }, 3000);
+                                return;
+                            }
+
                             // Show specific error message based on status code
                             let errorMsg = 'Failed to delete post. ';
-                            if (err.status === 401) {
+                            if (xhr.status === 401) {
                                 errorMsg += 'Please login to delete posts.';
-                            } else if (err.status === 403) {
+                            } else if (xhr.status === 403) {
                                 errorMsg += 'You do not have permission to delete this post.';
-                            } else if (err.status === 404) {
-                                errorMsg += 'Post not found.';
+                            } else if (xhr.status === 404) {
+                                errorMsg += 'Post not found. The page will refresh to update your feed.';
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 3000);
                             } else {
                                 errorMsg += 'Please try again later.';
                             }
