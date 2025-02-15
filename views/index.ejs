@@ -2,8 +2,50 @@
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Devit.to">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Devit.to - A developer platform for sharing knowledge, connecting with other developers, and staying up to date with the latest in tech. Join our community to discuss programming, tech news, and more.">
+    <meta name="keywords" content="developer platform, programming, coding, tech news, developer community, javascript, python, web development, software engineering">
+    <meta name="author" content="Devit.to">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Devit.to - Your Developer Community">
+    <meta property="og:description" content="Join Devit.to to connect with developers, share knowledge, and stay updated with the latest in tech.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devit.to">
+    <meta property="og:image" content="/icons/icon-180.png">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Devit.to - Your Developer Community">
+    <meta name="twitter:description" content="Join Devit.to to connect with developers, share knowledge, and stay updated with the latest in tech.">
+    <meta name="twitter:image" content="/icons/icon-180.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://devit.to">
     <title>Devit.to - Your Feed</title>
+    
+    <!-- iOS icons -->
+    <link rel="apple-touch-icon" href="/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167.png">
+    
+    <!-- iOS splash screens -->
+    <link rel="apple-touch-startup-image" href="/splash/iphone5.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/iphone6.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/iphoneplus.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/splash/iphonex.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/splash/iphonexr.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/iphonexsmax.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/splash/ipad.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/ipadpro1.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/ipadpro2.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/ipadpro3.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)">
+
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,6 +53,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <style>
+    /* iOS specific styles */
+    * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+    }
+
+    /* Prevent text size adjustment on orientation change */
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* Add smooth scrolling for iOS */
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Rest of the existing styles remain unchanged */
     /* Theme variables */
     html[data-theme="light"] {
         --primary: #6366f1;
@@ -31,7 +90,6 @@
         --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
         --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
-
     html[data-theme="dark"] {
         --primary: #818cf8;
         --primary-hover: #6366f1;
@@ -636,7 +694,6 @@
         animation: fadeIn 0.3s ease-out;
     }
 </style>
-
 <body>
     <div class="version-banner">🚀 Welcome to Devit.to - The developer platform!</div>
 
