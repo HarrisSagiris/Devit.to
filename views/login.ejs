@@ -10,14 +10,14 @@
         :root {
             --primary: #0a95ff;
             --primary-hover: #0074cc;
-            --bg: #f8f9f9;
-            --bg-card: #ffffff;
-            --text: #242729;
-            --text-muted: #6a737c;
-            --border: #e3e6e8;
+            --bg: #1a1a1a;
+            --bg-card: #242424;
+            --text: #ffffff;
+            --text-muted: #a3a3a3;
+            --border: #404040;
             --error: #f44336;
             --success: #4CAF50;
-            --shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         * {
@@ -34,7 +34,7 @@
             justify-content: center;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
-            line-height: 1.6;
+            position: relative;
         }
 
         .container {
@@ -42,7 +42,7 @@
             max-width: 420px;
             background: var(--bg-card);
             padding: 2.8rem;
-            border-radius: 8px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             animation: slideUp 0.4s ease-out;
@@ -61,81 +61,64 @@
 
         .logo {
             text-align: center;
-            margin-bottom: 2.8rem;
+            margin-bottom: 2rem;
         }
 
         .logo h1 {
-            font-size: 2.4rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.8rem;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
         }
 
         .logo p {
             color: var(--text-muted);
-            font-size: 1.1rem;
-            font-weight: 500;
+            font-size: 1rem;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 1.4rem;
+            gap: 1rem;
         }
 
         .input-group {
             position: relative;
         }
 
-        .input-group i {
-            position: absolute;
-            left: 1.2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-        }
-
-        input {
+        .input-group input {
             width: 100%;
-            padding: 1.2rem 1.2rem 1.2rem 3rem;
-            background: var(--bg);
+            padding: 1rem 1rem 1rem 2.8rem;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text);
+            border-radius: 6px;
             font-size: 1rem;
-            font-family: inherit;
+            color: var(--text);
+            background: var(--bg-card);
             transition: all 0.2s ease;
         }
 
-        input:focus {
+        .input-group input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
         }
 
-        input:focus + i {
-            color: var(--primary);
-        }
-
-        input::placeholder {
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--text-muted);
-            font-weight: 500;
         }
 
         button {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 1.2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             margin-top: 0.8rem;
@@ -152,14 +135,12 @@
         }
 
         .register-link {
-            display: block;
             text-align: center;
-            margin-top: 2rem;
             color: var(--text-muted);
-            text-decoration: none;
             font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+            display: block;
+            text-decoration: none;
         }
 
         .register-link:hover {
@@ -170,6 +151,7 @@
             .container {
                 margin: 1rem;
                 padding: 2rem;
+                border-radius: 12px;
             }
 
             .logo h1 {
@@ -185,7 +167,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <h1><i class="fas fa-code"></i>Rverto</h1>
+            <h1>Devit.to</h1>
             <p>Welcome back to the community</p>
         </div>
         <form action="/login" method="post">
