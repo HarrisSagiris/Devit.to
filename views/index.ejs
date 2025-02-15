@@ -1128,33 +1128,60 @@
                     $.ajax({
                         url: `/post/${postId}`,
                         method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         success: function(response) {
-                            // Fade out and remove the post
-                            postElement.fadeOut(400, function() {
-                                $(this).remove();
-                            });
-                            
-                            // Show success message
-                            const successMessage = $('<div class="alert alert-success">Post deleted successfully</div>')
-                                .hide()
-                                .insertBefore('.feed')
-                                .fadeIn(400);
-                                
-                            // Remove success message after 3 seconds
-                            setTimeout(() => {
-                                successMessage.fadeOut(400, function() {
+                            if (response.success) {
+                                // Fade out and remove the post
+                                postElement.fadeOut(400, function() {
                                     $(this).remove();
                                 });
-                            }, 3000);
+                                
+                                // Show success message
+                                const successMessage = $('<div class="alert alert-success">Post deleted successfully</div>')
+                                    .hide()
+                                    .insertBefore('.feed')
+                                    .fadeIn(400);
+                                    
+                                // Remove success message after 3 seconds
+                                setTimeout(() => {
+                                    successMessage.fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                }, 3000);
+                            } else {
+                                // Show error if deletion was not successful
+                                const errorMessage = $('<div class="alert alert-error">Failed to delete post: ' + (response.message || 'Unknown error') + '</div>')
+                                    .hide()
+                                    .insertBefore('.feed')
+                                    .fadeIn(400);
+                                    
+                                setTimeout(() => {
+                                    errorMessage.fadeOut(400, function() {
+                                        $(this).remove();
+                                    });
+                                }, 3000);
+                            }
                         },
                         error: function(err) {
-                            // Show error message
-                            const errorMessage = $('<div class="alert alert-error">Failed to delete post. Please try again.</div>')
+                            // Show specific error message based on status code
+                            let errorMsg = 'Failed to delete post. ';
+                            if (err.status === 401) {
+                                errorMsg += 'Please login to delete posts.';
+                            } else if (err.status === 403) {
+                                errorMsg += 'You do not have permission to delete this post.';
+                            } else if (err.status === 404) {
+                                errorMsg += 'Post not found.';
+                            } else {
+                                errorMsg += 'Please try again later.';
+                            }
+                            
+                            const errorMessage = $('<div class="alert alert-error">' + errorMsg + '</div>')
                                 .hide()
                                 .insertBefore('.feed')
                                 .fadeIn(400);
                                 
-                            // Remove error message after 3 seconds
                             setTimeout(() => {
                                 errorMessage.fadeOut(400, function() {
                                     $(this).remove();
