@@ -15,7 +15,8 @@
             --text: #ffffff;
             --text-muted: #a3a3a3;
             --border: #404040;
-            --shadow: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --gradient: linear-gradient(135deg, #0a95ff, #00b4d8);
         }
 
         * {
@@ -30,105 +31,173 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             padding: 2rem;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+            position: relative;
+            background: rgba(10, 149, 255, 0.05);
+            border-radius: 20px;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            border-radius: 20px 20px 0 0;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary), #00b4d8);
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .header p {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
         }
 
         .news-card {
             background: var(--bg-card);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
             border: 1px solid var(--border);
+            position: relative;
         }
 
         .news-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-8px);
             box-shadow: var(--shadow);
+            border-color: var(--primary);
         }
 
         .news-image {
             width: 100%;
-            height: 200px;
+            height: 240px;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover .news-image {
+            transform: scale(1.05);
         }
 
         .news-content {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .news-source {
             display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: var(--primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--gradient);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 8px rgba(10, 149, 255, 0.2);
         }
 
         .news-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
             line-height: 1.4;
+            color: var(--text);
         }
 
         .news-description {
             color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
         }
 
         .news-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .news-date {
             color: var(--text-muted);
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .read-more {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid var(--primary);
+        }
+
+        .read-more:hover {
+            background: var(--primary);
+            color: white;
         }
 
         .loading {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem;
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            color: var(--primary);
         }
 
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .news-grid {
                 grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 1rem;
             }
         }
     </style>
@@ -136,20 +205,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Developer News</h1>
-            <p>Stay updated with the latest in tech and development</p>
+            <h1>Developer News Hub</h1>
+            <p>Your daily dose of tech insights, programming updates, and development trends</p>
         </div>
 
         <div id="news-container" class="news-grid">
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
-                Loading latest news...
+                <span>Fetching the latest developer news...</span>
             </div>
         </div>
     </div>
 
     <script>
-        // Using NewsAPI for developer news
         const API_KEY = 'YOUR_NEWS_API_KEY';
         const TOPICS = 'programming OR developer OR technology';
 
@@ -160,17 +228,27 @@
                 newsContainer.innerHTML = '';
 
                 data.articles.forEach(article => {
-                    const date = new Date(article.publishedAt).toLocaleDateString();
+                    const date = new Date(article.publishedAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
                     const card = `
                         <div class="news-card">
-                            <img class="news-image" src="${article.urlToImage || 'default-image.jpg'}" alt="${article.title}">
+                            <img class="news-image" src="${article.urlToImage || 'default-image.jpg'}" alt="${article.title}" onerror="this.src='https://via.placeholder.com/400x240?text=No+Image+Available'">
                             <div class="news-content">
                                 <span class="news-source">${article.source.name}</span>
                                 <h2 class="news-title">${article.title}</h2>
                                 <p class="news-description">${article.description || 'No description available'}</p>
                                 <div class="news-meta">
-                                    <span>${date}</span>
-                                    <a href="${article.url}" target="_blank" style="color: var(--primary)">Read More</a>
+                                    <span class="news-date">
+                                        <i class="far fa-calendar-alt"></i>
+                                        ${date}
+                                    </span>
+                                    <a href="${article.url}" target="_blank" class="read-more">
+                                        Read Article
+                                        <i class="fas fa-external-link-alt" style="margin-left: 5px;"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +261,7 @@
                 document.getElementById('news-container').innerHTML = `
                     <div class="loading" style="color: #ff4444;">
                         <i class="fas fa-exclamation-circle"></i>
-                        Error loading news. Please try again later.
+                        <span>Unable to load news at this time. Please try again later.</span>
                     </div>
                 `;
             });
