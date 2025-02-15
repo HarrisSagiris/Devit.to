@@ -459,7 +459,6 @@
         padding: 1.5rem;
         border-top: 1px solid var(--border);
         background: var(--bg);
-        display: none; /* Initially hidden */
     }
 
     .comment {
@@ -773,7 +772,7 @@
     <div class="version-banner">🚀 Welcome to Devit.to - The developer platform!</div>
     
     <div class="github-banner">
-        🌟 Love Devit.to? Help us make it better! Check out our <a href="https://github.com/HarrisSagiris/Devit.to" target="_blank">GitHub repository</a> and contribute to the project. Every contribution and star counts! 
+        🌟 Love Devit.to? Help us make it better! Check out our <a href="https://github.com/HarrisSagiris/Devit.to" target="_blank">GitHub repository</a> and contribute to the project. Every contribution counts! 
     </div>
 
     <header class="header">
@@ -873,7 +872,7 @@
                     </div>
                 </div>
 
-                <div class="comments-section" style="display: none;" id="comments-section-<%= post._id %>">
+                <div class="comments-section">
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
                             <input type="text" name="content" placeholder="Add a comment..." required>
