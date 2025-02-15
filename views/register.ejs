@@ -166,12 +166,34 @@
             font-size: 0.9rem;
         }
 
-        .github-btn {
+        .github-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
             background: var(--github-black);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .github-btn:hover {
-            background: #1a1e22;
+        .github-button:hover {
+            background: #2f363d;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .github-button:active {
+            transform: translateY(0);
+        }
+
+        .github-button i {
+            font-size: 1.2rem;
         }
 
         .login-link {
@@ -233,7 +255,7 @@
         </div>
 
         <div class="oauth-buttons">
-            <a href="/auth/github" class="github-btn button">
+            <a href="/auth/github" class="github-button">
                 <i class="fab fa-github"></i>
                 Continue with GitHub
             </a>
