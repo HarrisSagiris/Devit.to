@@ -255,7 +255,7 @@
         </div>
 
         <div class="oauth-buttons">
-            <a href="/auth/github" class="github-button">
+            <a href="/auth/github?returnTo=/" class="github-button">
                 <i class="fab fa-github"></i>
                 Continue with GitHub
             </a>
@@ -266,6 +266,7 @@
         </div>
 
         <form action="/register" method="post">
+            <input type="hidden" name="returnTo" value="/">
             <div class="input-group">
                 <input type="text" name="username" placeholder="Username" required>
                 <i class="fas fa-user"></i>
