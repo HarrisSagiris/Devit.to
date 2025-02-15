@@ -37,7 +37,7 @@
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 800px;
             background: var(--bg-card);
             padding: 3rem;
             border-radius: 16px;
@@ -100,37 +100,68 @@
             transform: translateY(-1px);
         }
 
-        .benefits {
+        .repositories {
             margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
         }
 
-        .benefit-item {
+        .repo-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .repo-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .repo-header {
             display: flex;
-            align-items: flex-start;
-            margin-bottom: 1.2rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
         }
 
-        .benefit-item i {
+        .repo-name {
+            font-weight: 600;
             color: var(--primary);
-            margin-right: 1rem;
-            margin-top: 0.2rem;
         }
 
-        .benefit-text {
-            flex: 1;
+        .repo-visibility {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            background: var(--github);
         }
 
-        .benefit-text h3 {
-            font-size: 1rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .benefit-text p {
+        .repo-description {
             color: var(--text-muted);
             font-size: 0.9rem;
+            margin-bottom: 1rem;
             line-height: 1.4;
+        }
+
+        .repo-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .repo-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
         }
 
         @media (max-width: 520px) {
@@ -148,40 +179,76 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Connect with GitHub</h1>
-            <p>Link your GitHub account to enhance your Devit.to experience</p>
+            <h1>GitHub Integration</h1>
+            <p id="header-text">Connect your GitHub account to view all your repositories</p>
         </div>
 
-        <a href="/auth/github" class="github-button">
-            <i class="fab fa-github"></i>
-            Connect with GitHub
-        </a>
-
-        <div class="benefits">
-            <div class="benefit-item">
-                <i class="fas fa-sync-alt"></i>
-                <div class="benefit-text">
-                    <h3>Sync Your Repositories</h3>
-                    <p>Automatically import and showcase your GitHub projects</p>
+        <% if (!user) { %>
+            <a href="/auth/github" class="github-button">
+                <i class="fab fa-github"></i>
+                Connect with GitHub
+            </a>
+        <% } else { %>
+            <div id="repositories" class="repositories">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading repositories...
                 </div>
             </div>
-
-            <div class="benefit-item">
-                <i class="fas fa-user-circle"></i>
-                <div class="benefit-text">
-                    <h3>Enhanced Profile</h3>
-                    <p>Display your GitHub contributions and activity</p>
-                </div>
-            </div>
-
-            <div class="benefit-item">
-                <i class="fas fa-code-branch"></i>
-                <div class="benefit-text">
-                    <h3>Share Code Snippets</h3>
-                    <p>Easily share code from your repositories in posts</p>
-                </div>
-            </div>
-        </div>
+        <% } %>
     </div>
+
+    <script>
+        <%- `
+            ${user ? `
+                fetch('/api/github/repos')
+                    .then(response => response.json())
+                    .then(repos => {
+                        const reposContainer = document.getElementById('repositories');
+                        reposContainer.innerHTML = '';
+                        
+                        document.getElementById('header-text').textContent = 
+                            'Showing all repositories for ${user.username}';
+
+                        repos.forEach(repo => {
+                            const card = \`
+                                <div class="repo-card">
+                                    <div class="repo-header">
+                                        <a href="\${repo.html_url}" target="_blank" class="repo-name">\${repo.name}</a>
+                                        <span class="repo-visibility">\${repo.private ? 'Private' : 'Public'}</span>
+                                    </div>
+                                    <div class="repo-description">
+                                        \${repo.description || 'No description provided'}
+                                    </div>
+                                    <div class="repo-stats">
+                                        <div class="repo-stat">
+                                            <i class="fas fa-star"></i>
+                                            \${repo.stargazers_count}
+                                        </div>
+                                        <div class="repo-stat">
+                                            <i class="fas fa-code-branch"></i>
+                                            \${repo.forks_count}
+                                        </div>
+                                        <div class="repo-stat">
+                                            <i class="fas fa-code"></i>
+                                            \${repo.language || 'N/A'}
+                                        </div>
+                                    </div>
+                                </div>
+                            \`;
+                            reposContainer.innerHTML += card;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching repositories:', error);
+                        document.getElementById('repositories').innerHTML = \`
+                            <div style="text-align: center; color: var(--text-muted);">
+                                Error loading repositories. Please try again later.
+                            </div>
+                        \`;
+                    });
+            ` : ''}
+        ` %>
+    </script>
 </body>
 </html>

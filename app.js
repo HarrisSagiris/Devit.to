@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs'); // Changed from bcrypt to bcryptjs
 const session = require('express-session');
 const path = require('path');
+const axios = require('axios'); // Add axios for GitHub API calls
 
 const app = express();
 const PORT = process.env.PORT || 10000; // Changed port to 10000
-//add cookie session 
 
 require('dotenv').config();
 
@@ -47,7 +47,33 @@ app.get('/fordevelopers', (req, res) => {
 
 // Add route for GitHub integration page
 app.get('/github', (req, res) => {
-  res.render('github');
+  res.render('github', { user: req.session.user });
+});
+
+// Add GitHub API endpoint
+app.get('/api/github/repos', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const user = await User.findById(req.session.user._id);
+    if (!user.githubToken) {
+      return res.status(400).json({ error: 'GitHub token not found' });
+    }
+
+    const response = await axios.get('https://api.github.com/user/repos', {
+      headers: {
+        'Authorization': `token ${user.githubToken}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('GitHub API error:', error);
+    res.status(500).json({ error: 'Error fetching GitHub repositories' });
+  }
 });
 
 // Routes with error handling
