@@ -670,7 +670,7 @@
                     </div>
                 </div>
             <% } else { %>
-                <div class="nav-links">
+                <div class="nav-links" style="position: relative;">
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
                     <a href="/github" class="github-btn">
@@ -683,6 +683,9 @@
                             <input type="checkbox" id="theme-toggle">
                             <span class="slider"></span>
                         </label>
+                    </div>
+                    <div style="position: absolute; top: 100%; left: 0; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 0.5rem; margin-top: 0.5rem; box-shadow: var(--shadow); font-size: 0.875rem; color: var(--text-muted); white-space: nowrap;">
+                        Login/Register to access all features
                     </div>
                 </div>
             <% } %>
