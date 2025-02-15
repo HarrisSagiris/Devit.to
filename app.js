@@ -90,7 +90,7 @@ passport.use(new GitHubStrategy({
 
 // Auth routes
 app.get('/auth/github',
-  passport.authenticate('github', { scope: ['user:email', 'repo'] })
+  passport.authenticate('github', { scope: ['user:email'] })
 );
 
 app.get('/auth/github/callback',
@@ -112,25 +112,11 @@ app.get('/github', (req, res) => {
 });
 
 // Add route for devitgit page
-app.get('/devitgit', async (req, res) => {
-  try {
-    if (!req.session.user) {
-      return res.redirect('/login');
-    }
-
-    const user = await User.findById(req.session.user._id);
-    if (!user.githubToken) {
-      return res.redirect('/github');
-    }
-
-    res.render('devitgit', { user: req.session.user });
-  } catch (error) {
-    console.error('Error loading devitgit page:', error);
-    res.status(500).send('Error loading devitgit page');
-  }
+app.get('/devitgit', (req, res) => {
+  res.render('devitgit', { user: req.session.user });
 });
 
-// Add GitHub API endpoints for devitgit
+// Add GitHub API endpoint
 app.get('/api/github/repos', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -153,84 +139,6 @@ app.get('/api/github/repos', async (req, res) => {
   } catch (error) {
     console.error('GitHub API error:', error);
     res.status(500).json({ error: 'Error fetching GitHub repositories' });
-  }
-});
-
-app.get('/api/github/repo/:owner/:repo/commits', async (req, res) => {
-  try {
-    if (!req.session.user) {
-      return res.status(403).json({ error: 'Login required' });
-    }
-
-    const user = await User.findById(req.session.user._id);
-    if (!user.githubToken) {
-      return res.status(400).json({ error: 'GitHub token not found' });
-    }
-
-    const { owner, repo } = req.params;
-    const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/commits`, {
-      headers: {
-        'Authorization': `token ${user.githubToken}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('GitHub API error:', error);
-    res.status(500).json({ error: 'Error fetching commits' });
-  }
-});
-
-app.get('/api/github/repo/:owner/:repo/branches', async (req, res) => {
-  try {
-    if (!req.session.user) {
-      return res.status(403).json({ error: 'Login required' });
-    }
-
-    const user = await User.findById(req.session.user._id);
-    if (!user.githubToken) {
-      return res.status(400).json({ error: 'GitHub token not found' });
-    }
-
-    const { owner, repo } = req.params;
-    const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/branches`, {
-      headers: {
-        'Authorization': `token ${user.githubToken}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('GitHub API error:', error);
-    res.status(500).json({ error: 'Error fetching branches' });
-  }
-});
-
-app.get('/api/github/repo/:owner/:repo/issues', async (req, res) => {
-  try {
-    if (!req.session.user) {
-      return res.status(403).json({ error: 'Login required' });
-    }
-
-    const user = await User.findById(req.session.user._id);
-    if (!user.githubToken) {
-      return res.status(400).json({ error: 'GitHub token not found' });
-    }
-
-    const { owner, repo } = req.params;
-    const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/issues`, {
-      headers: {
-        'Authorization': `token ${user.githubToken}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('GitHub API error:', error);
-    res.status(500).json({ error: 'Error fetching issues' });
   }
 });
 
