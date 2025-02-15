@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Integration - Devit.to</title>
+    <title>Developer News - Devit.to</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -15,7 +15,6 @@
             --text: #ffffff;
             --text-muted: #a3a3a3;
             --border: #404040;
-            --github: #24292e;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
@@ -28,150 +27,108 @@
         body {
             background-color: var(--bg);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
+            padding: 2rem;
         }
 
         .container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--bg-card);
-            padding: 3rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            animation: slideUp 0.4s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .header p {
             color: var(--text-muted);
-            line-height: 1.5;
+            font-size: 1.1rem;
         }
 
-        .github-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 1rem;
-            background: var(--github);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .github-button i {
-            margin-right: 0.8rem;
-            font-size: 1.2rem;
-        }
-
-        .github-button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .repositories {
-            margin-top: 2rem;
+        .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
         }
 
-        .repo-card {
-            background: var(--bg);
+        .news-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
             border: 1px solid var(--border);
-            border-radius: 8px;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-content {
             padding: 1.5rem;
-            transition: transform 0.2s;
         }
 
-        .repo-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .repo-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .news-source {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
             margin-bottom: 1rem;
         }
 
-        .repo-name {
+        .news-title {
+            font-size: 1.2rem;
             font-weight: 600;
-            color: var(--primary);
-        }
-
-        .repo-visibility {
-            font-size: 0.8rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            background: var(--github);
-        }
-
-        .repo-description {
-            color: var(--text-muted);
-            font-size: 0.9rem;
             margin-bottom: 1rem;
             line-height: 1.4;
         }
 
-        .repo-stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.9rem;
+        .news-description {
             color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
         }
 
-        .repo-stat {
+        .news-meta {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         .loading {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             color: var(--text-muted);
+            font-size: 1.1rem;
         }
 
-        @media (max-width: 520px) {
-            .container {
-                margin: 1rem;
-                padding: 2rem;
-            }
-
+        @media (max-width: 768px) {
             .header h1 {
-                font-size: 1.75rem;
+                font-size: 2rem;
+            }
+            
+            .news-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -179,111 +136,57 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>GitHub Integration</h1>
-            <p id="header-text">Connect your GitHub account to view all your repositories</p>
+            <h1>Developer News</h1>
+            <p>Stay updated with the latest in tech and development</p>
         </div>
 
-        <% if (!user) { %>
-            <a href="https://github.com/login/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=http://localhost:10000/auth/github/callback&scope=repo" class="github-button">
-                <i class="fab fa-github"></i>
-                Connect with GitHub
-            </a>
-        <% } else { %>
-            <div id="repositories" class="repositories">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    Loading repositories...
-                </div>
+        <div id="news-container" class="news-grid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                Loading latest news...
             </div>
-        <% } %>
+        </div>
     </div>
 
     <script>
-        const GITHUB_CLIENT_ID = 'YOUR_CLIENT_ID';
-        const GITHUB_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
-        const REDIRECT_URI = 'http://localhost:10000/auth/github/callback';
+        // Using NewsAPI for developer news
+        const API_KEY = 'YOUR_NEWS_API_KEY';
+        const TOPICS = 'programming OR developer OR technology';
 
-        <%- `
-            ${user ? `
-                fetch('/api/github/repos')
-                    .then(response => response.json())
-                    .then(repos => {
-                        const reposContainer = document.getElementById('repositories');
-                        reposContainer.innerHTML = '';
-                        
-                        document.getElementById('header-text').textContent = 
-                            'Showing all repositories for ${user.username}';
-
-                        repos.forEach(repo => {
-                            const card = \`
-                                <div class="repo-card">
-                                    <div class="repo-header">
-                                        <a href="\${repo.html_url}" target="_blank" class="repo-name">\${repo.name}</a>
-                                        <span class="repo-visibility">\${repo.private ? 'Private' : 'Public'}</span>
-                                    </div>
-                                    <div class="repo-description">
-                                        \${repo.description || 'No description provided'}
-                                    </div>
-                                    <div class="repo-stats">
-                                        <div class="repo-stat">
-                                            <i class="fas fa-star"></i>
-                                            \${repo.stargazers_count}
-                                        </div>
-                                        <div class="repo-stat">
-                                            <i class="fas fa-code-branch"></i>
-                                            \${repo.forks_count}
-                                        </div>
-                                        <div class="repo-stat">
-                                            <i class="fas fa-code"></i>
-                                            \${repo.language || 'N/A'}
-                                        </div>
-                                    </div>
-                                </div>
-                            \`;
-                            reposContainer.innerHTML += card;
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching repositories:', error);
-                        document.getElementById('repositories').innerHTML = \`
-                            <div style="text-align: center; color: var(--text-muted);">
-                                Error loading repositories. Please try again later.
-                            </div>
-                        \`;
-                    });
-            ` : ''}
-        ` %>
-
-        // Handle OAuth callback
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-            fetch('https://github.com/login/oauth/access_token', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    client_id: GITHUB_CLIENT_ID,
-                    client_secret: GITHUB_CLIENT_SECRET,
-                    code: code,
-                    redirect_uri: REDIRECT_URI
-                })
-            })
+        fetch(`https://newsapi.org/v2/everything?q=${TOPICS}&sortBy=publishedAt&language=en&apiKey=${API_KEY}`)
             .then(response => response.json())
             .then(data => {
-                if (data.access_token) {
-                    // Store the token and redirect
-                    localStorage.setItem('github_token', data.access_token);
-                    window.location.href = '/github';
-                }
+                const newsContainer = document.getElementById('news-container');
+                newsContainer.innerHTML = '';
+
+                data.articles.forEach(article => {
+                    const date = new Date(article.publishedAt).toLocaleDateString();
+                    const card = `
+                        <div class="news-card">
+                            <img class="news-image" src="${article.urlToImage || 'default-image.jpg'}" alt="${article.title}">
+                            <div class="news-content">
+                                <span class="news-source">${article.source.name}</span>
+                                <h2 class="news-title">${article.title}</h2>
+                                <p class="news-description">${article.description || 'No description available'}</p>
+                                <div class="news-meta">
+                                    <span>${date}</span>
+                                    <a href="${article.url}" target="_blank" style="color: var(--primary)">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    newsContainer.innerHTML += card;
+                });
             })
             .catch(error => {
-                console.error('Error during GitHub authentication:', error);
+                console.error('Error fetching news:', error);
+                document.getElementById('news-container').innerHTML = `
+                    <div class="loading" style="color: #ff4444;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        Error loading news. Please try again later.
+                    </div>
+                `;
             });
-        }
     </script>
 </body>
 </html>
