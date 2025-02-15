@@ -258,10 +258,11 @@
     </div>
 
     <script>
-        const API_KEY = 'd105c017f9af43ada62ac05ea1eb4f35';
-        const TOPICS = 'programming OR developer OR technology';
+        // Using the GNews API which has a free tier and allows public access
+        const API_KEY = '7f2dca2d6b1d7fb5c2d84c2e7e0f2f1f'; // Replace with your GNews API key
+        const API_URL = `https://gnews.io/api/v4/search?q=programming,technology,developer&lang=en&country=us&max=10&apikey=${API_KEY}`;
 
-        fetch(`https://newsapi.org/v2/everything?q=${TOPICS}&sortBy=publishedAt&language=en&apiKey=${API_KEY}`)
+        fetch(API_URL)
             .then(response => response.json())
             .then(data => {
                 const newsContainer = document.getElementById('news-container');
@@ -275,7 +276,7 @@
                     });
                     const card = `
                         <div class="news-card">
-                            <img class="news-image" src="${article.urlToImage || 'default-image.jpg'}" alt="${article.title}" onerror="this.src='https://via.placeholder.com/400x240?text=No+Image+Available'">
+                            <img class="news-image" src="${article.image || 'default-image.jpg'}" alt="${article.title}" onerror="this.src='https://via.placeholder.com/400x240?text=No+Image+Available'">
                             <div class="news-content">
                                 <span class="news-source">${article.source.name}</span>
                                 <h2 class="news-title">${article.title}</h2>
