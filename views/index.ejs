@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <style>
     /* Theme variables */
@@ -198,6 +199,23 @@
 
     .nav-links .for-developers-btn:hover {
         background: var(--primary-hover);
+        color: white;
+    }
+
+    .nav-links .github-btn {
+        background: #24292e;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-links .github-btn:hover {
+        background: #1a1e22;
         color: white;
     }
 
@@ -638,6 +656,10 @@
                     <a href="#" id="change-username">Change Username</a>
                     <a href="/my-posts">Reputation</a>
                     <a href="fordevelopers.html" class="for-developers-btn">About us</a>
+                    <a href="/github" class="github-btn">
+                        <i class="fab fa-github"></i>
+                        GitHub
+                    </a>
                     <a href="/logout">Logout</a>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 0.875rem; color: var(--text-muted);">Theme:</span>
@@ -651,6 +673,10 @@
                 <div class="nav-links">
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
+                    <a href="/github" class="github-btn">
+                        <i class="fab fa-github"></i>
+                        GitHub
+                    </a>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 0.875rem; color: var(--text-muted);">Theme:</span>
                         <label class="theme-switch" title="Switch between light and dark theme">

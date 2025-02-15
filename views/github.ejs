@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Integration - Devit.to</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a95ff;
+            --primary-hover: #0074cc;
+            --bg: #1a1a1a;
+            --bg-card: #242424;
+            --text: #ffffff;
+            --text-muted: #a3a3a3;
+            --border: #404040;
+            --github: #24292e;
+            --shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .github-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem;
+            background: var(--github);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .github-button i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .github-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .benefits {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.2rem;
+        }
+
+        .benefit-item i {
+            color: var(--primary);
+            margin-right: 1rem;
+            margin-top: 0.2rem;
+        }
+
+        .benefit-text {
+            flex: 1;
+        }
+
+        .benefit-text h3 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .benefit-text p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 520px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Connect with GitHub</h1>
+            <p>Link your GitHub account to enhance your Devit.to experience</p>
+        </div>
+
+        <a href="/auth/github" class="github-button">
+            <i class="fab fa-github"></i>
+            Connect with GitHub
+        </a>
+
+        <div class="benefits">
+            <div class="benefit-item">
+                <i class="fas fa-sync-alt"></i>
+                <div class="benefit-text">
+                    <h3>Sync Your Repositories</h3>
+                    <p>Automatically import and showcase your GitHub projects</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <i class="fas fa-user-circle"></i>
+                <div class="benefit-text">
+                    <h3>Enhanced Profile</h3>
+                    <p>Display your GitHub contributions and activity</p>
+                </div>
+            </div>
+
+            <div class="benefit-item">
+                <i class="fas fa-code-branch"></i>
+                <div class="benefit-text">
+                    <h3>Share Code Snippets</h3>
+                    <p>Easily share code from your repositories in posts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
