@@ -8,17 +8,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0a95ff;
-            --primary-hover: #0074cc;
-            --bg: #1a1a1a;
-            --bg-card: #242424;
+            --primary: #1DA1F2;
+            --primary-hover: #1a91da;
+            --bg: #000000;
+            --bg-card: #16181c;
             --text: #ffffff;
-            --text-muted: #a3a3a3;
-            --border: #404040;
+            --text-muted: #71767b;
+            --border: #2f3336;
             --shadow: 0 4px 12px rgba(0,0,0,0.3);
-            --gradient: linear-gradient(135deg, #0a95ff, #00b4d8);
-            --upvote: #10b981;
-            --downvote: #ef4444;
+            --gradient: linear-gradient(135deg, #1DA1F2, #1a91da);
+            --upvote: #00BA7C;
+            --downvote: #F4212E;
+            --source-github: #6e5494;
+            --source-reddit: #ff4500;
+            --source-devto: #0a0a0a;
         }
 
         * {
@@ -32,124 +35,93 @@
             min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
-            padding: 2rem;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 2rem 1rem;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 4rem;
-            padding: 3rem 0;
-            position: relative;
-            background: rgba(10, 149, 255, 0.05);
-            border-radius: 20px;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--gradient);
-            border-radius: 20px 20px 0 0;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
         }
 
         .header h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
             background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: -1px;
         }
 
         .header p {
             color: var(--text-muted);
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .news-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
         }
 
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 2rem;
-            padding: 0 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
         .news-card {
             background: var(--bg-card);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
             border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
             position: relative;
+            overflow: hidden;
         }
 
         .news-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-4px);
             box-shadow: var(--shadow);
-            border-color: var(--primary);
-        }
-
-        .news-image {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .news-card:hover .news-image {
-            transform: scale(1.05);
         }
 
         .news-content {
-            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .news-source {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--gradient);
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 2px 8px rgba(10, 149, 255, 0.2);
-        }
-
-        .news-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            line-height: 1.4;
-            color: var(--text);
-        }
-
-        .news-description {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        .news-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .news-date {
             color: var(--text-muted);
             font-size: 0.9rem;
             display: flex;
@@ -157,87 +129,113 @@
             gap: 0.5rem;
         }
 
-        .read-more {
-            color: var(--primary);
-            text-decoration: none;
+        .source-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: 500;
-            font-size: 0.95rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.2s;
-            border: 1px solid var(--primary);
         }
 
-        .read-more:hover {
-            background: var(--primary);
+        .source-tag.github {
+            background: var(--source-github);
             color: white;
         }
 
-        .loading {
-            text-align: center;
-            padding: 4rem;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
+        .source-tag.reddit {
+            background: var(--source-reddit);
+            color: white;
         }
 
-        .loading i {
-            font-size: 2rem;
+        .source-tag.devto {
+            background: var(--source-devto);
+            color: white;
+        }
+
+        .news-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .news-description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .read-more {
             color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .read-more:hover {
+            color: var(--primary-hover);
+            gap: 0.75rem;
         }
 
         .vote-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-top: 1rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
         }
 
         .vote-btn {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            background: transparent;
             border: none;
             cursor: pointer;
-            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: 8px;
             transition: all 0.2s;
         }
 
-        .upvote {
-            background: rgba(16, 185, 129, 0.1);
+        .vote-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .vote-btn.active.upvote {
             color: var(--upvote);
         }
 
-        .upvote:hover {
-            background: var(--upvote);
-            color: white;
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
         }
 
-        .downvote {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--downvote);
-        }
-
-        .downvote:hover {
-            background: var(--downvote);
-            color: white;
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
+            .container {
+                padding: 1rem;
             }
             
-            .news-grid {
-                grid-template-columns: 1fr;
+            .header {
+                padding: 1.5rem 0;
             }
 
-            body {
-                padding: 1rem;
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -245,112 +243,194 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Devit.to News Hub</h1>
-            <p>Your daily dose of tech insights, programming updates, and development trends</p>
+            <h1>Tech News Hub</h1>
+            <p>Your daily dose of developer news, tech updates, and trending stories</p>
+        </div>
+
+        <div class="news-filters">
+            <button class="filter-btn active">All Sources</button>
+            <button class="filter-btn">Hacker News</button>
+            <button class="filter-btn">GitHub Trending</button>
+            <button class="filter-btn">Dev.to</button>
+            <button class="filter-btn">Reddit Tech</button>
         </div>
 
         <div id="news-container" class="news-grid">
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
-                <span>Fetching the latest developer news...</span>
+                <span>Fetching the latest tech news...</span>
             </div>
         </div>
     </div>
 
     <script>
-        // Using the HackerNews API which is free and doesn't require an API key
-        const fetchTopStories = async () => {
+        const fetchAllNews = async () => {
             try {
-                const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
-                const storyIds = await response.json();
-                const top10Ids = storyIds.slice(0, 10);
-                
-                const stories = await Promise.all(
-                    top10Ids.map(id => 
-                        fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-                        .then(response => response.json())
-                    )
-                );
+                // Fetch from multiple sources in parallel
+                const [hackerNews, githubTrending, devtoNews, redditTech] = await Promise.all([
+                    fetchHackerNews(),
+                    fetchGithubTrending(),
+                    fetchDevtoNews(),
+                    fetchRedditTech()
+                ]);
 
-                const newsContainer = document.getElementById('news-container');
-                newsContainer.innerHTML = '';
+                const allNews = [...hackerNews, ...githubTrending, ...devtoNews, ...redditTech]
+                    .sort((a, b) => b.time - a.time);
 
-                stories.forEach(story => {
-                    const date = new Date(story.time * 1000).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                    
-                    const card = `
-                        <div class="news-card">
-                            <img class="news-image" src="https://picsum.photos/seed/${story.id}/400/240" alt="Tech News Image" onerror="this.src='https://via.placeholder.com/400x240?text=No+Image+Available'">
-                            <div class="news-content">
-                                <span class="news-source">Hacker News</span>
-                                <h2 class="news-title">${story.title}</h2>
-                                <p class="news-description">Posted by ${story.by} • ${story.score} points</p>
-                                <div class="news-meta">
-                                    <span class="news-date">
-                                        <i class="far fa-calendar-alt"></i>
-                                        ${date}
-                                    </span>
-                                    <a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" target="_blank" class="read-more">
-                                        Read Article
-                                        <i class="fas fa-external-link-alt" style="margin-left: 5px;"></i>
-                                    </a>
-                                </div>
-                                <div class="vote-buttons">
-                                    <button class="vote-btn upvote" onclick="handleVote(this, 'up')">
-                                        <i class="fas fa-arrow-up"></i>
-                                        <span class="vote-count">0</span>
-                                    </button>
-                                    <button class="vote-btn downvote" onclick="handleVote(this, 'down')">
-                                        <i class="fas fa-arrow-down"></i>
-                                        <span class="vote-count">0</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    newsContainer.innerHTML += card;
-                });
+                displayNews(allNews);
             } catch (error) {
                 console.error('Error fetching news:', error);
-                document.getElementById('news-container').innerHTML = `
-                    <div class="loading" style="color: #ff4444;">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span>Unable to load news at this time. Please try again later.</span>
-                    </div>
-                `;
+                showError();
             }
         };
 
-        fetchTopStories();
+        const fetchHackerNews = async () => {
+            const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
+            const storyIds = await response.json();
+            const top15Ids = storyIds.slice(0, 15);
+            
+            const stories = await Promise.all(
+                top15Ids.map(id => 
+                    fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+                    .then(response => response.json())
+                    .then(story => ({
+                        ...story,
+                        source: 'hackernews'
+                    }))
+                )
+            );
+            return stories;
+        };
 
-        function handleVote(button, type) {
+        const fetchGithubTrending = async () => {
+            // Simulated GitHub trending fetch
+            return [];
+        };
+
+        const fetchDevtoNews = async () => {
+            // Simulated Dev.to news fetch
+            return [];
+        };
+
+        const fetchRedditTech = async () => {
+            // Simulated Reddit tech news fetch
+            return [];
+        };
+
+        const displayNews = (news) => {
+            const newsContainer = document.getElementById('news-container');
+            newsContainer.innerHTML = '';
+
+            news.forEach(story => {
+                const timeAgo = getTimeAgo(story.time * 1000);
+                const sourceTag = getSourceTag(story.source);
+                
+                const card = `
+                    <div class="news-card">
+                        <div class="news-content">
+                            <div class="news-source">
+                                ${sourceTag}
+                                <span>• ${timeAgo}</span>
+                            </div>
+                            <h2 class="news-title">${story.title}</h2>
+                            <p class="news-description">Posted by ${story.by} • ${story.score} points</p>
+                            <a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" target="_blank" class="read-more">
+                                Read full article <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <div class="vote-buttons">
+                                <button class="vote-btn upvote" onclick="handleVote(this)">
+                                    <i class="far fa-heart"></i>
+                                    <span class="vote-count">0</span>
+                                </button>
+                                <button class="vote-btn" onclick="shareStory('${story.url || `https://news.ycombinator.com/item?id=${story.id}`}')">
+                                    <i class="far fa-share-square"></i>
+                                    Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                newsContainer.innerHTML += card;
+            });
+        };
+
+        const getSourceTag = (source) => {
+            const sources = {
+                hackernews: '<span class="source-tag github">Hacker News</span>',
+                github: '<span class="source-tag github">GitHub</span>',
+                devto: '<span class="source-tag devto">DEV</span>',
+                reddit: '<span class="source-tag reddit">Reddit</span>'
+            };
+            return sources[source] || sources.hackernews;
+        };
+
+        function getTimeAgo(timestamp) {
+            const seconds = Math.floor((new Date() - timestamp) / 1000);
+            const intervals = {
+                year: 31536000,
+                month: 2592000,
+                week: 604800,
+                day: 86400,
+                hour: 3600,
+                minute: 60
+            };
+            
+            for (let [unit, secondsInUnit] of Object.entries(intervals)) {
+                const interval = Math.floor(seconds / secondsInUnit);
+                if (interval >= 1) {
+                    return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+                }
+            }
+            return 'just now';
+        }
+
+        function handleVote(button) {
             const countSpan = button.querySelector('.vote-count');
             let count = parseInt(countSpan.textContent);
             
             if (button.classList.contains('active')) {
-                count = type === 'up' ? count - 1 : count + 1;
+                count--;
                 button.classList.remove('active');
             } else {
-                count = type === 'up' ? count + 1 : count - 1;
+                count++;
                 button.classList.add('active');
-                
-                // Remove active class from opposite button
-                const oppositeButton = button.parentElement.querySelector(
-                    type === 'up' ? '.downvote' : '.upvote'
-                );
-                if (oppositeButton.classList.contains('active')) {
-                    oppositeButton.classList.remove('active');
-                    const oppositeCount = oppositeButton.querySelector('.vote-count');
-                    oppositeCount.textContent = parseInt(oppositeCount.textContent) + (type === 'up' ? 1 : -1);
-                }
             }
             
             countSpan.textContent = count;
         }
+
+        function shareStory(url) {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this tech news',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url)
+                    .then(() => alert('Link copied to clipboard!'))
+                    .catch(() => alert('Failed to copy link'));
+            }
+        }
+
+        function showError() {
+            document.getElementById('news-container').innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Unable to load news. Please try again later.</span>
+                </div>
+            `;
+        }
+
+        // Initialize news filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                // TODO: Implement actual filtering
+            });
+        });
+
+        fetchAllNews();
     </script>
 </body>
 </html>
