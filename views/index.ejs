@@ -1513,7 +1513,7 @@
                                 Posted in <%= post.category %> by 
                                 <span class="user-info">
                                     <%= post.username %>
-                                    <span class="followers-count">(<%= post.authorTotalUpvotes %> upvotes)</span>
+                                    <span class="followers-count">(<%= post.author?.totalUpvotes || 0 %> upvotes)</span>
                                     <% if (user && user.username !== post.username) { %>
                                         <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
                                                 data-username="<%= post.username %>">
