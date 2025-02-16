@@ -144,11 +144,7 @@ app.get('/api/github/repos', async (req, res) => {
 
 // Routes with error handling
 app.get('/', (req, res) => {
-  if (!req.session.user) {
-    res.redirect('/register');
-  } else {
-    res.render('index', { user: req.session.user });
-  }
+  res.render('register');
 });
 
 // Add route for my posts page
