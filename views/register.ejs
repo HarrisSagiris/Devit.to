@@ -112,6 +112,19 @@
             color: var(--text-muted);
         }
 
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .password-requirements {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+
         button {
             background: var(--primary);
             color: white;
@@ -265,19 +278,31 @@
             <span>OR</span>
         </div>
 
-        <form action="/register" method="post">
+        <form action="/register" method="post" id="registerForm" onsubmit="return validateForm()">
             <input type="hidden" name="returnTo" value="/">
             <div class="input-group">
                 <input type="text" name="username" placeholder="Username" required>
                 <i class="fas fa-user"></i>
             </div>
             <div class="input-group">
-                <input type="email" name="email" placeholder="Email address" required>
+                <input type="email" name="email" id="email" placeholder="Email address" required>
                 <i class="fas fa-envelope"></i>
+                <div class="error-message" id="emailError">Please enter a valid email address</div>
             </div>
             <div class="input-group">
-                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="password" id="password" placeholder="Password" required>
                 <i class="fas fa-lock"></i>
+                <div class="password-requirements">
+                    Password must contain at least:
+                    <ul>
+                        <li>8 characters</li>
+                        <li>One uppercase letter</li>
+                        <li>One lowercase letter</li>
+                        <li>One number</li>
+                        <li>One special character</li>
+                    </ul>
+                </div>
+                <div class="error-message" id="passwordError">Password does not meet requirements</div>
             </div>
             <button type="submit">
                 <i class="fas fa-user-plus"></i>
@@ -293,5 +318,35 @@
             By signing up, you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>
         </div>
     </div>
+
+    <script>
+        function validateForm() {
+            let isValid = true;
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+
+            // Email validation
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailRegex.test(email.value)) {
+                emailError.style.display = 'block';
+                isValid = false;
+            } else {
+                emailError.style.display = 'none';
+            }
+
+            // Password validation
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(password.value)) {
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else {
+                passwordError.style.display = 'none';
+            }
+
+            return isValid;
+        }
+    </script>
 </body>
 </html>
