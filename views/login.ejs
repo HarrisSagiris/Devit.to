@@ -260,7 +260,7 @@
         </div>
 
         <div class="oauth-buttons">
-            <a href="/auth/github" class="github-button">
+            <a href="/auth/github" class="github-button" onclick="handleGitHubAuth(event)">
                 <i class="fab fa-github"></i>
                 Continue with GitHub
             </a>
@@ -287,5 +287,25 @@
 
         <a href="/register" class="register-link">New to Devit.to? Create an account</a>
     </div>
+
+    <script>
+    function handleGitHubAuth(event) {
+        event.preventDefault();
+        
+        // Store the current URL as the return destination
+        localStorage.setItem('authReturnTo', window.location.href);
+        
+        // Redirect to GitHub auth
+        window.location.href = '/auth/github';
+    }
+
+    // Check for auth errors on page load
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            alert('Authentication failed. Please try again.');
+        }
+    };
+    </script>
 </body>
 </html>
