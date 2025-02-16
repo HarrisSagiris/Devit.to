@@ -1128,6 +1128,34 @@
                 // Sort categories by post count (descending)
                 const sortedCategories = Object.entries(categories)
                     .sort((a, b) => b[1] - a[1]);
+
+                // Define icon map here
+                const iconMap = {
+                    'General': 'fas fa-globe',
+                    'Javascript/Typescript': 'fab fa-js',
+                    'C++': 'fas fa-code',
+                    'Gaming': 'fas fa-gamepad',
+                    'Python': 'fab fa-python',
+                    'PHP': 'fab fa-php',
+                    'Tech': 'fas fa-microchip',
+                    'AI': 'fas fa-robot',
+                    'Java': 'fab fa-java',
+                    'Ruby': 'fas fa-gem',
+                    'Go': 'fab fa-golang',
+                    'Rust': 'fas fa-cog',
+                    'Swift': 'fab fa-swift',
+                    'Kotlin': 'fas fa-mobile-alt',
+                    'React': 'fab fa-react',
+                    'Vue': 'fab fa-vuejs',
+                    'Angular': 'fab fa-angular',
+                    'Node.js': 'fab fa-node-js',
+                    'DevOps': 'fas fa-server',
+                    'Cloud Computing': 'fas fa-cloud',
+                    'Cybersecurity': 'fas fa-shield-alt',
+                    'Blockchain': 'fas fa-link',
+                    'Machine Learning': 'fas fa-brain',
+                    'Data Science': 'fas fa-chart-bar'
+                };
                 %>
 
                 <a href="javascript:void(0)" class="category-item active" data-value="" onclick="filterPosts('')">
@@ -1142,7 +1170,7 @@
                            class="category-item" 
                            data-value="<%= category %>" 
                            onclick="filterPosts('<%= category %>')">
-                            <i class="<%= getCategoryIcon(category) %>"></i>
+                            <i class="<%= iconMap[category] || 'fas fa-tag' %>"></i>
                             <span><%= category %></span>
                             <span class="post-count"><%= count %></span>
                         </a>
@@ -1333,36 +1361,6 @@
         </style>
 
         <script>
-            function getCategoryIcon(category) {
-                const iconMap = {
-                    'General': 'fas fa-globe',
-                    'Javascript/Typescript': 'fab fa-js',
-                    'C++': 'fas fa-code',
-                    'Gaming': 'fas fa-gamepad',
-                    'Python': 'fab fa-python',
-                    'PHP': 'fab fa-php',
-                    'Tech': 'fas fa-microchip',
-                    'AI': 'fas fa-robot',
-                    'Java': 'fab fa-java',
-                    'Ruby': 'fas fa-gem',
-                    'Go': 'fab fa-golang',
-                    'Rust': 'fas fa-cog',
-                    'Swift': 'fab fa-swift',
-                    'Kotlin': 'fas fa-mobile-alt',
-                    'React': 'fab fa-react',
-                    'Vue': 'fab fa-vuejs',
-                    'Angular': 'fab fa-angular',
-                    'Node.js': 'fab fa-node-js',
-                    'DevOps': 'fas fa-server',
-                    'Cloud Computing': 'fas fa-cloud',
-                    'Cybersecurity': 'fas fa-shield-alt',
-                    'Blockchain': 'fas fa-link',
-                    'Machine Learning': 'fas fa-brain',
-                    'Data Science': 'fas fa-chart-bar'
-                };
-                return iconMap[category] || 'fas fa-tag';
-            }
-
             // Add animation delay to categories
             document.querySelectorAll('.category-item').forEach((item, index) => {
                 item.style.setProperty('--index', index);
