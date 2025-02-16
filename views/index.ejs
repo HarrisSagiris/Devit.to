@@ -1089,8 +1089,9 @@
             </h3>
             <div class="categories-list">
                 <% 
+                // Initialize categories object
                 const categories = {
-                    'all': 0,
+                    'all': posts.length, // Total number of posts
                     'General': 0,
                     'Javascript/Typescript': 0,
                     'C++': 0,
@@ -1116,132 +1117,37 @@
                     'Machine Learning': 0,
                     'Data Science': 0
                 };
+
+                // Count posts per category
+                posts.forEach(post => {
+                    if (categories.hasOwnProperty(post.category)) {
+                        categories[post.category]++;
+                    }
+                });
+
+                // Sort categories by post count (descending)
+                const sortedCategories = Object.entries(categories)
+                    .sort((a, b) => b[1] - a[1]);
                 %>
+
                 <a href="javascript:void(0)" class="category-item active" data-value="" onclick="filterPosts('')">
                     <i class="fas fa-th-large"></i>
                     <span>All Categories</span>
                     <span class="post-count"><%= categories['all'] %></span>
                 </a>
-                <a href="javascript:void(0)" class="category-item" data-value="General" onclick="filterPosts('General')">
-                    <i class="fas fa-globe"></i>
-                    <span>General</span>
-                    <span class="post-count"><%= categories['General'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Javascript/Typescript" onclick="filterPosts('Javascript/Typescript')">
-                    <i class="fab fa-js"></i>
-                    <span>Javascript/Typescript</span>
-                    <span class="post-count"><%= categories['Javascript/Typescript'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="C++" onclick="filterPosts('C++')">
-                    <i class="fas fa-code"></i>
-                    <span>C++</span>
-                    <span class="post-count"><%= categories['C++'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Gaming" onclick="filterPosts('Gaming')">
-                    <i class="fas fa-gamepad"></i>
-                    <span>Gaming</span>
-                    <span class="post-count"><%= categories['Gaming'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Python" onclick="filterPosts('Python')">
-                    <i class="fab fa-python"></i>
-                    <span>Python</span>
-                    <span class="post-count"><%= categories['Python'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="PHP" onclick="filterPosts('PHP')">
-                    <i class="fab fa-php"></i>
-                    <span>PHP</span>
-                    <span class="post-count"><%= categories['PHP'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Tech" onclick="filterPosts('Tech')">
-                    <i class="fas fa-microchip"></i>
-                    <span>Tech</span>
-                    <span class="post-count"><%= categories['Tech'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="AI" onclick="filterPosts('AI')">
-                    <i class="fas fa-robot"></i>
-                    <span>AI</span>
-                    <span class="post-count"><%= categories['AI'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Java" onclick="filterPosts('Java')">
-                    <i class="fab fa-java"></i>
-                    <span>Java</span>
-                    <span class="post-count"><%= categories['Java'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Ruby" onclick="filterPosts('Ruby')">
-                    <i class="fas fa-gem"></i>
-                    <span>Ruby</span>
-                    <span class="post-count"><%= categories['Ruby'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Go" onclick="filterPosts('Go')">
-                    <i class="fab fa-golang"></i>
-                    <span>Go</span>
-                    <span class="post-count"><%= categories['Go'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Rust" onclick="filterPosts('Rust')">
-                    <i class="fas fa-cog"></i>
-                    <span>Rust</span>
-                    <span class="post-count"><%= categories['Rust'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Swift" onclick="filterPosts('Swift')">
-                    <i class="fab fa-swift"></i>
-                    <span>Swift</span>
-                    <span class="post-count"><%= categories['Swift'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Kotlin" onclick="filterPosts('Kotlin')">
-                    <i class="fas fa-mobile-alt"></i>
-                    <span>Kotlin</span>
-                    <span class="post-count"><%= categories['Kotlin'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="React" onclick="filterPosts('React')">
-                    <i class="fab fa-react"></i>
-                    <span>React</span>
-                    <span class="post-count"><%= categories['React'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Vue" onclick="filterPosts('Vue')">
-                    <i class="fab fa-vuejs"></i>
-                    <span>Vue</span>
-                    <span class="post-count"><%= categories['Vue'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Angular" onclick="filterPosts('Angular')">
-                    <i class="fab fa-angular"></i>
-                    <span>Angular</span>
-                    <span class="post-count"><%= categories['Angular'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Node.js" onclick="filterPosts('Node.js')">
-                    <i class="fab fa-node-js"></i>
-                    <span>Node.js</span>
-                    <span class="post-count"><%= categories['Node.js'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="DevOps" onclick="filterPosts('DevOps')">
-                    <i class="fas fa-server"></i>
-                    <span>DevOps</span>
-                    <span class="post-count"><%= categories['DevOps'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Cloud Computing" onclick="filterPosts('Cloud Computing')">
-                    <i class="fas fa-cloud"></i>
-                    <span>Cloud Computing</span>
-                    <span class="post-count"><%= categories['Cloud Computing'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Cybersecurity" onclick="filterPosts('Cybersecurity')">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Cybersecurity</span>
-                    <span class="post-count"><%= categories['Cybersecurity'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Blockchain" onclick="filterPosts('Blockchain')">
-                    <i class="fas fa-link"></i>
-                    <span>Blockchain</span>
-                    <span class="post-count"><%= categories['Blockchain'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Machine Learning" onclick="filterPosts('Machine Learning')">
-                    <i class="fas fa-brain"></i>
-                    <span>Machine Learning</span>
-                    <span class="post-count"><%= categories['Machine Learning'] %></span>
-                </a>
-                <a href="javascript:void(0)" class="category-item" data-value="Data Science" onclick="filterPosts('Data Science')">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Data Science</span>
-                    <span class="post-count"><%= categories['Data Science'] %></span>
-                </a>
+
+                <% sortedCategories.forEach(([category, count]) => { 
+                    if(category !== 'all' && count > 0) { %>
+                        <a href="javascript:void(0)" 
+                           class="category-item" 
+                           data-value="<%= category %>" 
+                           onclick="filterPosts('<%= category %>')">
+                            <i class="<%= getCategoryIcon(category) %>"></i>
+                            <span><%= category %></span>
+                            <span class="post-count"><%= count %></span>
+                        </a>
+                    <% }
+                }); %>
             </div>
         </div>
 
@@ -1269,6 +1175,24 @@
                 
                 .categories-sidebar.active {
                     transform: translateX(0);
+                }
+
+                .toggle-sidebar {
+                    display: block;
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 101;
+                    background: var(--primary);
+                    color: white;
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: var(--shadow-lg);
+                    cursor: pointer;
                 }
             }
 
@@ -1307,6 +1231,19 @@
                 background: var(--bg);
                 border: 1px solid var(--border);
                 position: relative;
+                overflow: hidden;
+            }
+
+            .category-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 3px;
+                background: var(--primary);
+                opacity: 0;
+                transition: opacity 0.2s;
             }
 
             .category-item i {
@@ -1315,6 +1252,7 @@
                 font-size: 1.1rem;
                 color: var(--primary);
                 margin-right: 12px;
+                transition: transform 0.2s;
             }
 
             .category-item span {
@@ -1329,12 +1267,24 @@
                 font-size: 0.75rem;
                 min-width: 24px;
                 text-align: center;
+                transition: transform 0.2s;
             }
 
             .category-item:hover {
                 background: var(--primary-light);
                 border-color: var(--primary);
-                transform: translateX(5px);
+            }
+
+            .category-item:hover::before {
+                opacity: 1;
+            }
+
+            .category-item:hover i {
+                transform: scale(1.1);
+            }
+
+            .category-item:hover .post-count {
+                transform: scale(1.1);
             }
 
             .category-item.active {
@@ -1352,7 +1302,6 @@
                 color: var(--primary);
             }
 
-            /* Custom scrollbar for the sidebar */
             .categories-sidebar::-webkit-scrollbar {
                 width: 6px;
             }
@@ -1370,7 +1319,55 @@
             .categories-sidebar::-webkit-scrollbar-thumb:hover {
                 background: var(--primary-hover);
             }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .category-item {
+                animation: fadeIn 0.3s ease forwards;
+                animation-delay: calc(var(--index) * 0.05s);
+                opacity: 0;
+            }
         </style>
+
+        <script>
+            function getCategoryIcon(category) {
+                const iconMap = {
+                    'General': 'fas fa-globe',
+                    'Javascript/Typescript': 'fab fa-js',
+                    'C++': 'fas fa-code',
+                    'Gaming': 'fas fa-gamepad',
+                    'Python': 'fab fa-python',
+                    'PHP': 'fab fa-php',
+                    'Tech': 'fas fa-microchip',
+                    'AI': 'fas fa-robot',
+                    'Java': 'fab fa-java',
+                    'Ruby': 'fas fa-gem',
+                    'Go': 'fab fa-golang',
+                    'Rust': 'fas fa-cog',
+                    'Swift': 'fab fa-swift',
+                    'Kotlin': 'fas fa-mobile-alt',
+                    'React': 'fab fa-react',
+                    'Vue': 'fab fa-vuejs',
+                    'Angular': 'fab fa-angular',
+                    'Node.js': 'fab fa-node-js',
+                    'DevOps': 'fas fa-server',
+                    'Cloud Computing': 'fas fa-cloud',
+                    'Cybersecurity': 'fas fa-shield-alt',
+                    'Blockchain': 'fas fa-link',
+                    'Machine Learning': 'fas fa-brain',
+                    'Data Science': 'fas fa-chart-bar'
+                };
+                return iconMap[category] || 'fas fa-tag';
+            }
+
+            // Add animation delay to categories
+            document.querySelectorAll('.category-item').forEach((item, index) => {
+                item.style.setProperty('--index', index);
+            });
+        </script>
 
     <script>
         const searchBar = document.getElementById('search-bar');
