@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Devit.to - Create Account</title>
+    <title>Join Daily.dev - Create Account</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0a95ff;
-            --primary-hover: #0074cc;
-            --bg: #1a1a1a;
-            --bg-card: #242424;
+            --primary: #8858ED;
+            --primary-hover: #7040E5; 
+            --bg: #0E1217;
+            --bg-card: #151920;
             --text: #ffffff;
-            --text-muted: #a3a3a3;
-            --border: #404040;
+            --text-muted: #626466;
+            --border: #2D3748;
             --error: #f44336;
             --success: #4CAF50;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -40,6 +40,9 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             position: relative;
+            background-image: url('/images/bg-pattern.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .container {
@@ -65,12 +68,12 @@
         }
 
         .logo {
-            text-align: center;
+            text-align: left;
             margin-bottom: 2rem;
         }
 
         .logo h1 {
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--text);
             margin-bottom: 0.5rem;
@@ -79,6 +82,8 @@
         .logo p {
             color: var(--text-muted);
             font-size: 1rem;
+            line-height: 1.5;
+            max-width: 280px;
         }
 
         form {
@@ -105,7 +110,7 @@
         .input-group input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(136, 88, 237, 0.1);
         }
 
         .input-group i {
@@ -114,87 +119,6 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
-        }
-
-        .password-strength-bar {
-            height: 4px;
-            background: var(--border);
-            margin-top: 8px;
-            border-radius: 2px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .password-strength-bar .strength {
-            width: 0%;
-            height: 100%;
-            background: var(--password-weak);
-            transition: all 0.3s ease;
-        }
-
-        .password-requirements {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            display: flex;
-            gap: 4px;
-            margin-top: 4px;
-            height: 20px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .password-requirements.show {
-            opacity: 1;
-        }
-
-        .requirement {
-            flex: 1;
-            height: 100%;
-            background: var(--warning);
-            border-radius: 2px;
-            transition: background-color 0.3s ease;
-            position: relative;
-        }
-
-        .requirement.valid {
-            background: var(--success);
-        }
-
-        .requirement:hover::after {
-            content: attr(data-requirement);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-card);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            margin-bottom: 4px;
-            border: 1px solid var(--border);
-        }
-
-        .error-message {
-            color: var(--error);
-            font-size: 0.8rem;
-            margin-top: 0.3rem;
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         button {
@@ -217,11 +141,6 @@
         button:hover {
             background: var(--primary-hover);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(10, 149, 255, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0);
         }
 
         .oauth-buttons {
@@ -249,6 +168,7 @@
         .oauth-divider span {
             color: var(--text-muted);
             font-size: 0.9rem;
+            text-transform: uppercase;
         }
 
         .github-button {
@@ -256,7 +176,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.8rem;
-            background: var(--github-black);
+            background: var(--bg);
             color: white;
             text-decoration: none;
             padding: 0.8rem;
@@ -264,17 +184,12 @@
             font-size: 1rem;
             font-weight: 500;
             transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
         }
 
         .github-button:hover {
-            background: #2f363d;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .github-button:active {
-            transform: translateY(0);
+            background: var(--bg-card);
+            border-color: var(--primary);
         }
 
         .github-button i {
@@ -284,7 +199,7 @@
         .login-link {
             text-align: center;
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-top: 1.5rem;
         }
 
@@ -323,7 +238,7 @@
             }
 
             .logo h1 {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
 
             input {
@@ -335,55 +250,35 @@
 <body>
     <div class="container">
         <div class="logo">
-            <h1>Devit.to</h1>
-            <p>Join the community today</p>
-        </div>
-
-        <div class="oauth-buttons">
-            <a href="/auth/github?returnTo=/" class="github-button">
-                <i class="fab fa-github"></i>
-                Continue with GitHub
-            </a>
-        </div>
-
-        <div class="oauth-divider">
-            <span>OR</span>
+            <h1>daily.dev</h1>
+            <p>Where developers suffer together</p>
         </div>
 
         <form action="/register" method="post" id="registerForm" onsubmit="return validateForm()">
             <input type="hidden" name="returnTo" value="/">
             <div class="input-group">
-                <small style="color: var(--text-muted); display: block; margin-bottom: 0.5rem;">You can change your username any time</small>
-                <input type="text" name="username" placeholder="Username" required>
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="input-group">
-                <input type="email" name="email" id="email" placeholder="Email address" required>
+                <input type="email" name="email" id="email" placeholder="Sign up - Free forever" required>
                 <i class="fas fa-envelope"></i>
-                <div class="error-message" id="emailError">Please enter a valid email address</div>
             </div>
-            <div class="input-group">
-                <input type="password" name="password" id="password" placeholder="Password" required>
-                <i class="fas fa-lock"></i>
-                <div class="password-strength-bar">
-                    <div class="strength"></div>
-                    <div class="password-requirements" id="passwordRequirements">
-                        <div class="requirement" id="length" data-requirement="8+ chars"></div>
-                        <div class="requirement" id="uppercase" data-requirement="Uppercase"></div>
-                        <div class="requirement" id="lowercase" data-requirement="Lowercase"></div>
-                        <div class="requirement" id="number" data-requirement="Number"></div>
-                        <div class="requirement" id="special" data-requirement="Special char"></div>
-                    </div>
-                </div>
-            </div>
-            <button type="submit" id="submitBtn" disabled>
-                <i class="fas fa-user-plus"></i>
-                Create Account
+            
+            <button type="submit" id="submitBtn">
+                Sign up
             </button>
         </form>
 
-        <div class="login-link">
-            Already have an account?<a href="/login">Sign in</a>
+        <div class="oauth-divider">
+            <span>or</span>
+        </div>
+
+        <div class="oauth-buttons">
+            <a href="/auth/google" class="github-button">
+                <i class="fab fa-google"></i>
+                Google
+            </a>
+            <a href="/auth/github?returnTo=/" class="github-button">
+                <i class="fab fa-github"></i>
+                GitHub
+            </a>
         </div>
 
         <div class="terms">
@@ -392,78 +287,21 @@
     </div>
 
     <script>
-        const passwordInput = document.getElementById('password');
         const emailInput = document.getElementById('email');
-        const requirements = document.getElementById('passwordRequirements');
         const submitBtn = document.getElementById('submitBtn');
-        const strengthBar = document.querySelector('.strength');
-        
-        // Show requirements when password field is focused
-        passwordInput.addEventListener('focus', () => {
-            requirements.classList.add('show');
-        });
 
-        // Real-time password validation
-        passwordInput.addEventListener('input', validatePassword);
         emailInput.addEventListener('input', validateEmail);
-
-        function validatePassword() {
-            const password = passwordInput.value;
-            
-            // Requirements checks
-            const checks = {
-                length: password.length >= 8,
-                uppercase: /[A-Z]/.test(password),
-                lowercase: /[a-z]/.test(password),
-                number: /[0-9]/.test(password),
-                special: /[@$!%*?&]/.test(password)
-            };
-
-            // Update requirement styles
-            Object.keys(checks).forEach(check => {
-                const requirement = document.getElementById(check);
-                if (checks[check]) {
-                    requirement.classList.add('valid');
-                } else {
-                    requirement.classList.remove('valid');
-                }
-            });
-
-            // Calculate password strength
-            const validChecks = Object.values(checks).filter(Boolean).length;
-            const strengthPercentage = (validChecks / 5) * 100;
-            strengthBar.style.width = `${strengthPercentage}%`;
-
-            // Update strength bar color
-            if (strengthPercentage <= 40) {
-                strengthBar.style.background = 'var(--password-weak)';
-            } else if (strengthPercentage <= 80) {
-                strengthBar.style.background = 'var(--password-medium)';
-            } else {
-                strengthBar.style.background = 'var(--password-strong)';
-            }
-
-            // Enable/disable submit button based on all requirements being met
-            const allValid = Object.values(checks).every(check => check) && validateEmail();
-            submitBtn.disabled = !allValid;
-        }
 
         function validateEmail() {
             const email = emailInput.value;
-            const emailError = document.getElementById('emailError');
             const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
             
-            if (!emailRegex.test(email)) {
-                emailError.style.display = 'block';
-                return false;
-            } else {
-                emailError.style.display = 'none';
-                return true;
-            }
+            submitBtn.disabled = !emailRegex.test(email);
+            return emailRegex.test(email);
         }
 
         function validateForm() {
-            return validateEmail() && validatePassword();
+            return validateEmail();
         }
     </script>
 </body>
