@@ -1512,7 +1512,7 @@
                             <div class="post-meta">
                                 Posted in <%= post.category %> by 
                                 <span class="user-info">
-                                    <%= post.username %>-<%= post.author?.totalUpvotes || 0 %>
+                                    <%= post.username %>-<%= post.author ? post.author.upvotes : 0 %>
                                     <% if (user && user.username !== post.username) { %>
                                         <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
                                                 data-username="<%= post.username %>">
@@ -1520,7 +1520,7 @@
                                         </button>
                                     <% } %>
                                 </span>
-                                • <%= new Date(post.createdAt).toLocaleString() %>
+                                • <%= new Date(post.createdAt).toLocaleDateString() %>
                             </div>
                             <h3 class="post-title"><%= post.title %></h3>
                             <div class="post-content">
