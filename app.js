@@ -143,11 +143,17 @@ app.get('/api/github/repos', async (req, res) => {
 });
 
 // Routes with error handling
-app.get('/', (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/register');
+app.get('/', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/register');
+    }
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.render('index', { user: req.session.user, posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).send('Error loading posts');
   }
-  res.render('index', { user: req.session.user });
 });
 
 // Add route for my posts page

@@ -1127,16 +1127,16 @@
                 };
 
                 // Update 'all' count if posts exists
-                if (typeof posts !== 'undefined' && Array.isArray(posts)) {
-                    categories.all = posts.length;
+                if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
+                    categories.all = locals.posts.length;
+                    
+                    // Count posts per category
+                    locals.posts.forEach(post => {
+                        if (categories.hasOwnProperty(post.category)) {
+                            categories[post.category]++;
+                        }
+                    });
                 }
-
-                // Count posts per category
-                posts.forEach(post => {
-                    if (categories.hasOwnProperty(post.category)) {
-                        categories[post.category]++;
-                    }
-                });
 
                 // Sort categories by post count (descending)
                 const sortedCategories = Object.entries(categories)
