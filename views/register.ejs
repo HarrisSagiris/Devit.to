@@ -136,6 +136,10 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
             display: none;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
         }
 
         button {
@@ -301,9 +305,40 @@
             <div class="input-group">
                 <input type="password" name="password" id="password" placeholder="Password" required>
                 <i class="fas fa-lock"></i>
-                <div id="passwordStrength" class="password-strength"></div>
+                <div id="passwordStrength" class="password-strength">
+                    <div class="strength-bar"></div>
+                    <span class="strength-text"></span>
+                </div>
+                <style>
+                    .password-strength {
+                        margin-top: 0.5rem;
+                        font-size: 0.875rem;
+                    }
+                    .strength-bar {
+                        height: 4px;
+                        background: var(--border);
+                        border-radius: 2px;
+                        margin-bottom: 0.25rem;
+                        transition: all 0.3s ease;
+                    }
+                    .strength-text {
+                        color: var(--text-muted);
+                        font-size: 0.75rem;
+                    }
+                    .weak .strength-bar {
+                        width: 33%;
+                        background: var(--password-weak);
+                    }
+                    .medium .strength-bar {
+                        width: 66%;
+                        background: var(--password-medium);
+                    }
+                    .strong .strength-bar {
+                        width: 100%;
+                        background: var(--password-strong);
+                    }
+                </style>
             </div>
-            
             <button type="submit" id="submitBtn">
                 Create Account
                 <i class="fas fa-arrow-right"></i>
