@@ -1082,6 +1082,14 @@
             <i class="fas fa-spinner"></i>
             <span>AI is thinking...</span>
         </div>
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <div class="toggle-lines">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+
         <div class="categories-sidebar">
             <h3 class="sidebar-title">
                 <i class="fas fa-layer-group"></i>
@@ -1180,6 +1188,49 @@
         </div>
 
         <style>
+            .toggle-sidebar {
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 1000;
+                background: var(--primary);
+                border: none;
+                border-radius: 8px;
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+
+            .toggle-lines {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .toggle-lines span {
+                display: block;
+                width: 20px;
+                height: 2px;
+                background: white;
+                transition: all 0.3s ease;
+            }
+
+            .toggle-sidebar.active .toggle-lines span:nth-child(1) {
+                transform: translateY(6px) rotate(45deg);
+            }
+
+            .toggle-sidebar.active .toggle-lines span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .toggle-sidebar.active .toggle-lines span:nth-child(3) {
+                transform: translateY(-6px) rotate(-45deg);
+            }
+
             .categories-sidebar {
                 position: fixed;
                 left: 0;
@@ -1193,44 +1244,17 @@
                 box-shadow: var(--shadow-lg);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 100;
+                transform: translateX(-100%);
+            }
+
+            .categories-sidebar.active {
+                transform: translateX(0);
             }
 
             @media (max-width: 768px) {
                 .categories-sidebar {
-                    transform: translateX(-100%);
                     width: 100%;
                     backdrop-filter: blur(8px);
-                }
-                
-                .categories-sidebar.active {
-                    transform: translateX(0);
-                }
-
-                .toggle-sidebar {
-                    display: block;
-                    position: fixed;
-                    bottom: 24px;
-                    right: 24px;
-                    z-index: 101;
-                    background: var(--primary);
-                    color: white;
-                    border-radius: 50%;
-                    width: 56px;
-                    height: 56px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    cursor: pointer;
-                    transition: transform 0.2s;
-                }
-
-                .toggle-sidebar:hover {
-                    transform: scale(1.05);
-                }
-
-                .toggle-sidebar:active {
-                    transform: scale(0.95);
                 }
             }
 
@@ -1388,6 +1412,14 @@
             document.querySelectorAll('.category-item').forEach((item, index) => {
                 item.style.setProperty('--index', index);
             });
+
+            // Toggle sidebar functionality
+            function toggleSidebar() {
+                const sidebar = document.querySelector('.categories-sidebar');
+                const toggleBtn = document.querySelector('.toggle-sidebar');
+                sidebar.classList.toggle('active');
+                toggleBtn.classList.toggle('active');
+            }
         </script>
     <script>
         const searchBar = document.getElementById('search-bar');
