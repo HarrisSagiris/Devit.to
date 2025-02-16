@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Devit.to</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8858ED;
+            --primary-hover: #7040E5;
+            --bg: #0E1217;
+            --bg-card: #151920;
+            --text: #ffffff;
+            --text-muted: #626466;
+            --border: #2D3748;
+            --error: #f44336;
+            --success: #4CAF50;
+            --shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .header {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .terms-section {
+            margin-bottom: 2rem;
+        }
+
+        .terms-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .terms-section p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .terms-section ul {
+            list-style-position: inside;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .terms-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-code"></i>
+                Devit.to
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2 class="section-title">Terms of Service</h2>
+            
+            <div class="terms-section">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing and using Devit.to, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+            </div>
+
+            <div class="terms-section">
+                <h3>2. User Responsibilities</h3>
+                <p>As a user of Devit.to, you agree to:</p>
+                <ul>
+                    <li>Provide accurate and complete information</li>
+                    <li>Maintain the security of your account</li>
+                    <li>Respect the intellectual property rights of others</li>
+                    <li>Not engage in any harmful or malicious activities</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h3>3. Content Guidelines</h3>
+                <p>Users are responsible for the content they post. Content must not:</p>
+                <ul>
+                    <li>Violate any laws or regulations</li>
+                    <li>Contain hate speech or discriminatory content</li>
+                    <li>Include spam or malicious code</li>
+                    <li>Infringe on others' intellectual property rights</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h3>4. Privacy</h3>
+                <p>Your use of Devit.to is also governed by our Privacy Policy. By using our service, you consent to our collection and use of data as outlined in the Privacy Policy.</p>
+            </div>
+
+            <div class="terms-section">
+                <h3>5. Modifications</h3>
+                <p>We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the modified terms.</p>
+            </div>
+
+            <div class="terms-section">
+                <h3>6. Termination</h3>
+                <p>We reserve the right to terminate or suspend accounts that violate these terms or for any other reason at our discretion.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
