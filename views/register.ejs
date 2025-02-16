@@ -47,123 +47,131 @@
             background-attachment: fixed;
         }
 
-        .welcome-message {
-            position: absolute;
-            top: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            animation: fadeInDown 0.8s ease-out;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -20px);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-        }
-
         .container {
             width: 100%;
             max-width: 420px;
+            background: rgba(21, 25, 32, 0.95);
             padding: 2.8rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            animation: slideUp 0.4s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo {
-            text-align: center;
-            margin-bottom: 1rem;
+            text-align: left;
+            margin-bottom: 2rem;
         }
 
         .logo h1 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--text);
             margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .logo p {
-            color: var(--text);
-            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-size: 1rem;
             line-height: 1.5;
+            max-width: 280px;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .input-group {
             position: relative;
-            margin-bottom: 1rem;
         }
 
         .input-group input {
             width: 100%;
-            padding: 1.2rem;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
+            padding: 1rem 1rem 1rem 2.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             font-size: 1rem;
             color: var(--text);
-            background: rgba(21, 25, 32, 0.7);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: rgba(14, 18, 23, 0.8);
+            transition: all 0.2s ease;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(21, 25, 32, 0.8);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(136, 88, 237, 0.2);
+            box-shadow: 0 0 0 4px rgba(136, 88, 237, 0.1);
         }
 
         .input-group i {
             position: absolute;
-            right: 1rem;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .input-group input:focus + i {
-            color: var(--primary-hover);
+            color: var(--text-muted);
         }
 
         button {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 1rem;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(136, 88, 237, 0.3);
+            transition: all 0.2s ease;
+            margin-top: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
         button:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(136, 88, 237, 0.4);
+            transform: translateY(-1px);
         }
 
         .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
             margin: 1.5rem 0;
+        }
+
+        .oauth-divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .oauth-divider span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
         }
 
         .github-button {
@@ -171,54 +179,57 @@
             align-items: center;
             justify-content: center;
             gap: 0.8rem;
-            background: rgba(21, 25, 32, 0.7);
+            background: rgba(14, 18, 23, 0.8);
             color: white;
             text-decoration: none;
-            padding: 1rem;
-            border-radius: 12px;
+            padding: 0.8rem;
+            border-radius: 6px;
             font-size: 1rem;
             font-weight: 500;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
         }
 
         .github-button:hover {
-            background: var(--github-black);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            background: var(--bg-card);
+            border-color: var(--primary);
         }
 
-        .oauth-divider {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            color: var(--text);
+        .github-button i {
+            font-size: 1.2rem;
         }
 
-        .oauth-divider::before,
-        .oauth-divider::after {
-            content: "";
-            flex: 1;
-            height: 2px;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .login-link, .terms {
+        .login-link {
             text-align: center;
-            color: var(--text);
+            color: var(--text-muted);
             font-size: 0.9rem;
+            margin-top: 1.5rem;
         }
 
-        .login-link a, .terms a {
+        .login-link a {
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            margin-left: 0.3rem;
         }
 
-        .login-link a:hover, .terms a:hover {
+        .login-link a:hover {
+            color: var(--primary-hover);
+        }
+
+        .terms {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+        }
+
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .terms a:hover {
             color: var(--primary-hover);
         }
 
@@ -226,17 +237,20 @@
             .container {
                 margin: 1rem;
                 padding: 2rem;
+                border-radius: 12px;
             }
 
-            .welcome-message {
-                font-size: 2rem;
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+
+            input {
+                padding: 1rem 1rem 1rem 2.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <h1 class="welcome-message">Welcome to Devit.to!</h1>
-    
     <div class="container">
         <div class="logo">
             <h1>Devit.to</h1>
