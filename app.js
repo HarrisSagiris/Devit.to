@@ -143,36 +143,8 @@ app.get('/api/github/repos', async (req, res) => {
 });
 
 // Routes with error handling
-app.get('/', async (req, res) => {
-  try {
-    let query = {};
-    const searchTerm = req.query.search;
-    
-    if (searchTerm) {
-      query = {
-        $or: [
-          { title: { $regex: searchTerm, $options: 'i' } },
-          { category: { $regex: searchTerm, $options: 'i' } }
-        ]
-      };
-    }
-
-    const posts = await Post.find(query)
-      .sort({ createdAt: -1 })
-      .populate('comments.user', 'username');
-    res.render('index.ejs', { 
-      posts, 
-      user: req.session.user,
-      searchTerm: searchTerm || ''
-    });
-    
-    if (posts.length === 0) {
-      console.log('No posts found matching search criteria');
-    }
-  } catch (error) {
-    console.error('Error fetching posts:', error);
-    res.status(500).send('Error loading feed');
-  }
+app.get('/', (req, res) => {
+  res.redirect('/register');
 });
 
 // Add route for my posts page
