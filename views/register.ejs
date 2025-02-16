@@ -109,7 +109,7 @@
             font-size: 1rem;
             color: var(--text);
             background: rgba(14, 18, 23, 0.9);
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .input-group input:focus {
@@ -133,13 +133,91 @@
         }
 
         .password-strength {
-            font-size: 0.8rem;
-            margin-top: 1.5rem;
+            margin-top: 0.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
             display: none;
+        }
+
+        .password-strength.show {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        .strength-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .strength-bar::after {
+            content: '';
             position: absolute;
-            bottom: -35px;
             left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            border-radius: 3px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .weak .strength-bar::after {
+            width: 33%;
+            background: var(--password-weak);
+            box-shadow: 0 0 8px var(--password-weak);
+        }
+
+        .medium .strength-bar::after {
+            width: 66%;
+            background: var(--password-medium);
+            box-shadow: 0 0 8px var(--password-medium);
+        }
+
+        .strong .strength-bar::after {
             width: 100%;
+            background: var(--password-strong);
+            box-shadow: 0 0 8px var(--password-strong);
+        }
+
+        .strength-text {
+            color: var(--text);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .strength-text::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .weak .strength-text::before {
+            background: var(--password-weak);
+            box-shadow: 0 0 8px var(--password-weak);
+        }
+
+        .medium .strength-text::before {
+            background: var(--password-medium);
+            box-shadow: 0 0 8px var(--password-medium);
+        }
+
+        .strong .strength-text::before {
+            background: var(--password-strong);
+            box-shadow: 0 0 8px var(--password-strong);
         }
 
         button {
@@ -309,36 +387,6 @@
                     <div class="strength-bar"></div>
                     <span class="strength-text"></span>
                 </div>
-                <style>
-                    .password-strength {
-                        margin-top: 0.5rem;
-                        font-size: 0.875rem;
-                        display: block;
-                    }
-                    .strength-bar {
-                        height: 4px;
-                        background: var(--border);
-                        border-radius: 2px;
-                        margin-bottom: 0.25rem;
-                        transition: all 0.3s ease;
-                    }
-                    .strength-text {
-                        color: var(--text-muted);
-                        font-size: 0.75rem;
-                    }
-                    .weak .strength-bar {
-                        width: 33%;
-                        background: var(--password-weak);
-                    }
-                    .medium .strength-bar {
-                        width: 66%;
-                        background: var(--password-medium);
-                    }
-                    .strong .strength-bar {
-                        width: 100%;
-                        background: var(--password-strong);
-                    }
-                </style>
             </div>
             <button type="submit" id="submitBtn">
                 Create Account
@@ -410,9 +458,9 @@
             passwordStrength.className = 'password-strength';
             
             if (password.length === 0) {
-                passwordStrength.style.display = 'none';
+                passwordStrength.classList.remove('show');
             } else {
-                passwordStrength.style.display = 'block';
+                passwordStrength.classList.add('show');
                 if (strength < 2) {
                     passwordStrength.classList.add('weak');
                     strengthText.textContent = 'Weak password - Add uppercase, numbers, or special characters';
