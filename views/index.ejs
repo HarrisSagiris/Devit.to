@@ -1832,6 +1832,19 @@
                     const postId = $(this).data('id');
                     const postElement = $(`#post-${postId}`);
                     
+                    // First check if post exists
+                    if (!postElement.length) {
+                        const errorMessage = $('<div class="alert alert-error">Post not found. The page will refresh.</div>')
+                            .hide()
+                            .insertBefore('.feed')
+                            .fadeIn(400);
+                            
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                        return;
+                    }
+                    
                     $.ajax({
                         url: `/post/${postId}`,
                         method: 'DELETE',
@@ -1866,8 +1879,7 @@
                                     break;
                                 case 404:
                                     errorMsg += 'Post not found.';
-                                    // Refresh page if post not found to sync with server
-                                    setTimeout(() => location.reload(), 3000);
+                                    location.reload(); // Immediately refresh if post not found
                                     break;
                                 default:
                                     errorMsg += 'An unexpected error occurred. Please try again later.';
