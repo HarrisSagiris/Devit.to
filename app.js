@@ -6,6 +6,7 @@ const path = require('path');
 const axios = require('axios');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
+const TwitterStrategy = require('passport-twitter').Strategy;
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -88,6 +89,33 @@ passport.use(new GitHubStrategy({
   }
 ));
 
+// Twitter Strategy
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_CONSUMER_KEY,
+    consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+    callbackURL: "/auth/twitter/callback"
+  },
+  async (token, tokenSecret, profile, done) => {
+    try {
+      let user = await User.findOne({ twitterId: profile.id });
+      
+      if (!user) {
+        user = await User.create({
+          username: profile.username,
+          email: `${profile.username}@twitter.com`,
+          password: await bcryptjs.hash(Math.random().toString(36), 10),
+          twitterId: profile.id,
+          twitterToken: token
+        });
+      }
+      
+      return done(null, user);
+    } catch (err) {
+      return done(err, null);
+    }
+  }
+));
+
 // Auth routes
 app.get('/auth/github',
   passport.authenticate('github', { scope: ['user:email'] })
@@ -95,6 +123,19 @@ app.get('/auth/github',
 
 app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
+  (req, res) => {
+    req.session.user = { username: req.user.username, _id: req.user._id };
+    res.redirect('/');
+  }
+);
+
+// Twitter auth routes
+app.get('/auth/twitter',
+  passport.authenticate('twitter')
+);
+
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
   (req, res) => {
     req.session.user = { username: req.user.username, _id: req.user._id };
     res.redirect('/');
