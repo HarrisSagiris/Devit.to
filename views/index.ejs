@@ -1386,14 +1386,14 @@
             aiResponse.style.display = 'none';
 
             try {
-                const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1', {
+                const response = await fetch('https://api-inference.huggingface.co/models/THUDM/codegeex2-6b', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer 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',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        inputs: `<s>[INST] ${query} [/INST]`,
+                        inputs: query,
                         parameters: {
                             max_length: 500,
                             temperature: 0.7,
@@ -1408,7 +1408,7 @@
                 });
 
                 const result = await response.json();
-                aiResponseContent.textContent = result[0].generated_text.replace(/^<s>\[INST\].*\[\/INST\]/, '').trim();
+                aiResponseContent.textContent = result[0].generated_text.trim();
                 
                 aiLoading.style.display = 'none';
                 aiResponse.style.display = 'block';
