@@ -117,12 +117,55 @@
             font-size: 0.8rem;
             margin-top: 0.3rem;
             display: none;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .password-requirements {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .password-requirements.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .password-requirements h4 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.3rem 0;
             color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .requirement.valid {
+            color: var(--success);
+        }
+
+        .requirement i {
             font-size: 0.8rem;
-            margin-top: 0.3rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         button {
@@ -292,19 +335,31 @@
             <div class="input-group">
                 <input type="password" name="password" id="password" placeholder="Password" required>
                 <i class="fas fa-lock"></i>
-                <div class="password-requirements">
-                    Password must contain at least:
-                    <ul>
-                        <li>8 characters</li>
-                        <li>One uppercase letter</li>
-                        <li>One lowercase letter</li>
-                        <li>One number</li>
-                        <li>One special character</li>
-                    </ul>
+                <div class="password-requirements" id="passwordRequirements">
+                    <h4>Password Requirements:</h4>
+                    <div class="requirement" id="length">
+                        <i class="fas fa-circle"></i>
+                        At least 8 characters
+                    </div>
+                    <div class="requirement" id="uppercase">
+                        <i class="fas fa-circle"></i>
+                        One uppercase letter
+                    </div>
+                    <div class="requirement" id="lowercase">
+                        <i class="fas fa-circle"></i>
+                        One lowercase letter
+                    </div>
+                    <div class="requirement" id="number">
+                        <i class="fas fa-circle"></i>
+                        One number
+                    </div>
+                    <div class="requirement" id="special">
+                        <i class="fas fa-circle"></i>
+                        One special character
+                    </div>
                 </div>
-                <div class="error-message" id="passwordError">Password does not meet requirements</div>
             </div>
-            <button type="submit">
+            <button type="submit" id="submitBtn" disabled>
                 <i class="fas fa-user-plus"></i>
                 Create Account
             </button>
@@ -320,32 +375,65 @@
     </div>
 
     <script>
-        function validateForm() {
-            let isValid = true;
-            const email = document.getElementById('email');
-            const password = document.getElementById('password');
-            const emailError = document.getElementById('emailError');
-            const passwordError = document.getElementById('passwordError');
+        const passwordInput = document.getElementById('password');
+        const emailInput = document.getElementById('email');
+        const requirements = document.getElementById('passwordRequirements');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Show requirements when password field is focused
+        passwordInput.addEventListener('focus', () => {
+            requirements.classList.add('show');
+        });
 
-            // Email validation
+        // Real-time password validation
+        passwordInput.addEventListener('input', validatePassword);
+        emailInput.addEventListener('input', validateEmail);
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            
+            // Requirements checks
+            const checks = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[@$!%*?&]/.test(password)
+            };
+
+            // Update requirement styles
+            Object.keys(checks).forEach(check => {
+                const requirement = document.getElementById(check);
+                if (checks[check]) {
+                    requirement.classList.add('valid');
+                    requirement.querySelector('i').className = 'fas fa-check-circle';
+                } else {
+                    requirement.classList.remove('valid');
+                    requirement.querySelector('i').className = 'fas fa-circle';
+                }
+            });
+
+            // Enable/disable submit button based on all requirements being met
+            const allValid = Object.values(checks).every(check => check) && validateEmail();
+            submitBtn.disabled = !allValid;
+        }
+
+        function validateEmail() {
+            const email = emailInput.value;
+            const emailError = document.getElementById('emailError');
             const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            if (!emailRegex.test(email.value)) {
+            
+            if (!emailRegex.test(email)) {
                 emailError.style.display = 'block';
-                isValid = false;
+                return false;
             } else {
                 emailError.style.display = 'none';
+                return true;
             }
+        }
 
-            // Password validation
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            if (!passwordRegex.test(password.value)) {
-                passwordError.style.display = 'block';
-                isValid = false;
-            } else {
-                passwordError.style.display = 'none';
-            }
-
-            return isValid;
+        function validateForm() {
+            return validateEmail() && validatePassword();
         }
     </script>
 </body>
