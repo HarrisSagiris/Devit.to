@@ -56,36 +56,24 @@
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: slideUp 0.5s ease-out, glow 2s ease-in-out infinite alternate;
+            animation: fadeIn 0.5s ease-out;
             backdrop-filter: blur(16px);
-            transform-style: preserve-3d;
-            perspective: 1000px;
         }
 
-        @keyframes slideUp {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px) rotateX(-10deg);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) rotateX(0);
-            }
-        }
-
-        @keyframes glow {
-            from {
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            }
-            to {
-                box-shadow: 0 8px 32px rgba(136, 88, 237, 0.2);
+                transform: translateY(0);
             }
         }
 
         .logo {
             text-align: left;
             margin-bottom: 2.5rem;
-            transform: translateZ(20px);
         }
 
         .logo h1 {
@@ -93,7 +81,6 @@
             font-weight: 700;
             color: var(--text);
             margin-bottom: 0.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .logo p {
@@ -107,16 +94,10 @@
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
-            transform: translateZ(10px);
         }
 
         .input-group {
             position: relative;
-            transition: transform 0.2s ease;
-        }
-
-        .input-group:hover {
-            transform: translateY(-2px);
         }
 
         .input-group input {
@@ -127,14 +108,13 @@
             font-size: 1rem;
             color: var(--text);
             background: rgba(14, 18, 23, 0.9);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(136, 88, 237, 0.15);
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 3px rgba(136, 88, 237, 0.2);
         }
 
         .input-group i {
@@ -144,7 +124,7 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 1.1rem;
-            transition: color 0.3s ease;
+            transition: color 0.2s ease;
         }
 
         .input-group input:focus + i {
@@ -160,19 +140,17 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             margin-top: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.8rem;
-            transform: translateZ(15px);
         }
 
         button:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px) translateZ(15px);
-            box-shadow: 0 4px 12px rgba(136, 88, 237, 0.3);
+            transform: translateY(-2px);
         }
 
         .oauth-buttons {
@@ -180,7 +158,6 @@
             flex-direction: column;
             gap: 1rem;
             margin: 1.8rem 0;
-            transform: translateZ(5px);
         }
 
         .oauth-divider {
@@ -217,15 +194,13 @@
             border-radius: 12px;
             font-size: 1.1rem;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: 1px solid var(--border);
         }
 
         .github-button:hover {
             background: var(--bg-card);
             border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .github-button i {
@@ -244,7 +219,7 @@
             text-decoration: none;
             font-weight: 600;
             margin-left: 0.5rem;
-            transition: color 0.3s ease;
+            transition: color 0.2s ease;
         }
 
         .login-link a:hover {
@@ -263,7 +238,7 @@
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: color 0.2s ease;
         }
 
         .terms a:hover {

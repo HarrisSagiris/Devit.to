@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login to Devit.to</title>
+    <title>Sign in to Devit.to</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -19,10 +19,6 @@
             --success: #4CAF50;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
             --github-black: #24292e;
-            --password-weak: #ff4444;
-            --password-medium: #ffbb33;
-            --password-strong: #00C851;
-            --warning: #ffd700;
         }
 
         * {
@@ -36,27 +32,31 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
+            padding-right: 10%;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             position: relative;
-            background-image: url('/images/bg-pattern.png');
+            background-image: url('/icons/background.jpg');
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
         .container {
             width: 100%;
             max-width: 420px;
-            background: var(--bg-card);
-            padding: 2.8rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            animation: slideUp 0.4s ease-out;
+            background: rgba(21, 25, 32, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            backdrop-filter: blur(16px);
         }
 
-        @keyframes slideUp {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
                 transform: translateY(20px);
@@ -69,27 +69,27 @@
 
         .logo {
             text-align: left;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .logo h1 {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .logo p {
             color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.5;
-            max-width: 280px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 320px;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .input-group {
@@ -98,63 +98,73 @@
 
         .input-group input {
             width: 100%;
-            padding: 1rem 1rem 1rem 2.8rem;
+            padding: 1.2rem 1rem 1.2rem 3rem;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 12px;
             font-size: 1rem;
             color: var(--text);
-            background: var(--bg-card);
+            background: rgba(14, 18, 23, 0.9);
             transition: all 0.2s ease;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(136, 88, 237, 0.1);
+            box-shadow: 0 0 0 4px rgba(136, 88, 237, 0.15);
+            transform: translateY(-1px);
         }
 
         .input-group i {
             position: absolute;
-            left: 1rem;
+            left: 1.2rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .input-group input:focus + i {
+            color: var(--primary);
         }
 
         button {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 0.8rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            margin-top: 0.8rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            transform: translateZ(15px);
         }
 
         button:hover {
             background: var(--primary-hover);
-            transform: translateY(-1px);
+            transform: translateY(-2px) translateZ(15px);
+            box-shadow: 0 4px 12px rgba(136, 88, 237, 0.3);
         }
 
         .oauth-buttons {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
-            margin: 1.5rem 0;
+            gap: 1rem;
+            margin: 1.8rem 0;
+            transform: translateZ(5px);
         }
 
         .oauth-divider {
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
         }
 
         .oauth-divider::before,
@@ -169,39 +179,43 @@
             color: var(--text-muted);
             font-size: 0.9rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .github-button {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.8rem;
-            background: var(--bg);
+            gap: 1rem;
+            background: rgba(14, 18, 23, 0.9);
             color: white;
             text-decoration: none;
-            padding: 0.8rem;
-            border-radius: 6px;
-            font-size: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             border: 1px solid var(--border);
         }
 
         .github-button:hover {
             background: var(--bg-card);
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .github-button i {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
 
         .register-link {
             text-align: center;
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 1.5rem;
+            font-size: 1rem;
+            margin-top: 1.8rem;
             text-decoration: none;
+            display: block;
         }
 
         .register-link:hover {
@@ -212,15 +226,15 @@
             .container {
                 margin: 1rem;
                 padding: 2rem;
-                border-radius: 12px;
+                border-radius: 16px;
             }
 
             .logo h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
 
             input {
-                padding: 1rem 1rem 1rem 2.8rem;
+                padding: 1.1rem 1rem 1.1rem 3rem;
             }
         }
     </style>
@@ -229,17 +243,20 @@
     <div class="container">
         <div class="logo">
             <h1>Devit.to</h1>
-            <p>Welcome back to the community</p>
+            <p>Welcome back! Sign in to continue your journey in the developer community.</p>
         </div>
+
         <div class="oauth-buttons">
             <a href="/auth/github?returnTo=/" class="github-button">
                 <i class="fab fa-github"></i>
-                Sign in with GitHub
+                Continue with GitHub
             </a>
         </div>
+
         <div class="oauth-divider">
             <span>or</span>
         </div>
+
         <form action="/login" method="post">
             <input type="hidden" name="returnTo" value="/">
             <div class="input-group">
@@ -255,6 +272,7 @@
                 <i class="fas fa-arrow-right"></i>
             </button>
         </form>
+
         <a href="/register" class="register-link">New to Devit.to? Create an account</a>
     </div>
 </body>
