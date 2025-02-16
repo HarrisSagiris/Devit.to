@@ -8,17 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0a95ff;
-            --primary-hover: #0074cc;
-            --bg: #1a1a1a;
-            --bg-card: #242424;
+            --primary: #8858ED;
+            --primary-hover: #7040E5; 
+            --bg: #0E1217;
+            --bg-card: #151920;
             --text: #ffffff;
-            --text-muted: #a3a3a3;
-            --border: #404040;
+            --text-muted: #626466;
+            --border: #2D3748;
             --error: #f44336;
             --success: #4CAF50;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
             --github-black: #24292e;
+            --password-weak: #ff4444;
+            --password-medium: #ffbb33;
+            --password-strong: #00C851;
+            --warning: #ffd700;
         }
 
         * {
@@ -36,6 +40,9 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             position: relative;
+            background-image: url('/images/bg-pattern.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .container {
@@ -61,12 +68,12 @@
         }
 
         .logo {
-            text-align: center;
+            text-align: left;
             margin-bottom: 2rem;
         }
 
         .logo h1 {
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--text);
             margin-bottom: 0.5rem;
@@ -75,6 +82,8 @@
         .logo p {
             color: var(--text-muted);
             font-size: 1rem;
+            line-height: 1.5;
+            max-width: 280px;
         }
 
         form {
@@ -101,7 +110,7 @@
         .input-group input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(10, 149, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(136, 88, 237, 0.1);
         }
 
         .input-group i {
@@ -132,24 +141,6 @@
         button:hover {
             background: var(--primary-hover);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(10, 149, 255, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .register-link {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1rem;
-            margin-top: 1.5rem;
-            display: block;
-            text-decoration: none;
-        }
-
-        .register-link:hover {
-            color: var(--primary);
         }
 
         .oauth-buttons {
@@ -157,28 +148,6 @@
             flex-direction: column;
             gap: 0.8rem;
             margin: 1.5rem 0;
-        }
-
-        .github-button {
-            background: var(--github-black);
-            color: white;
-            border: none;
-            padding: 0.8rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .github-button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
         }
 
         .oauth-divider {
@@ -199,6 +168,44 @@
         .oauth-divider span {
             color: var(--text-muted);
             font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .github-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: var(--bg);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .github-button:hover {
+            background: var(--bg-card);
+            border-color: var(--primary);
+        }
+
+        .github-button i {
+            font-size: 1.2rem;
+        }
+
+        .register-link {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            text-decoration: none;
+        }
+
+        .register-link:hover {
+            color: var(--primary-hover);
         }
 
         @media (max-width: 480px) {
@@ -209,7 +216,7 @@
             }
 
             .logo h1 {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
 
             input {
@@ -231,7 +238,7 @@
             </a>
         </div>
         <div class="oauth-divider">
-            <span>OR</span>
+            <span>or</span>
         </div>
         <form action="/login" method="post">
             <input type="hidden" name="returnTo" value="/">
@@ -243,7 +250,10 @@
                 <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
                 <i class="fas fa-lock"></i>
             </div>
-            <button type="submit">Sign In</button>
+            <button type="submit">
+                Sign In
+                <i class="fas fa-arrow-right"></i>
+            </button>
         </form>
         <a href="/register" class="register-link">New to Devit.to? Create an account</a>
     </div>
