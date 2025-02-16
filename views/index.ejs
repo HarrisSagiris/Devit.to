@@ -1512,7 +1512,7 @@
                             <div class="post-meta">
                                 Posted in <%= post.category %> by 
                                 <span class="user-info">
-                                    <%= post.username %>-<%= post.author ? post.author.upvotes : 0 %>
+                                    <%= post.username %> (<%= post.author ? post.author.totalUpvotes : 0 %> total upvotes)
                                     <% if (user && user.username !== post.username) { %>
                                         <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
                                                 data-username="<%= post.username %>">
