@@ -19,6 +19,9 @@
             --success: #4CAF50;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
             --github-black: #24292e;
+            --password-weak: #ff4444;
+            --password-medium: #ffbb33;
+            --password-strong: #00C851;
         }
 
         * {
@@ -110,6 +113,22 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
+        }
+
+        .password-strength-bar {
+            height: 4px;
+            background: var(--border);
+            margin-top: 8px;
+            border-radius: 2px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength-bar .strength {
+            width: 0%;
+            height: 100%;
+            background: var(--password-weak);
+            transition: all 0.3s ease;
         }
 
         .error-message {
@@ -335,6 +354,9 @@
             <div class="input-group">
                 <input type="password" name="password" id="password" placeholder="Password" required>
                 <i class="fas fa-lock"></i>
+                <div class="password-strength-bar">
+                    <div class="strength"></div>
+                </div>
                 <div class="password-requirements" id="passwordRequirements">
                     <h4>Password Requirements:</h4>
                     <div class="requirement" id="length">
@@ -379,6 +401,7 @@
         const emailInput = document.getElementById('email');
         const requirements = document.getElementById('passwordRequirements');
         const submitBtn = document.getElementById('submitBtn');
+        const strengthBar = document.querySelector('.strength');
         
         // Show requirements when password field is focused
         passwordInput.addEventListener('focus', () => {
@@ -412,6 +435,20 @@
                     requirement.querySelector('i').className = 'fas fa-circle';
                 }
             });
+
+            // Calculate password strength
+            const validChecks = Object.values(checks).filter(Boolean).length;
+            const strengthPercentage = (validChecks / 5) * 100;
+            strengthBar.style.width = `${strengthPercentage}%`;
+
+            // Update strength bar color
+            if (strengthPercentage <= 40) {
+                strengthBar.style.background = 'var(--password-weak)';
+            } else if (strengthPercentage <= 80) {
+                strengthBar.style.background = 'var(--password-medium)';
+            } else {
+                strengthBar.style.background = 'var(--password-strong)';
+            }
 
             // Enable/disable submit button based on all requirements being met
             const allValid = Object.values(checks).every(check => check) && validateEmail();
