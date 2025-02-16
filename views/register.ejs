@@ -40,9 +40,22 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             position: relative;
-            background-image: url('/images/bg-pattern.png');
+            background-image: url('https://images.unsplash.com/photo-1464618663641-bbdd760ae84a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(14, 18, 23, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 0;
         }
 
         .container {
@@ -54,6 +67,8 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             animation: slideUp 0.4s ease-out;
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes slideUp {
