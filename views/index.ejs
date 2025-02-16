@@ -129,43 +129,6 @@
         font-size: 1.75rem;
     }
 
-    /* Add the HTML for iOS bottom bar */
-    .ios-bottom-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: none;
-        background: var(--bg-card);
-        padding: 0.5rem;
-        border-top: 1px solid var(--border);
-        z-index: 100;
-        }
-
-        .ios-bottom-bar a:first-child {
-            <a href="/" class="bottom-bar-item <%= path === '/' ? 'active' : '' %>">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="/search" class="bottom-bar-item <%= path === '/search' ? 'active' : '' %>">
-                <i class="fas fa-search"></i>
-                <span>Search</span>
-            </a>
-            <a href="/new-post" class="bottom-bar-item create">
-                <i class="fas fa-plus-circle"></i>
-                <span>Create</span>
-            </a>
-            <a href="/notifications" class="bottom-bar-item <%= path === '/notifications' ? 'active' : '' %>">
-                <i class="fas fa-bell"></i>
-                <span>Alerts</span>
-            </a>
-            <a href="/profile" class="bottom-bar-item <%= path === '/profile' ? 'active' : '' %>">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
-        </div>
-    }
-
     /* Theme variables */
     html[data-theme="light"] {
         --primary: #6366f1;
