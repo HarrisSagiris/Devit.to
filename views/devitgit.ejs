@@ -12,14 +12,29 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
+        }
+        .repo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+            word-break: break-word;
+        }
+        .repo-description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            word-break: break-word;
         }
         .repo-stats {
             display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
             color: var(--text-muted);
         }
         .search-container {
@@ -69,6 +84,25 @@
             text-align: center;
             box-shadow: var(--shadow);
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+        }
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -82,9 +116,14 @@
 
         <div id="user-profile"></div>
         <div id="repos-container"></div>
+        <div id="pagination" class="pagination"></div>
     </div>
 
     <script>
+        let currentPage = 1;
+        const reposPerPage = 10;
+        let allRepos = [];
+
         async function searchUser() {
             const username = document.getElementById('username').value;
             if (!username) return;
@@ -96,7 +135,7 @@
                 ]);
 
                 const userData = await userResponse.json();
-                const reposData = await reposResponse.json();
+                allRepos = await reposResponse.json();
 
                 if (userResponse.status === 404) {
                     alert('User not found');
@@ -104,7 +143,8 @@
                 }
 
                 displayUserProfile(userData);
-                displayRepos(reposData);
+                displayRepos(1);
+                displayPagination();
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error fetching data from GitHub');
@@ -138,24 +178,53 @@
             `;
         }
 
-        function displayRepos(repos) {
+        function displayRepos(page) {
+            currentPage = page;
+            const startIndex = (page - 1) * reposPerPage;
+            const endIndex = startIndex + reposPerPage;
+            const paginatedRepos = allRepos.slice(startIndex, endIndex);
+
             const reposContainer = document.getElementById('repos-container');
-            reposContainer.innerHTML = repos.map(repo => `
+            reposContainer.innerHTML = paginatedRepos.map(repo => `
                 <div class="repo-card">
-                    <h3 class="text-xl font-semibold">
-                        <a href="${repo.html_url}" target="_blank" class="text-blue-600 hover:underline">
+                    <h3 class="repo-title">
+                        <a href="${repo.html_url}" target="_blank" style="color: var(--primary); text-decoration: none; hover:underline">
                             ${repo.name}
                         </a>
                     </h3>
-                    <p class="text-gray-600 mt-2">${repo.description || 'No description available'}</p>
+                    <p class="repo-description">${repo.description || 'No description available'}</p>
                     <div class="repo-stats">
-                        <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
-                        <span><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
+                        <span><i class="fas fa-star"></i> ${repo.stargazers_count} stars</span>
+                        <span><i class="fas fa-code-branch"></i> ${repo.forks_count} forks</span>
                         <span><i class="fas fa-circle"></i> ${repo.language || 'N/A'}</span>
-                        <span><i class="fas fa-eye"></i> ${repo.watchers_count}</span>
+                        <span><i class="fas fa-eye"></i> ${repo.watchers_count} watchers</span>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function displayPagination() {
+            const totalPages = Math.ceil(allRepos.length / reposPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            let paginationHTML = '';
+            
+            if (currentPage > 1) {
+                paginationHTML += `<button class="page-btn" onclick="displayRepos(${currentPage - 1})">Previous</button>`;
+            }
+            
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                    <button class="page-btn ${currentPage === i ? 'active' : ''}" 
+                            onclick="displayRepos(${i})">${i}</button>
+                `;
+            }
+            
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="page-btn" onclick="displayRepos(${currentPage + 1})">Next</button>`;
+            }
+            
+            pagination.innerHTML = paginationHTML;
         }
     </script>
 </body>
