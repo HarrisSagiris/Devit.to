@@ -22,6 +22,7 @@
             --password-weak: #ff4444;
             --password-medium: #ffbb33;
             --password-strong: #00C851;
+            --warning: #ffd700;
         }
 
         * {
@@ -122,6 +123,7 @@
             border-radius: 2px;
             overflow: hidden;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .password-strength-bar .strength {
@@ -131,49 +133,57 @@
             transition: all 0.3s ease;
         }
 
+        .password-requirements {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .password-requirements.show {
+            opacity: 1;
+        }
+
+        .requirement {
+            flex: 1;
+            height: 100%;
+            background: var(--warning);
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .requirement.valid {
+            background: var(--success);
+        }
+
+        .requirement:hover::after {
+            content: attr(data-requirement);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            border: 1px solid var(--border);
+        }
+
         .error-message {
             color: var(--error);
             font-size: 0.8rem;
             margin-top: 0.3rem;
             display: none;
             animation: fadeIn 0.3s ease-out;
-        }
-
-        .password-requirements {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            display: none;
-        }
-
-        .password-requirements.show {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .password-requirements h4 {
-            color: var(--text);
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .requirement {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0.3rem 0;
-            color: var(--text-muted);
-            transition: color 0.2s;
-        }
-
-        .requirement.valid {
-            color: var(--success);
-        }
-
-        .requirement i {
-            font-size: 0.8rem;
         }
 
         @keyframes fadeIn {
@@ -356,28 +366,12 @@
                 <i class="fas fa-lock"></i>
                 <div class="password-strength-bar">
                     <div class="strength"></div>
-                </div>
-                <div class="password-requirements" id="passwordRequirements">
-                    <h4>Password Requirements:</h4>
-                    <div class="requirement" id="length">
-                        <i class="fas fa-circle"></i>
-                        At least 8 characters
-                    </div>
-                    <div class="requirement" id="uppercase">
-                        <i class="fas fa-circle"></i>
-                        One uppercase letter
-                    </div>
-                    <div class="requirement" id="lowercase">
-                        <i class="fas fa-circle"></i>
-                        One lowercase letter
-                    </div>
-                    <div class="requirement" id="number">
-                        <i class="fas fa-circle"></i>
-                        One number
-                    </div>
-                    <div class="requirement" id="special">
-                        <i class="fas fa-circle"></i>
-                        One special character
+                    <div class="password-requirements" id="passwordRequirements">
+                        <div class="requirement" id="length" data-requirement="8+ chars"></div>
+                        <div class="requirement" id="uppercase" data-requirement="Uppercase"></div>
+                        <div class="requirement" id="lowercase" data-requirement="Lowercase"></div>
+                        <div class="requirement" id="number" data-requirement="Number"></div>
+                        <div class="requirement" id="special" data-requirement="Special char"></div>
                     </div>
                 </div>
             </div>
@@ -429,10 +423,8 @@
                 const requirement = document.getElementById(check);
                 if (checks[check]) {
                     requirement.classList.add('valid');
-                    requirement.querySelector('i').className = 'fas fa-check-circle';
                 } else {
                     requirement.classList.remove('valid');
-                    requirement.querySelector('i').className = 'fas fa-circle';
                 }
             });
 
