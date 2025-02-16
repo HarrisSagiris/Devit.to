@@ -144,7 +144,11 @@ app.get('/api/github/repos', async (req, res) => {
 
 // Routes with error handling
 app.get('/', (req, res) => {
-  res.render('index', { user: req.session.user });
+  if (!req.session.user) {
+    res.redirect('/register');
+  } else {
+    res.render('index', { user: req.session.user });
+  }
 });
 
 // Add route for my posts page
@@ -330,7 +334,7 @@ app.get('/logout', (req, res) => {
       console.error('Logout error:', err);
       return res.status(500).send('Error during logout');
     }
-    res.redirect('/');
+    res.redirect('/register');
   });
 });
 
