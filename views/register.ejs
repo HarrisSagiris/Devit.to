@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Daily.dev - Create Account</title>
+    <title>Join Devit.to - Create Account</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -250,19 +250,28 @@
 <body>
     <div class="container">
         <div class="logo">
-            <h1>daily.dev</h1>
-            <p>Where developers suffer together</p>
+            <h1>Devit.to</h1>
+            <p>Where developers grow together</p>
         </div>
 
         <form action="/register" method="post" id="registerForm" onsubmit="return validateForm()">
             <input type="hidden" name="returnTo" value="/">
             <div class="input-group">
-                <input type="email" name="email" id="email" placeholder="Sign up - Free forever" required>
+                <input type="text" name="username" id="username" placeholder="Username" required>
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="input-group">
+                <input type="email" name="email" id="email" placeholder="Email address" required>
                 <i class="fas fa-envelope"></i>
+            </div>
+            <div class="input-group">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <i class="fas fa-lock"></i>
             </div>
             
             <button type="submit" id="submitBtn">
-                Sign up
+                Create Account
+                <i class="fas fa-arrow-right"></i>
             </button>
         </form>
 
@@ -271,14 +280,14 @@
         </div>
 
         <div class="oauth-buttons">
-            <a href="/auth/google" class="github-button">
-                <i class="fab fa-google"></i>
-                Google
-            </a>
-            <a href="/auth/github?returnTo=/" class="github-button">
+            <a href="/auth/github" class="github-button">
                 <i class="fab fa-github"></i>
-                GitHub
+                Continue with GitHub
             </a>
+        </div>
+
+        <div class="login-link">
+            Already have an account?<a href="/login">Sign in</a>
         </div>
 
         <div class="terms">
@@ -288,20 +297,34 @@
 
     <script>
         const emailInput = document.getElementById('email');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
         const submitBtn = document.getElementById('submitBtn');
 
-        emailInput.addEventListener('input', validateEmail);
+        emailInput.addEventListener('input', validateForm);
+        usernameInput.addEventListener('input', validateForm);
+        passwordInput.addEventListener('input', validateForm);
 
         function validateEmail() {
             const email = emailInput.value;
             const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            
-            submitBtn.disabled = !emailRegex.test(email);
             return emailRegex.test(email);
         }
 
+        function validateUsername() {
+            const username = usernameInput.value;
+            return username.length >= 3;
+        }
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            return password.length >= 6;
+        }
+
         function validateForm() {
-            return validateEmail();
+            const isValid = validateEmail() && validateUsername() && validatePassword();
+            submitBtn.disabled = !isValid;
+            return isValid;
         }
     </script>
 </body>
