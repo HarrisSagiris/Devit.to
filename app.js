@@ -290,7 +290,7 @@ app.post('/register', async (req, res) => {
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
     req.session.user = { username: user.username, _id: user._id };
-    res.redirect('/');
+    res.render('index', { user: req.session.user });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(400).send('Error: Unable to register');
@@ -310,7 +310,7 @@ app.post('/login', async (req, res) => {
       const validPassword = await bcryptjs.compare(password, user.password);
       if (validPassword) {
         req.session.user = { username: user.username, _id: user._id };
-        res.redirect('/');
+        res.render('index', { user: req.session.user });
       } else {
         res.status(400).send('Invalid email or password');
       }
