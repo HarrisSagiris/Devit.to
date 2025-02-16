@@ -313,6 +313,7 @@
                     .password-strength {
                         margin-top: 0.5rem;
                         font-size: 0.875rem;
+                        display: block;
                     }
                     .strength-bar {
                         height: 4px;
@@ -371,10 +372,15 @@
         const passwordInput = document.getElementById('password');
         const submitBtn = document.getElementById('submitBtn');
         const passwordStrength = document.getElementById('passwordStrength');
+        const strengthBar = passwordStrength.querySelector('.strength-bar');
+        const strengthText = passwordStrength.querySelector('.strength-text');
 
         emailInput.addEventListener('input', validateForm);
         usernameInput.addEventListener('input', validateForm);
-        passwordInput.addEventListener('input', validateForm);
+        passwordInput.addEventListener('input', () => {
+            validateForm();
+            updatePasswordStrength();
+        });
 
         function validateEmail() {
             const email = emailInput.value;
@@ -387,7 +393,7 @@
             return username.length >= 3;
         }
 
-        function validatePassword() {
+        function updatePasswordStrength() {
             const password = passwordInput.value;
             const hasUpperCase = /[A-Z]/.test(password);
             const hasLowerCase = /[a-z]/.test(password);
@@ -401,22 +407,30 @@
             strength += hasSpecialChar ? 1 : 0;
             strength += password.length >= 8 ? 1 : 0;
 
-            passwordStrength.style.display = 'block';
+            passwordStrength.className = 'password-strength';
             
-            if (strength < 2) {
-                passwordStrength.style.color = 'var(--password-weak)';
-                passwordStrength.textContent = 'Weak password - Add uppercase, numbers, or special characters';
-                passwordInput.style.borderColor = 'var(--password-weak)';
-            } else if (strength < 4) {
-                passwordStrength.style.color = 'var(--password-medium)';
-                passwordStrength.textContent = 'Medium password - Add more character types for stronger security';
-                passwordInput.style.borderColor = 'var(--password-medium)';
+            if (password.length === 0) {
+                passwordStrength.style.display = 'none';
             } else {
-                passwordStrength.style.color = 'var(--password-strong)';
-                passwordStrength.textContent = 'Strong password';
-                passwordInput.style.borderColor = 'var(--password-strong)';
+                passwordStrength.style.display = 'block';
+                if (strength < 2) {
+                    passwordStrength.classList.add('weak');
+                    strengthText.textContent = 'Weak password - Add uppercase, numbers, or special characters';
+                    passwordInput.style.borderColor = 'var(--password-weak)';
+                } else if (strength < 4) {
+                    passwordStrength.classList.add('medium');
+                    strengthText.textContent = 'Medium password - Add more character types for stronger security';
+                    passwordInput.style.borderColor = 'var(--password-medium)';
+                } else {
+                    passwordStrength.classList.add('strong');
+                    strengthText.textContent = 'Strong password';
+                    passwordInput.style.borderColor = 'var(--password-strong)';
+                }
             }
+        }
 
+        function validatePassword() {
+            const password = passwordInput.value;
             return password.length >= 6;
         }
 
