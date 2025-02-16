@@ -116,6 +116,9 @@ app.get('/devitgit', (req, res) => {
   res.render('devitgit', { user: req.session.user });
 });
 
+// Add route for terms page
+app.get('/terms', (req, res) => res.render('terms'));
+
 // Add GitHub API endpoint
 app.get('/api/github/repos', async (req, res) => {
   try {
