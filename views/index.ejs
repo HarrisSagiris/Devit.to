@@ -1097,9 +1097,9 @@
             </h3>
             <div class="categories-list">
                 <% 
-                // Initialize categories object
+                // Initialize categories object with default values
                 const categories = {
-                    'all': (typeof posts !== 'undefined' ? posts.length : 0), // Total number of posts
+                    'all': 0, // Will be updated if posts exist
                     'General': 0,
                     'Javascript/Typescript': 0,
                     'C++': 0,
@@ -1125,6 +1125,11 @@
                     'Machine Learning': 0,
                     'Data Science': 0
                 };
+
+                // Update 'all' count if posts exists
+                if (typeof posts !== 'undefined' && Array.isArray(posts)) {
+                    categories.all = posts.length;
+                }
 
                 // Count posts per category
                 posts.forEach(post => {
