@@ -260,7 +260,7 @@
         </div>
 
         <div class="oauth-buttons">
-            <a href="/auth/github?returnTo=/index" class="github-button">
+            <a href="/auth/github" class="github-button">
                 <i class="fab fa-github"></i>
                 Continue with GitHub
             </a>
@@ -271,7 +271,6 @@
         </div>
 
         <form action="/login" method="post">
-            <input type="hidden" name="returnTo" value="/index">
             <div class="input-group">
                 <input type="email" name="email" placeholder="Email address" required autocomplete="email">
                 <i class="fas fa-envelope"></i>
