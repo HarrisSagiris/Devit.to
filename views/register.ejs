@@ -20,8 +20,8 @@
             --success: #4CAF50;
             --shadow: 0 2px 8px rgba(0,0,0,0.2);
             --github-black: #24292e;
-            --twitter-blue: #1DA1F2;
-            --twitter-hover: #1a8cd8;
+            --twitter-black: #000000;
+            --twitter-hover: #333333;
             --password-weak: #ff4444;
             --password-medium: #ffbb33;
             --password-strong: #00C851;
@@ -295,7 +295,7 @@
         }
 
         .twitter-button {
-            background: var(--twitter-blue);
+            background: var(--twitter-black);
             border: none;
         }
 
@@ -411,11 +411,11 @@
         </div>
 
         <div class="oauth-buttons">
-            <a href="/auth/github" class="github-button">
+            <a href="/auth/github" class="github-button" onclick="handleGitHubAuth(event)">
                 <i class="fab fa-github"></i>
                 Continue with GitHub
             </a>
-            <a href="/auth/twitter" class="twitter-button">
+            <a href="/auth/twitter" class="twitter-button" onclick="handleTwitterAuth(event)">
                 <i class="fab fa-x-twitter"></i>
                 Continue with X
             </a>
@@ -510,6 +510,18 @@
                 document.getElementById('registerForm').appendChild(redirectInput);
             }
             return isValid;
+        }
+
+        function handleGitHubAuth(event) {
+            event.preventDefault();
+            localStorage.setItem('authReturnTo', window.location.href);
+            window.location.href = '/auth/github';
+        }
+
+        function handleTwitterAuth(event) {
+            event.preventDefault();
+            localStorage.setItem('authReturnTo', window.location.href);
+            window.location.href = '/auth/twitter';
         }
     </script>
 </body>
