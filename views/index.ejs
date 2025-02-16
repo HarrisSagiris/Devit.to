@@ -1555,26 +1555,21 @@
                             <div class="comment" id="comment-<%= comment._id %>">
                                 <div class="comment-header">
                                     <span class="comment-username">
-                                        <%= comment.username %>
-                                        <span class="followers-count">(<%= comment.authorFollowers || 0 %> followers)</span>
-                                        <% if (user && user.username !== comment.username) { %>
-                                            <button class="follow-btn <%= user.following?.includes(comment.username) ? 'following' : '' %>"
-                                                    data-username="<%= comment.username %>">
-                                                <%= user.following?.includes(comment.username) ? 'Following' : 'Follow' %>
-                                            </button>
-                                        <% } %>
+                                        <%= comment.author ? comment.author.username : comment.username %>
                                     </span>
                                 </div>
                                 <div class="comment-content">
                                     <%= comment.content %>
                                 </div>
                                 <div class="comment-actions">
-                                    <button class="comment-like-btn <%= comment.likedBy && comment.likedBy.includes(user?.username) ? 'liked' : '' %>" 
+                                    <button class="comment-like-btn <%= comment.likedBy?.includes(user?._id) ? 'liked' : '' %>"
                                             data-comment-id="<%= comment._id %>"
-                                            data-post-id="<%= post._id %>">
+                                            data-post-id="<%= post._id %>"
+                                            onclick="likeComment(this, '<%= comment._id %>', '<%= post._id %>')"
+                                            <%= !user ? 'disabled' : '' %>>
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
-                                    <% if (user && user.username === comment.username) { %>
+                                    <% if (user && user.username === (comment.author ? comment.author.username : comment.username)) { %>
                                         <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
                                     <% } %>
                                 </div>
