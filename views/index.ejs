@@ -1083,33 +1083,86 @@
             <span>AI is thinking...</span>
         </div>
 
-        <select id="search-category">
-            <option value="">All Categories</option>
-            <option value="General">General</option>
-            <option value="Javascript/Typescript">Javascript/Typescript</option>
-            <option value="C++">C++</option>
-            <option value="Gaming">Gaming</option>
-            <option value="Python">Python</option>
-            <option value="PHP">PHP</option>
-            <option value="Tech">Tech</option>
-            <option value="AI">AI</option>
-            <option value="Java">Java</option>
-            <option value="Ruby">Ruby</option>
-            <option value="Go">Go</option>
-            <option value="Rust">Rust</option>
-            <option value="Swift">Swift</option>
-            <option value="Kotlin">Kotlin</option>
-            <option value="React">React</option>
-            <option value="Vue">Vue</option>
-            <option value="Angular">Angular</option>
-            <option value="Node.js">Node.js</option>
-            <option value="DevOps">DevOps</option>
-            <option value="Cloud Computing">Cloud Computing</option>
-            <option value="Cybersecurity">Cybersecurity</option>
-            <option value="Blockchain">Blockchain</option>
-            <option value="Machine Learning">Machine Learning</option>
-            <option value="Data Science">Data Science</option>
-        </select>
+        <div class="categories-sidebar">
+            <h3 class="sidebar-title">Categories</h3>
+            <div class="categories-list">
+                <a href="#" class="category-item active" data-value="" onclick="filterPosts('')">All Categories</a>
+                <a href="#" class="category-item" data-value="General" onclick="filterPosts('General')">General</a>
+                <a href="#" class="category-item" data-value="Javascript/Typescript" onclick="filterPosts('Javascript/Typescript')">Javascript/Typescript</a>
+                <a href="#" class="category-item" data-value="C++" onclick="filterPosts('C++')">C++</a>
+                <a href="#" class="category-item" data-value="Gaming" onclick="filterPosts('Gaming')">Gaming</a>
+                <a href="#" class="category-item" data-value="Python" onclick="filterPosts('Python')">Python</a>
+                <a href="#" class="category-item" data-value="PHP" onclick="filterPosts('PHP')">PHP</a>
+                <a href="#" class="category-item" data-value="Tech" onclick="filterPosts('Tech')">Tech</a>
+                <a href="#" class="category-item" data-value="AI" onclick="filterPosts('AI')">AI</a>
+                <a href="#" class="category-item" data-value="Java" onclick="filterPosts('Java')">Java</a>
+                <a href="#" class="category-item" data-value="Ruby" onclick="filterPosts('Ruby')">Ruby</a>
+                <a href="#" class="category-item" data-value="Go" onclick="filterPosts('Go')">Go</a>
+                <a href="#" class="category-item" data-value="Rust" onclick="filterPosts('Rust')">Rust</a>
+                <a href="#" class="category-item" data-value="Swift" onclick="filterPosts('Swift')">Swift</a>
+                <a href="#" class="category-item" data-value="Kotlin" onclick="filterPosts('Kotlin')">Kotlin</a>
+                <a href="#" class="category-item" data-value="React" onclick="filterPosts('React')">React</a>
+                <a href="#" class="category-item" data-value="Vue" onclick="filterPosts('Vue')">Vue</a>
+                <a href="#" class="category-item" data-value="Angular" onclick="filterPosts('Angular')">Angular</a>
+                <a href="#" class="category-item" data-value="Node.js" onclick="filterPosts('Node.js')">Node.js</a>
+                <a href="#" class="category-item" data-value="DevOps" onclick="filterPosts('DevOps')">DevOps</a>
+                <a href="#" class="category-item" data-value="Cloud Computing" onclick="filterPosts('Cloud Computing')">Cloud Computing</a>
+                <a href="#" class="category-item" data-value="Cybersecurity" onclick="filterPosts('Cybersecurity')">Cybersecurity</a>
+                <a href="#" class="category-item" data-value="Blockchain" onclick="filterPosts('Blockchain')">Blockchain</a>
+                <a href="#" class="category-item" data-value="Machine Learning" onclick="filterPosts('Machine Learning')">Machine Learning</a>
+                <a href="#" class="category-item" data-value="Data Science" onclick="filterPosts('Data Science')">Data Science</a>
+            </div>
+        </div>
+
+        <style>
+            .categories-sidebar {
+                position: fixed;
+                left: 0;
+                top: 60px; /* Adjust based on your header height */
+                bottom: 0;
+                width: 250px;
+                background: var(--bg-card);
+                border-right: 1px solid var(--border);
+                padding: 1.5rem;
+                overflow-y: auto;
+                box-shadow: var(--shadow);
+            }
+
+            .sidebar-title {
+                color: var(--text);
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .categories-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .category-item {
+                display: block;
+                padding: 0.5rem 0.75rem;
+                color: var(--text-muted);
+                text-decoration: none;
+                border-radius: 0.375rem;
+                transition: all 0.2s;
+                font-size: 0.875rem;
+            }
+
+            .category-item:hover {
+                background: var(--bg);
+                color: var(--primary);
+            }
+
+            .category-item.active {
+                background: var(--primary);
+                color: white;
+            }
+        </style>
     </div>
 
     <script>
