@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0a95ff;
-            --primary-hover: #0074cc;
-            --bg: #f8f9f9;
-            --bg-card: #ffffff;
-            --text: #242729;
-            --text-muted: #6a737c;
-            --border: #e3e6e8;
+            --primary: #8858ED;
+            --primary-hover: #7040E5;
+            --bg: #0E1217;
+            --bg-card: #151920;
+            --text: #ffffff;
+            --text-muted: #626466;
+            --border: #2D3748;
             --error: #f44336;
             --success: #4CAF50;
+            --shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         * {
@@ -30,88 +31,106 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 2rem auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
         .card {
             background: var(--bg-card);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .hero-section {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(145deg, var(--bg-card), #1a1f2a);
         }
 
         .hero-section h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
             color: var(--text);
+            background: linear-gradient(to right, var(--primary), #b088ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-section p {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
         }
 
         .values-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
         .value-card {
-            padding: 1.5rem;
-            border-radius: 8px;
-            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            background: linear-gradient(145deg, var(--bg-card), #1a1f2a);
             border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .value-card h3 {
             color: var(--primary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
         }
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
         }
 
         .team-member {
-            background: linear-gradient(145deg, var(--bg-card), #f5f5f5);
-            padding: 2rem;
-            border-radius: 12px;
+            background: linear-gradient(145deg, var(--bg-card), #1a1f2a);
+            padding: 2.5rem;
+            border-radius: 16px;
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid var(--border);
         }
 
         .team-member:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
         }
 
         .team-member h3 {
             color: var(--primary);
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
         }
 
         .team-member p {
@@ -123,88 +142,94 @@
         .social-links {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .social-links a {
             color: var(--text-muted);
-            font-size: 1.5rem;
-            transition: color 0.3s ease;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
             text-decoration: none;
         }
 
         .social-links a:hover {
             color: var(--primary);
-        }
-
-        .join-button {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            background: var(--primary);
-            color: white !important;
-            border-radius: 6px;
-            font-size: 1rem !important;
-            font-weight: 500;
-            transition: background 0.3s ease;
-        }
-
-        .join-button:hover {
-            background: var(--primary-hover);
+            transform: scale(1.2);
         }
 
         .header {
             background: var(--bg-card);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
-            margin-bottom: 2rem;
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         .header-content {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
         .logo {
             text-decoration: none;
             color: var(--text);
-            font-weight: 600;
-            font-size: 1.25rem;
+            font-weight: 700;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--primary);
         }
 
         .nav-links {
             display: flex;
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
         .nav-links a {
             text-decoration: none;
             color: var(--text-muted);
             font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
         }
 
         .nav-links a:hover {
             color: var(--primary);
+            background: rgba(136, 88, 237, 0.1);
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 0 0.5rem;
+                padding: 0 1rem;
             }
             
             .hero-section h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
             .nav-links {
                 display: none;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .team-grid {
+                gap: 1.5rem;
             }
         }
     </style>
@@ -269,7 +294,6 @@
                         <a href="https://github.com/marakigia" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
                         <a href="https://instagram.com/marak1_gtr" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
