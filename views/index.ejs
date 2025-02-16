@@ -1099,7 +1099,7 @@
                 <% 
                 // Initialize categories object
                 const categories = {
-                    'all': posts.length, // Total number of posts
+                    'all': (typeof posts !== 'undefined' ? posts.length : 0), // Total number of posts
                     'General': 0,
                     'Javascript/Typescript': 0,
                     'C++': 0,
