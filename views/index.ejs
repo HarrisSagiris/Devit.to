@@ -1188,6 +1188,7 @@
         </div>
 
         <style>
+            /* Sidebar Toggle Button */
             .toggle-sidebar {
                 position: fixed;
                 top: 15px;
@@ -1198,13 +1199,20 @@
                 border-radius: 8px;
                 padding: 12px;
                 cursor: pointer;
-                transition: 0.3s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             }
 
             .toggle-sidebar:hover {
                 transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             }
 
+            .toggle-sidebar:active {
+                transform: scale(0.95);
+            }
+
+            /* Toggle Button Lines */
             .toggle-lines {
                 display: flex;
                 flex-direction: column;
@@ -1217,7 +1225,7 @@
                 height: 2px;
                 background: white;
                 border-radius: 2px;
-                transition: 0.3s ease;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .toggle-sidebar.active .toggle-lines span:nth-child(1) {
@@ -1226,12 +1234,14 @@
 
             .toggle-sidebar.active .toggle-lines span:nth-child(2) {
                 opacity: 0;
+                transform: scale(0);
             }
 
             .toggle-sidebar.active .toggle-lines span:nth-child(3) {
                 transform: translateY(-6px) rotate(-45deg);
             }
 
+            /* Sidebar Container */
             .categories-sidebar {
                 position: fixed;
                 left: 0;
@@ -1242,8 +1252,10 @@
                 border-right: 1px solid var(--border);
                 padding: 1.5rem;
                 overflow-y: auto;
-                transition: 0.3s ease;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 transform: translateX(-100%);
+                box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(8px);
             }
 
             .categories-sidebar.active {
@@ -1256,6 +1268,7 @@
                 }
             }
 
+            /* Sidebar Title */
             .sidebar-title {
                 color: var(--text);
                 font-size: 1.2rem;
@@ -1263,14 +1276,17 @@
                 margin-bottom: 1.5rem;
                 padding-bottom: 0.5rem;
                 border-bottom: 1px solid var(--border);
+                letter-spacing: 0.5px;
             }
 
+            /* Categories List */
             .categories-list {
                 display: flex;
                 flex-direction: column;
                 gap: 0.75rem;
             }
 
+            /* Category Items */
             .category-item {
                 display: flex;
                 align-items: center;
@@ -1278,9 +1294,10 @@
                 color: var(--text);
                 text-decoration: none;
                 border-radius: 8px;
-                transition: 0.3s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 background: var(--bg);
                 border: 1px solid var(--border);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             }
 
             .category-item i {
@@ -1288,28 +1305,38 @@
                 font-size: 1.1rem;
                 color: var(--primary);
                 margin-right: 0.75rem;
+                transition: transform 0.3s ease;
             }
 
             .category-item span {
                 flex: 1;
+                font-weight: 500;
             }
 
             .category-item .post-count {
                 background: var(--primary);
                 color: white;
-                padding: 0.25rem 0.5rem;
+                padding: 0.25rem 0.75rem;
                 border-radius: 12px;
                 font-size: 0.85rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
             }
 
             .category-item:hover {
                 background: var(--primary-light);
                 transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .category-item:hover i {
+                transform: scale(1.1);
             }
 
             .category-item.active {
                 background: var(--primary);
                 color: white;
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
             }
 
             .category-item.active i {
@@ -1321,18 +1348,31 @@
                 color: var(--primary);
             }
 
+            /* Scrollbar Styling */
             .categories-sidebar::-webkit-scrollbar {
                 width: 6px;
+            }
+
+            .categories-sidebar::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+                border-radius: 3px;
             }
 
             .categories-sidebar::-webkit-scrollbar-thumb {
                 background: var(--primary);
                 border-radius: 3px;
+                transition: background 0.3s ease;
             }
 
+            .categories-sidebar::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-dark);
+            }
+
+            /* Animation */
             .category-item {
-                animation: slideIn 0.3s ease forwards;
+                animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
                 opacity: 0;
+                animation-delay: calc(var(--index) * 0.05s);
             }
 
             @keyframes slideIn {
