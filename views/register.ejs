@@ -283,7 +283,6 @@
         </div>
 
         <form action="/register" method="post" id="registerForm" onsubmit="return validateForm()">
-            <input type="hidden" name="returnTo" value="/">
             <div class="input-group">
                 <input type="text" name="username" id="username" placeholder="Username" required>
                 <i class="fas fa-user"></i>
@@ -352,6 +351,14 @@
         function validateForm() {
             const isValid = validateEmail() && validateUsername() && validatePassword();
             submitBtn.disabled = !isValid;
+            if (isValid) {
+                // Add hidden input for redirect
+                const redirectInput = document.createElement('input');
+                redirectInput.type = 'hidden';
+                redirectInput.name = 'redirect';
+                redirectInput.value = '/index';
+                document.getElementById('registerForm').appendChild(redirectInput);
+            }
             return isValid;
         }
     </script>
