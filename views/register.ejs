@@ -36,7 +36,8 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
+            padding-right: 10%;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             position: relative;
@@ -50,7 +51,7 @@
         .container {
             width: 100%;
             max-width: 420px;
-            background: rgba(21, 25, 32, 0.95);
+            background: rgba(21, 25, 32, 0.85);
             padding: 2.8rem;
             border-radius: 16px;
             box-shadow: var(--shadow);
@@ -254,7 +255,7 @@
     <div class="container">
         <div class="logo">
             <h1>Devit.to</h1>
-            <p>Where developers grow together</p>
+            <p>Join the next-gen developer community! Share code, spark discussions, and build your digital presence. Your code, your voice, your community.</p>
         </div>
 
         <form action="/register" method="post" id="registerForm" onsubmit="return validateForm()">
