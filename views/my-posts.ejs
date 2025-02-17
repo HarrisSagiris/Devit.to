@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #6366f1;
@@ -28,6 +29,16 @@
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
+        [data-theme="dark"] {
+            --bg: #1a1b1e;
+            --bg-card: #2a2b2e;
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+            --header-bg: #2a2b2e;
+            --nav-bg: #2a2b2e;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -39,6 +50,7 @@
             color: var(--text);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .header {
@@ -49,6 +61,7 @@
             top: 0;
             z-index: 100;
             box-shadow: var(--shadow);
+            transition: background-color 0.3s;
         }
 
         .header-content {
@@ -66,6 +79,13 @@
             font-weight: 700;
             color: var(--primary);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.75rem;
         }
 
         .nav-links {
@@ -85,20 +105,27 @@
             border: none;
             background: none;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-links a:hover, .nav-links button:hover {
             background: var(--bg);
             color: var(--primary);
+            transform: translateY(-1px);
         }
 
         .create-post-btn {
             background: var(--primary) !important;
             color: white !important;
+            box-shadow: var(--shadow);
         }
 
         .create-post-btn:hover {
             background: var(--primary-hover) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: var(--shadow-lg) !important;
         }
 
         .container {
@@ -109,97 +136,160 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
         }
 
         .stat-card {
             background: var(--bg-card);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
+            padding: 1.75rem;
+            border-radius: 1rem;
             box-shadow: var(--shadow);
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-card h3 {
             color: var(--text-muted);
             font-size: 0.875rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .stat-card .value {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
             color: var(--text);
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .stat-card .trend {
+            font-size: 0.875rem;
+            color: var(--upvote);
         }
 
         .post {
             background: var(--bg-card);
             border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 1.75rem;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
         }
 
         .post:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
+        }
+
+        .post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .post:hover::before {
+            opacity: 1;
         }
 
         .post-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .post-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--text);
+            transition: color 0.2s;
+        }
+
+        .post:hover .post-title {
+            color: var(--primary);
         }
 
         .category-badge {
-            background: var(--bg);
-            color: var(--primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: var(--shadow);
         }
 
         .post-content {
             color: var(--text);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
         }
 
         .post-stats {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             color: var(--text-muted);
             font-size: 0.875rem;
+            align-items: center;
         }
 
-        .post-actions {
-            margin-top: 1rem;
+        .post-stats span {
             display: flex;
+            align-items: center;
             gap: 0.5rem;
         }
 
+        .post-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
         .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .edit-btn {
             background: var(--bg);
             color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .edit-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .delete-btn {
@@ -207,75 +297,186 @@
             color: white;
         }
 
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
         .comments-section {
-            margin-top: 1rem;
-            padding-top: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
             border-top: 1px solid var(--border);
+        }
+
+        .comments-section h4 {
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .comment {
             background: var(--bg);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .comment:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
         }
 
         .comment-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-size: 0.875rem;
             color: var(--text-muted);
         }
 
         .no-posts {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem 2rem;
             background: var(--bg-card);
             border-radius: 1rem;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
 
-        .no-posts a {
-            color: var(--primary);
-            text-decoration: none;
+        .no-posts h2 {
+            color: var(--text);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
         }
 
-        .no-posts a:hover {
-            text-decoration: underline;
+        .no-posts p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
         }
 
         .filters {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
-        .filters select {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
+        .filters select, .search-bar {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
             border: 1px solid var(--border);
             background: var(--bg-card);
             color: var(--text);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filters select:hover, .search-bar:hover {
+            border-color: var(--primary);
+        }
+
+        .filters select:focus, .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
 
         .search-bar {
             flex: 1;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text);
+            min-width: 200px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+            
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-left: auto;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-card);
+            transition: .4s;
+            border-radius: 34px;
+            border: 2px solid var(--primary);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 2px;
+            background-color: var(--primary);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: white;
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <a href="/" class="logo">Devit.to</a>
+            <a href="/" class="logo">
+                <i class="fas fa-code"></i>
+                Devit.to
+            </a>
             <nav class="nav-links">
-                <a href="/" class="create-post-btn">My Feed</a>
-                </form>
+                <a href="/" class="create-post-btn">
+                    <i class="fas fa-home"></i>
+                    My Feed
+                </a>
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
             </nav>
         </div>
     </header>
@@ -283,20 +484,29 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>Total Posts</h3>
-                <div class="value"><%= posts.length %></div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Upvotes</h3>
-                <div class="value"><%= posts.reduce((sum, post) => sum + post.upvotes, 0) %></div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Comments</h3>
-                <div class="value"><%= posts.reduce((sum, post) => sum + post.comments.length, 0) %></div>
-            </div>
-            <div class="stat-card">
-                <h3>Most Popular Category</h3>
+                <h3><i class="fas fa-file-alt"></i> Total Posts</h3>
                 <div class="value">
+                    <%= posts.length %>
+                    <span class="trend">+5% this week</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-thumbs-up"></i> Total Upvotes</h3>
+                <div class="value">
+                    <%= posts.reduce((sum, post) => sum + post.upvotes, 0) %>
+                    <span class="trend">+12% this week</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-comments"></i> Total Comments</h3>
+                <div class="value">
+                    <%= posts.reduce((sum, post) => sum + post.comments.length, 0) %>
+                    <span class="trend">+8% this week</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-tag"></i> Most Popular Category</h3>
+                <div class="value" style="font-size: 1.5rem;">
                     <%= posts.length ? posts.reduce((acc, post) => {
                         acc[post.category] = (acc[post.category] || 0) + 1;
                         return acc;
@@ -311,10 +521,10 @@
                 <option value="">All Categories</option>
                 <option value="General">General</option>
                 <option value="Javascript/Typescript">Javascript/Typescript</option>
-                <option value="c++">c++</option>
+                <option value="c++">C++</option>
                 <option value="Gaming">Gaming</option>
                 <option value="Python">Python</option>
-                <option value="php">php</option>
+                <option value="php">PHP</option>
                 <option value="Tech">Tech</option>
                 <option value="AI">AI</option>
             </select>
@@ -337,31 +547,36 @@
                             </div>
                             <p class="post-content content-text"><%= post.content %></p>
                             <div class="post-stats">
-                                <span>👍 <%= post.upvotes %> upvotes</span>
-                                <span>👎 <%= post.downvotes %> downvotes</span>
-                                <span>💬 <%= post.comments.length %> comments</span>
-                                <span>📅 <%= new Date(post.createdAt).toLocaleDateString() %></span>
+                                <span><i class="fas fa-thumbs-up"></i> <%= post.upvotes %> upvotes</span>
+                                <span><i class="fas fa-thumbs-down"></i> <%= post.downvotes %> downvotes</span>
+                                <span><i class="fas fa-comments"></i> <%= post.comments.length %> comments</span>
+                                <span><i class="far fa-calendar-alt"></i> <%= new Date(post.createdAt).toLocaleDateString() %></span>
                             </div>
                         </div>
                         
                         <div class="post-actions">
-                            <button class="btn edit-btn" data-id="<%= post._id %>">Edit</button>
-                            <button class="btn delete-btn" data-id="<%= post._id %>">Delete</button>
+                            <button class="btn edit-btn" data-id="<%= post._id %>">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn delete-btn" data-id="<%= post._id %>">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
                         </div>
 
                         <div class="comments-section">
-                            <h4>Recent Comments</h4>
+                            <h4><i class="fas fa-comments"></i> Recent Comments</h4>
                             <% post.comments.slice(-3).forEach(comment => { %>
                                 <div class="comment">
                                     <div class="comment-header">
-                                        <span><%= comment.author %></span>
-                                        <span><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                                        <span><i class="fas fa-user"></i> <%= comment.author %></span>
+                                        <span><i class="far fa-clock"></i> <%= new Date(comment.createdAt).toLocaleDateString() %></span>
                                     </div>
                                     <%= comment.content %>
                                 </div>
                             <% }) %>
                             <% if (post.comments.length > 3) { %>
                                 <button class="btn view-all-comments" data-id="<%= post._id %>">
+                                    <i class="fas fa-chevron-down"></i>
                                     View all <%= post.comments.length %> comments
                                 </button>
                             <% } %>
@@ -372,7 +587,10 @@
                 <div class="no-posts">
                     <h2>No Posts Yet</h2>
                     <p>Share your thoughts and experiences with the community!</p>
-                    <a href="/create-post" class="btn create-post-btn">Create Your First Post</a>
+                    <a href="/create-post" class="btn create-post-btn">
+                        <i class="fas fa-plus"></i>
+                        Create Your First Post
+                    </a>
                 </div>
             <% } %>
         </div>
@@ -380,26 +598,62 @@
 
     <script>
         $(document).ready(function() {
-            // Search functionality
-            $('.search-bar').on('input', function() {
-                const searchTerm = $(this).val().toLowerCase();
-                $('.post').each(function() {
-                    const title = $(this).find('.post-title').text().toLowerCase();
-                    const content = $(this).find('.content-text').text().toLowerCase();
-                    $(this).toggle(title.includes(searchTerm) || content.includes(searchTerm));
-                });
+            // Theme toggle
+            const themeToggle = $('#theme-toggle');
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.prop('checked', true);
+            }
+
+            // Theme switch handler
+            themeToggle.change(function() {
+                if (this.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
             });
 
-            // Category filter
+            // Search functionality with debounce
+            let searchTimeout;
+            $('.search-bar').on('input', function() {
+                clearTimeout(searchTimeout);
+                const searchBar = $(this);
+                
+                searchTimeout = setTimeout(function() {
+                    const searchTerm = searchBar.val().toLowerCase();
+                    $('.post').each(function() {
+                        const title = $(this).find('.post-title').text().toLowerCase();
+                        const content = $(this).find('.content-text').text().toLowerCase();
+                        const category = $(this).find('.category-badge').text().toLowerCase();
+                        
+                        $(this).toggle(
+                            title.includes(searchTerm) || 
+                            content.includes(searchTerm) || 
+                            category.includes(searchTerm)
+                        );
+                    });
+                }, 300);
+            });
+
+            // Category filter with animation
             $('#categoryFilter').on('change', function() {
                 const category = $(this).val();
                 $('.post').each(function() {
                     const postCategory = $(this).find('.category-badge').text();
-                    $(this).toggle(!category || postCategory === category);
+                    if (!category || postCategory === category) {
+                        $(this).fadeIn(300);
+                    } else {
+                        $(this).fadeOut(300);
+                    }
                 });
             });
 
-            // Sort functionality
+            // Enhanced sort functionality
             $('#sortBy').on('change', function() {
                 const sortBy = $(this).val();
                 const posts = $('.post').get();
@@ -421,41 +675,52 @@
                     }
                 });
 
-                $('#myPostsContainer').append(posts);
+                const container = $('#myPostsContainer');
+                $.each(posts, function(i, post) {
+                    $(post).css('opacity', '0').appendTo(container).delay(i * 100).animate({opacity: 1}, 300);
+                });
             });
 
-            // Edit & Delete functionality remains the same
-            $('.edit-btn').click(function() {
-                const postId = $(this).data('id');
-                $(`#content-${postId}`).hide();
-                $(`#edit-form-${postId}`).show();
-            });
-
+            // Improved delete confirmation
             $('.delete-btn').click(function() {
-                if (confirm('Are you sure you want to delete this post?')) {
-                    const postId = $(this).data('id');
+                const postId = $(this).data('id');
+                const post = $(`#post-${postId}`);
+                
+                if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
                     $.ajax({
                         url: `/post/${postId}`,
                         method: 'DELETE',
                         success: function() {
-                            $(`#post-${postId}`).fadeOut(400, function() {
+                            post.slideUp(400, function() {
                                 $(this).remove();
                                 if ($('.post').length === 0) {
                                     $('#myPostsContainer').html(`
                                         <div class="no-posts">
                                             <h2>No Posts Yet</h2>
                                             <p>Share your thoughts and experiences with the community!</p>
-                                            <a href="/create-post" class="btn create-post-btn">Create Your First Post</a>
+                                            <a href="/create-post" class="btn create-post-btn">
+                                                <i class="fas fa-plus"></i>
+                                                Create Your First Post
+                                            </a>
                                         </div>
-                                    `);
+                                    `).hide().fadeIn(400);
                                 }
                             });
                         },
                         error: function() {
-                            alert('Error deleting post');
+                            alert('Error deleting post. Please try again later.');
                         }
                     });
                 }
+            });
+
+            // Edit functionality with smooth transitions
+            $('.edit-btn').click(function() {
+                const postId = $(this).data('id');
+                const contentDiv = $(`#content-${postId}`);
+                contentDiv.slideUp(300, function() {
+                    $(`#edit-form-${postId}`).slideDown(300);
+                });
             });
         });
     </script>
