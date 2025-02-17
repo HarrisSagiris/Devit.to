@@ -1130,20 +1130,21 @@
                     <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Devit.to
+                <span class="logo-text">Devit.to</span>
             </a>
+
             <% if (user) { %>
-                <div class="nav-links">
-                    <div class="profile-dropdown" style="position: relative;">
-                        <div class="profile-trigger" onclick="toggleDropdown(this)" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: background 0.2s;">
-                            <img src="<%= user.avatar || '/icons/icon.jpg' %>" alt="Profile" class="profile-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
-                            <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
-                        </div>
-                        <div class="dropdown-content" style="position: absolute; top: 100%; right: 0; min-width: 220px; background: var(--bg-card); border-radius: 0.75rem; box-shadow: var(--shadow); margin-top: 0.5rem; z-index: 100; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s;">
-                            <div class="dropdown-header" style="padding: 1rem; background: var(--bg-card-hover);">
-                                <span style="display: block; margin-bottom: 0.5rem; color: var(--text);">Welcome, <strong><%= user.username %></strong></span>
+                <nav class="nav-links">
+                    <div class="profile-dropdown">
+                        <button class="profile-trigger" onclick="toggleDropdown(this)">
+                            <img src="<%= user.avatar || '/icons/icon.jpg' %>" alt="Profile" class="profile-avatar">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        
+                        <div class="dropdown-content">
+                            <div class="dropdown-header">
+                                <span class="welcome-text">Welcome, <strong><%= user.username %></strong></span>
                                 <% 
-                                // Calculate user rank based on total upvotes
                                 let rank;
                                 let badgeClass;
                                 let icon;
@@ -1178,67 +1179,76 @@
                                     icon = "fa-user";
                                 }
                                 %>
-                                <div class="ranking" style="margin-top: 0.5rem;">
-                                    <span class="ranking-badge <%= badgeClass %>" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; border-radius: 1rem; font-size: 0.75rem; background: var(--badge-bg); color: var(--badge-text);">
+                                <div class="ranking">
+                                    <span class="ranking-badge <%= badgeClass %>">
                                         <i class="fas <%= icon %>"></i>
                                         <%= rank %>
                                     </span>
                                 </div>
                             </div>
-                            <div class="dropdown-divider" style="height: 1px; background: var(--border);"></div>
-                            <a href="#" id="change-username" class="dropdown-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text); text-decoration: none; transition: background 0.2s;">
-                                <i class="fas fa-user-edit"></i>
-                                Change Username
-                            </a>
-                            <a href="/my-posts" class="dropdown-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text); text-decoration: none; transition: background 0.2s;">
-                                <i class="fas fa-chart-line"></i>
-                                Reputation
-                            </a>
-                            <a href="fordevelopers.html" class="dropdown-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text); text-decoration: none; transition: background 0.2s;">
-                                <i class="fas fa-info-circle"></i>
-                                About us
-                            </a>
-                            <a href="/github" class="dropdown-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text); text-decoration: none; transition: background 0.2s;">
-                                <i class="fas fa-newspaper"></i>
-                                News
-                            </a>
-                            <div class="dropdown-divider" style="height: 1px; background: var(--border);"></div>
-                            <div class="theme-toggle-container dropdown-item" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem;">
-                                <span style="color: var(--text);">Theme:</span>
-                                <label class="theme-switch" title="Switch between light and dark theme">
-                                    <input type="checkbox" id="theme-toggle">
-                                    <span class="slider"></span>
-                                </label>
+
+                            <div class="dropdown-menu">
+                                <a href="#" id="change-username" class="dropdown-item">
+                                    <i class="fas fa-user-edit"></i>
+                                    <span>Change Username</span>
+                                </a>
+                                <a href="/my-posts" class="dropdown-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Reputation</span>
+                                </a>
+                                <a href="fordevelopers.html" class="dropdown-item">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>About us</span>
+                                </a>
+                                <a href="/github" class="dropdown-item">
+                                    <i class="fas fa-newspaper"></i>
+                                    <span>News</span>
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <div class="theme-toggle-container">
+                                    <span>Theme</span>
+                                    <label class="theme-switch" title="Switch between light and dark theme">
+                                        <input type="checkbox" id="theme-toggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <a href="/logout" class="dropdown-item logout">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </a>
                             </div>
-                            <a href="/logout" class="dropdown-item text-danger" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--danger); text-decoration: none; transition: background 0.2s;">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
-                            </a>
                         </div>
                     </div>
-                </div>
+                </nav>
             <% } else { %>
-                <div class="nav-links">
-                    <a href="/login" style="color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">Login</a>
-                    <a href="/register" style="color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">Register</a>
-                    <a href="/github" class="github-btn" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
-                        <i class="fas fa-newspaper"></i>
-                        News
-                    </a>
-                    
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.875rem; color: var(--text-muted);">Theme:</span>
+                <nav class="nav-links">
+                    <div class="auth-links">
+                        <a href="/login" class="nav-link">Login</a>
+                        <a href="/register" class="nav-link">Register</a>
+                        <a href="/github" class="nav-link">
+                            <i class="fas fa-newspaper"></i>
+                            <span>News</span>
+                        </a>
+                    </div>
+
+                    <div class="theme-toggle-wrapper">
+                        <span>Theme</span>
                         <label class="theme-switch" title="Switch between light and dark theme">
                             <input type="checkbox" id="theme-toggle">
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div style="position: absolute; top: 100%; left: 0; background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 0.5rem; margin-top: 0.5rem; box-shadow: var(--shadow); font-size: 0.875rem; color: var(--text-muted); white-space: nowrap;">
+
+                    <div class="login-prompt">
                         Login/Register to access all features
                     </div>
-                </div>
+                </nav>
             <% } %>
         </div>
+    </header>
     </header>
     <script>
     function toggleDropdown(trigger) {
