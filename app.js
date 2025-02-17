@@ -414,21 +414,22 @@ app.post('/post', async (req, res) => {
 });
 
 // Delete post with proper error handling
-app.post('/post/:id/delete', async (req, res) => {
+app.delete('/post/:id', async (req, res) => {
   try {
-    if (!req.session.user) return res.status(403).send('Login required');
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).send('Post not found');
+    if (!req.session.user) return res.status(403).json({ error: 'Login required' });
     
-    if (post.user.toString() === req.session.user._id) {
-      await post.delete();
-      res.redirect('/');
-    } else {
-      res.status(403).send('Unauthorized');
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+    
+    if (post.user.toString() !== req.session.user._id.toString()) {
+      return res.status(403).json({ error: 'Unauthorized' });
     }
+    
+    await post.deleteOne();
+    res.json({ success: true });
   } catch (error) {
     console.error('Post deletion error:', error);
-    res.status(500).send('Error deleting post');
+    res.status(500).json({ error: 'Error deleting post' });
   }
 });
 
@@ -522,21 +523,21 @@ app.post('/post/:id/comment', async (req, res) => {
 // Like/Unlike comment
 app.post('/post/:postId/comment/:commentId/like', async (req, res) => {
   try {
-    if (!req.session.user) return res.status(403).send('Login required');
+    if (!req.session.user) return res.status(403).json({ error: 'Login required' });
 
     const post = await Post.findById(req.params.postId);
-    if (!post) return res.status(404).send('Post not found');
+    if (!post) return res.status(404).json({ error: 'Post not found' });
 
     const comment = post.comments.id(req.params.commentId);
-    if (!comment) return res.status(404).send('Comment not found');
+    if (!comment) return res.status(404).json({ error: 'Comment not found' });
 
-    const userId = req.session.user.username;
-    const likedIndex = comment.likedBy.indexOf(userId);
+    const username = req.session.user.username;
+    const likedIndex = comment.likedBy.indexOf(username);
 
     if (likedIndex === -1) {
       // Like comment
       comment.likes++;
-      comment.likedBy.push(userId);
+      comment.likedBy.push(username);
     } else {
       // Unlike comment
       comment.likes--;
@@ -544,26 +545,31 @@ app.post('/post/:postId/comment/:commentId/like', async (req, res) => {
     }
 
     await post.save();
-    res.json({ likes: comment.likes, liked: likedIndex === -1 });
+    res.json({ 
+      success: true,
+      likes: comment.likes, 
+      liked: likedIndex === -1,
+      likedBy: comment.likedBy 
+    });
   } catch (error) {
     console.error('Comment like error:', error);
-    res.status(500).send('Error processing comment like');
+    res.status(500).json({ error: 'Error processing comment like' });
   }
 });
 
 // Delete comment
-app.post('/post/:postId/comment/:commentId/delete', async (req, res) => {
+app.delete('/post/:postId/comment/:commentId', async (req, res) => {
   try {
-    if (!req.session.user) return res.status(403).send('Login required');
+    if (!req.session.user) return res.status(403).json({ error: 'Login required' });
 
     const post = await Post.findById(req.params.postId);
-    if (!post) return res.status(404).send('Post not found');
+    if (!post) return res.status(404).json({ error: 'Post not found' });
 
     const comment = post.comments.id(req.params.commentId);
-    if (!comment) return res.status(404).send('Comment not found');
+    if (!comment) return res.status(404).json({ error: 'Comment not found' });
 
     if (comment.username !== req.session.user.username) {
-      return res.status(403).send('Unauthorized to delete this comment');
+      return res.status(403).json({ error: 'Unauthorized to delete this comment' });
     }
 
     comment.remove();
@@ -571,7 +577,7 @@ app.post('/post/:postId/comment/:commentId/delete', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Comment deletion error:', error);
-    res.status(500).send('Error deleting comment');
+    res.status(500).json({ error: 'Error deleting comment' });
   }
 });
 

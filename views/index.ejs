@@ -1697,7 +1697,7 @@
                         <div class="post-actions">
                             <button class="comments-toggle">💬 <%= post.comments.length %> Comments</button>
                             <% if (user && user.username === post.username) { %>
-                                <button class="delete-btn" data-id="<%= post._id %>" onclick="deletePost('<%= post._id %>')">🗑️ Delete</button>
+                                <button class="delete-btn" data-id="<%= post._id %>">🗑️ Delete</button>
                             <% } %>
                         </div>
                     </div>
@@ -1724,16 +1724,19 @@
                                     <%= comment.content %>
                                 </div>
                                 <div class="comment-actions">
-                                    <button class="comment-like-btn <%= comment.likedBy?.includes(user?._id) ? 'liked' : '' %>"
+                                    <button class="comment-like-btn <%= comment.likedBy?.includes(user?.username) ? 'liked' : '' %>"
                                             data-comment-id="<%= comment._id %>"
-                                            data-post-id="<%= post._id %>"
-                                            onclick="likeComment(this, '<%= comment._id %>', '<%= post._id %>')"
-                                            <%= !user ? 'disabled' : '' %>>
+                                            data-post-id="<%= post._id %>">
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
-                                    <% if (user && user.username === (comment.author ? comment.author.username : comment.username)) { %>
-                                        <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
+                                    <% if (user && user.username === comment.username) { %>
+                                        <button class="delete-comment-btn" 
+                                                data-post-id="<%= post._id %>" 
+                                                data-comment-id="<%= comment._id %>">
+                                            Delete
+                                        </button>
                                     <% } %>
+                                </div>
                                 </div>
                             </div>
                         <% }) %>
@@ -2024,12 +2027,27 @@
                         url: `/post/${postId}/comment/${commentId}`,
                         method: 'DELETE',
                         success: function(response) {
-                            $(`#comment-${commentId}`).fadeOut(400, function() {
-                                $(this).remove();
-                            });
+                            if (response.success) {
+                                // Remove the comment from DOM
+                                $(`#comment-${commentId}`).fadeOut(400, function() {
+                                    $(this).remove();
+                                });
+                                
+                                // Update comment count
+                                const post = $(`#post-${postId}`);
+                                const commentsToggle = post.find('.comments-toggle');
+                                const currentCount = parseInt(commentsToggle.text().match(/\d+/)[0]);
+                                commentsToggle.html(`💬 ${currentCount - 1} Comments`);
+                            }
                         },
                         error: function(err) {
-                            alert('Unable to delete comment. Please try again later.');
+                            if (err.status === 403) {
+                                alert('You can only delete your own comments');
+                            } else if (err.status === 404) {
+                                alert('Comment not found');
+                            } else {
+                                alert('Error deleting comment. Please try again.');
+                            }
                         }
                     });
                 }
@@ -2053,76 +2071,45 @@
 
             // Delete post
             $('.delete-btn').on('click', function(e) {
-                e.preventDefault(); // Prevent any default behavior
+                e.preventDefault();
                 
-                if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                if (confirm('Are you sure you want to delete this post?')) {
                     const postId = $(this).data('id');
                     const postElement = $(`#post-${postId}`);
-                    
-                    // First check if post exists
-                    if (!postElement.length) {
-                        const errorMessage = $('<div class="alert alert-error">Post not found. The page will refresh.</div>')
-                            .hide()
-                            .insertBefore('.feed')
-                            .fadeIn(400);
-                            
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
-                        return;
-                    }
                     
                     $.ajax({
                         url: `/post/${postId}`,
                         method: 'DELETE',
                         success: function(response) {
-                            // Fade out and remove the post
-                            postElement.fadeOut(400, function() {
-                                $(this).remove();
-                                
-                                // Show success message
-                                const successMessage = $('<div class="alert alert-success">Post deleted successfully</div>')
-                                    .hide()
-                                    .insertBefore('.feed')
-                                    .fadeIn(400);
-                                    
-                                // Remove success message after 3 seconds
-                                setTimeout(() => {
-                                    successMessage.fadeOut(400, function() {
-                                        $(this).remove();
-                                    });
-                                }, 3000);
-                            });
-                        },
-                        error: function(xhr) {
-                            let errorMsg = 'Failed to delete post. ';
-                            
-                            switch(xhr.status) {
-                                case 401:
-                                    errorMsg += 'Please login to delete posts.';
-                                    break;
-                                case 403:
-                                    errorMsg += 'You do not have permission to delete this post.';
-                                    break;
-                                case 404:
-                                    errorMsg += 'Post not found.';
-                                    location.reload(); // Immediately refresh if post not found
-                                    break;
-                                default:
-                                    errorMsg += 'An unexpected error occurred. Please try again later.';
-                            }
-                            
-                            // Show error message
-                            const errorMessage = $('<div class="alert alert-error">' + errorMsg + '</div>')
-                                .hide()
-                                .insertBefore('.feed')
-                                .fadeIn(400);
-                                
-                            setTimeout(() => {
-                                errorMessage.fadeOut(400, function() {
+                            if (response.success) {
+                                postElement.fadeOut(400, function() {
                                     $(this).remove();
                                 });
-                            }, 3000);
+                            }
+                        },
+                        error: function(xhr) {
+                            let errorMsg = 'Error deleting post. ';
+                            
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                                errorMsg = xhr.responseJSON.error;
+                            } else {
+                                switch(xhr.status) {
+                                    case 403:
+                                        errorMsg = 'Login required';
+                                        break;
+                                    case 404:
+                                        errorMsg = 'Post not found';
+                                        break;
+                                    default:
+                                        errorMsg = 'An error occurred while deleting the post';
+                                }
+                            }
+                            
+                            alert(errorMsg);
+                            
+                            if (xhr.status === 404) {
+                                location.reload();
+                            }
                         }
                     });
                 }
