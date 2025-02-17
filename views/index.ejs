@@ -1126,35 +1126,43 @@
                     let rank;
                     let badgeClass;
                     let icon;
+                    let nextRankUpvotes;
                     
                     if (user.totalUpvotes >= 5000) {
                         rank = "Elite";
                         badgeClass = "gold";
-                        icon = "fa-crown"; 
+                        icon = "fa-crown";
+                        nextRankUpvotes = null; // Max rank
                     } else if (user.totalUpvotes >= 2500) {
                         rank = "Master";
                         badgeClass = "gold";
                         icon = "fa-star";
+                        nextRankUpvotes = 5000 - user.totalUpvotes;
                     } else if (user.totalUpvotes >= 1000) {
                         rank = "Expert";
-                        badgeClass = "silver"; 
+                        badgeClass = "silver";
                         icon = "fa-medal";
+                        nextRankUpvotes = 2500 - user.totalUpvotes;
                     } else if (user.totalUpvotes >= 500) {
                         rank = "Advanced";
                         badgeClass = "silver";
                         icon = "fa-award";
+                        nextRankUpvotes = 1000 - user.totalUpvotes;
                     } else if (user.totalUpvotes >= 100) {
                         rank = "Intermediate";
                         badgeClass = "bronze";
                         icon = "fa-certificate";
+                        nextRankUpvotes = 500 - user.totalUpvotes;
                     } else if (user.totalUpvotes >= 50) {
                         rank = "Beginner";
                         badgeClass = "bronze";
                         icon = "fa-seedling";
+                        nextRankUpvotes = 100 - user.totalUpvotes;
                     } else {
-                        rank = "Newbie"; 
+                        rank = "Newbie";
                         badgeClass = "bronze";
                         icon = "fa-user";
+                        nextRankUpvotes = 50 - user.totalUpvotes;
                     }
                     %>
                     <div class="ranking">
@@ -1163,23 +1171,7 @@
                             <%= rank %>
                         </span>
                         <span class="ranking-points">
-                            <% 
-                            let nextRankThreshold;
-                            if (user.totalUpvotes < 50) {
-                                nextRankThreshold = 50;
-                            } else if (user.totalUpvotes < 100) {
-                                nextRankThreshold = 100;
-                            } else if (user.totalUpvotes < 500) {
-                                nextRankThreshold = 500;
-                            } else if (user.totalUpvotes < 1000) {
-                                nextRankThreshold = 1000;
-                            } else if (user.totalUpvotes < 2500) {
-                                nextRankThreshold = 2500;
-                            } else if (user.totalUpvotes < 5000) {
-                                nextRankThreshold = 5000;
-                            }
-                            %>
-                            <%= nextRankThreshold ? (nextRankThreshold - user.totalUpvotes) + ' points to next rank' : 'Max rank achieved!' %>
+                            <%= nextRankUpvotes ? nextRankUpvotes + ' upvotes to ' + (rank === 'Newbie' ? 'Beginner' : rank === 'Beginner' ? 'Intermediate' : rank === 'Intermediate' ? 'Advanced' : rank === 'Advanced' ? 'Expert' : rank === 'Expert' ? 'Master' : rank === 'Master' ? 'Elite' : '') : 'Max rank achieved!' %>
                         </span>
                     </div>
                     <span class="user-rank" title="Based on total upvotes">Rank: <%= rank %></span>
