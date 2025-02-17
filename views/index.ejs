@@ -1122,29 +1122,37 @@
                 <div class="nav-links">
                     <span>Welcome, <strong><%= user.username %></strong></span>
                     <% 
-                    // Calculate user rank based on total upvotes from my-posts.ejs
+                    // Calculate user rank based on total upvotes
                     let rank;
                     let badgeClass;
                     let icon;
                     
-                    if (user.totalUpvotes >= 1000) {
-                        rank = "Legend";
+                    if (user.totalUpvotes >= 5000) {
+                        rank = "Elite";
                         badgeClass = "gold";
-                        icon = "fa-crown";
-                    } else if (user.totalUpvotes >= 500) {
-                        rank = "Expert"; 
-                        badgeClass = "silver";
+                        icon = "fa-crown"; 
+                    } else if (user.totalUpvotes >= 2500) {
+                        rank = "Master";
+                        badgeClass = "gold";
                         icon = "fa-star";
+                    } else if (user.totalUpvotes >= 1000) {
+                        rank = "Expert";
+                        badgeClass = "silver"; 
+                        icon = "fa-medal";
+                    } else if (user.totalUpvotes >= 500) {
+                        rank = "Advanced";
+                        badgeClass = "silver";
+                        icon = "fa-award";
                     } else if (user.totalUpvotes >= 100) {
                         rank = "Intermediate";
                         badgeClass = "bronze";
-                        icon = "fa-medal";
+                        icon = "fa-certificate";
                     } else if (user.totalUpvotes >= 50) {
                         rank = "Beginner";
                         badgeClass = "bronze";
                         icon = "fa-seedling";
                     } else {
-                        rank = "Newbie";
+                        rank = "Newbie"; 
                         badgeClass = "bronze";
                         icon = "fa-user";
                     }
@@ -1155,7 +1163,23 @@
                             <%= rank %>
                         </span>
                         <span class="ranking-points">
-                            <%= user.totalUpvotes %> points
+                            <% 
+                            let nextRankThreshold;
+                            if (user.totalUpvotes < 50) {
+                                nextRankThreshold = 50;
+                            } else if (user.totalUpvotes < 100) {
+                                nextRankThreshold = 100;
+                            } else if (user.totalUpvotes < 500) {
+                                nextRankThreshold = 500;
+                            } else if (user.totalUpvotes < 1000) {
+                                nextRankThreshold = 1000;
+                            } else if (user.totalUpvotes < 2500) {
+                                nextRankThreshold = 2500;
+                            } else if (user.totalUpvotes < 5000) {
+                                nextRankThreshold = 5000;
+                            }
+                            %>
+                            <%= nextRankThreshold ? (nextRankThreshold - user.totalUpvotes) + ' points to next rank' : 'Max rank achieved!' %>
                         </span>
                     </div>
                     <span class="user-rank" title="Based on total upvotes">Rank: <%= rank %></span>
