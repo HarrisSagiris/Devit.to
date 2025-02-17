@@ -28,6 +28,7 @@
     "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4",
     "querystring": "^0.2.1"
   }
 }
