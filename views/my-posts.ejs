@@ -487,21 +487,18 @@
                 <h3><i class="fas fa-file-alt"></i> Total Posts</h3>
                 <div class="value">
                     <%= posts.length %>
-                    <span class="trend">+5% this week</span>
                 </div>
             </div>
             <div class="stat-card">
                 <h3><i class="fas fa-thumbs-up"></i> Total Upvotes</h3>
                 <div class="value">
                     <%= posts.reduce((sum, post) => sum + post.upvotes, 0) %>
-                    <span class="trend">+12% this week</span>
                 </div>
             </div>
             <div class="stat-card">
                 <h3><i class="fas fa-comments"></i> Total Comments</h3>
                 <div class="value">
                     <%= posts.reduce((sum, post) => sum + post.comments.length, 0) %>
-                    <span class="trend">+8% this week</span>
                 </div>
             </div>
             <div class="stat-card">
