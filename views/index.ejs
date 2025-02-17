@@ -1397,46 +1397,45 @@
             .toggle-sidebar {
                 position: fixed;
                 top: 45px;
-                left: 50%;
-                transform: translateX(-50%);
+                left: 15px;
                 z-index: 1000;
                 background: var(--primary);
                 border: none;
-                border-radius: 12px;
-                width: 48px;
-                height: 48px;
+                border-radius: 8px;
+                width: 44px;
+                height: 44px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             }
 
             .toggle-sidebar:hover {
-                transform: translateX(-50%) scale(1.08);
-                box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+                transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             }
 
             .toggle-lines {
                 display: flex;
                 flex-direction: column;
-                gap: 6px;
-                width: 26px;
+                gap: 5px;
+                width: 24px;
             }
 
             .toggle-lines span {
                 display: block;
                 width: 100%;
-                height: 3px;
+                height: 2.5px;
                 background: white;
-                border-radius: 3px;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 2px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 transform-origin: center;
             }
 
             .toggle-sidebar.active .toggle-lines span:nth-child(1) {
-                transform: translateY(9px) rotate(45deg);
+                transform: translateY(7.5px) rotate(45deg);
             }
 
             .toggle-sidebar.active .toggle-lines span:nth-child(2) {
@@ -1445,7 +1444,7 @@
             }
 
             .toggle-sidebar.active .toggle-lines span:nth-child(3) {
-                transform: translateY(-9px) rotate(-45deg);
+                transform: translateY(-7.5px) rotate(-45deg);
             }
 
             .categories-sidebar {
@@ -1453,16 +1452,15 @@
                 left: 0;
                 top: 60px;
                 bottom: 0;
-                width: 320px;
+                width: 300px;
                 background: var(--bg-card);
-                border-right: 2px solid var(--border);
-                padding: 2.5rem;
+                border-right: 1px solid var(--border);
+                padding: 2rem;
                 overflow-y: auto;
                 box-shadow: var(--shadow-lg);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 100;
                 transform: translateX(-100%);
-                backdrop-filter: blur(10px);
             }
 
             .categories-sidebar.active {
@@ -1472,16 +1470,17 @@
             @media (max-width: 768px) {
                 .categories-sidebar {
                     width: 100%;
+                    backdrop-filter: blur(8px);
                 }
             }
 
             .sidebar-title {
                 color: var(--text);
-                font-size: 1.5rem;
+                font-size: 1.25rem;
                 font-weight: 700;
-                margin-bottom: 2.5rem;
-                padding-bottom: 1.25rem;
-                border-bottom: 3px solid var(--border);
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid var(--border);
                 display: flex;
                 align-items: center;
                 gap: 1rem;
@@ -1489,27 +1488,27 @@
 
             .sidebar-title i {
                 color: var(--primary);
-                font-size: 1.75rem;
+                font-size: 1.5rem;
             }
 
             .categories-list {
                 display: flex;
                 flex-direction: column;
-                gap: 1.25rem;
+                gap: 1rem;
             }
 
             .category-item {
                 display: flex;
                 align-items: center;
-                padding: 1.25rem 1.5rem;
+                padding: 1rem 1.25rem;
                 color: var(--text);
                 text-decoration: none;
                 border-radius: 1rem;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                font-size: 1.1rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-size: 1rem;
                 font-weight: 500;
                 background: var(--bg);
-                border: 2px solid var(--border);
+                border: 1.5px solid var(--border);
                 position: relative;
                 overflow: hidden;
                 backdrop-filter: blur(4px);
@@ -1521,19 +1520,19 @@
                 left: 0;
                 top: 0;
                 height: 100%;
-                width: 5px;
+                width: 4px;
                 background: var(--primary);
                 opacity: 0;
-                transition: opacity 0.4s;
+                transition: opacity 0.3s;
             }
 
             .category-item i {
-                width: 32px;
+                width: 28px;
                 text-align: center;
-                font-size: 1.3rem;
+                font-size: 1.2rem;
                 color: var(--primary);
-                margin-right: 1.25rem;
-                transition: transform 0.4s;
+                margin-right: 1rem;
+                transition: transform 0.3s;
             }
 
             .category-item span {
@@ -1543,19 +1542,19 @@
             .category-item .post-count {
                 background: var(--primary);
                 color: white;
-                padding: 0.4rem 0.9rem;
+                padding: 0.35rem 0.75rem;
                 border-radius: 2rem;
-                font-size: 0.9rem;
-                min-width: 32px;
+                font-size: 0.85rem;
+                min-width: 28px;
                 text-align: center;
-                transition: all 0.4s;
+                transition: all 0.3s;
                 font-weight: 600;
             }
 
             .category-item:hover {
                 background: var(--primary-light);
                 border-color: var(--primary);
-                transform: translateY(-3px);
+                transform: translateY(-2px);
             }
 
             .category-item:hover::before {
@@ -1563,19 +1562,19 @@
             }
 
             .category-item:hover i {
-                transform: scale(1.2) rotate(8deg);
+                transform: scale(1.15) rotate(5deg);
             }
 
             .category-item:hover .post-count {
-                transform: scale(1.15);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                transform: scale(1.1);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             }
 
             .category-item.active {
                 background: var(--primary);
                 color: white;
                 border-color: var(--primary);
-                box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.25);
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
             }
 
             .category-item.active i {
@@ -1588,18 +1587,18 @@
             }
 
             .categories-sidebar::-webkit-scrollbar {
-                width: 10px;
+                width: 8px;
             }
 
             .categories-sidebar::-webkit-scrollbar-track {
                 background: var(--bg);
-                border-radius: 5px;
+                border-radius: 4px;
             }
 
             .categories-sidebar::-webkit-scrollbar-thumb {
                 background: var(--primary);
-                border-radius: 5px;
-                border: 3px solid var(--bg);
+                border-radius: 4px;
+                border: 2px solid var(--bg);
             }
 
             .categories-sidebar::-webkit-scrollbar-thumb:hover {
@@ -1609,7 +1608,7 @@
             @keyframes fadeIn {
                 from { 
                     opacity: 0; 
-                    transform: translateY(25px); 
+                    transform: translateY(20px); 
                 }
                 to { 
                     opacity: 1; 
@@ -1618,8 +1617,8 @@
             }
 
             .category-item {
-                animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-                animation-delay: calc(var(--index) * 0.1s);
+                animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                animation-delay: calc(var(--index) * 0.08s);
                 opacity: 0;
             }
         </style>
