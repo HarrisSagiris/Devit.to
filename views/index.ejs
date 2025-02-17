@@ -1134,67 +1134,91 @@
             </a>
             <% if (user) { %>
                 <div class="nav-links">
-                    <span>Welcome, <strong><%= user.username %></strong></span>
-                    <% 
-                    // Calculate user rank based on total upvotes
-                    let rank;
-                    let badgeClass;
-                    let icon;
-                    
-                    if (user.totalUpvotes >= 5000) {
-                        rank = "Elite";
-                        badgeClass = "gold"; 
-                        icon = "fa-crown";
-                    } else if (user.totalUpvotes >= 2500) {
-                        rank = "Master";
-                        badgeClass = "gold";
-                        icon = "fa-star";
-                    } else if (user.totalUpvotes >= 1000) {
-                        rank = "Expert"; 
-                        badgeClass = "silver";
-                        icon = "fa-medal";
-                    } else if (user.totalUpvotes >= 500) {
-                        rank = "Advanced";
-                        badgeClass = "silver";
-                        icon = "fa-award";
-                    } else if (user.totalUpvotes >= 100) {
-                        rank = "Intermediate";
-                        badgeClass = "bronze";
-                        icon = "fa-certificate";
-                    } else if (user.totalUpvotes >= 50) {
-                        rank = "Beginner";
-                        badgeClass = "bronze";
-                        icon = "fa-seedling";
-                    } else {
-                        rank = "Newbie";
-                        badgeClass = "bronze";
-                        icon = "fa-user";
-                    }
-                    %>
-                    <div class="ranking">
-                        <span class="ranking-badge <%= badgeClass %>">
-                            <i class="fas <%= icon %>"></i>
-                            <%= rank %>
-                        </span>
-                    </div>
-                    <a href="#" id="change-username">Change Username</a>
-                    <a href="/my-posts">Reputation</a>
-                    <a href="fordevelopers.html" class="for-developers-btn">About us</a>
-                    <a href="/github" class="github-btn">
-                        <i class="fas fa-newspaper"></i>
-                        News
-                    </a>
-                    <a href="/logout">Logout</a>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.875rem; color: var(--text-muted);">Theme:</span>
-                        <label class="theme-switch" title="Switch between light and dark theme">
-                            <input type="checkbox" id="theme-toggle">
-                            <span class="slider"></span>
-                        </label>
+                    <div class="profile-dropdown">
+                        <div class="profile-trigger">
+                            <img src="<%= user.avatar || '/images/default-avatar.png' %>" alt="Profile" class="profile-avatar">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <div class="dropdown-header">
+                                <span>Welcome, <strong><%= user.username %></strong></span>
+                                <% 
+                                // Calculate user rank based on total upvotes
+                                let rank;
+                                let badgeClass;
+                                let icon;
+                                
+                                if (user.totalUpvotes >= 5000) {
+                                    rank = "Elite";
+                                    badgeClass = "gold"; 
+                                    icon = "fa-crown";
+                                } else if (user.totalUpvotes >= 2500) {
+                                    rank = "Master";
+                                    badgeClass = "gold";
+                                    icon = "fa-star";
+                                } else if (user.totalUpvotes >= 1000) {
+                                    rank = "Expert"; 
+                                    badgeClass = "silver";
+                                    icon = "fa-medal";
+                                } else if (user.totalUpvotes >= 500) {
+                                    rank = "Advanced";
+                                    badgeClass = "silver";
+                                    icon = "fa-award";
+                                } else if (user.totalUpvotes >= 100) {
+                                    rank = "Intermediate";
+                                    badgeClass = "bronze";
+                                    icon = "fa-certificate";
+                                } else if (user.totalUpvotes >= 50) {
+                                    rank = "Beginner";
+                                    badgeClass = "bronze";
+                                    icon = "fa-seedling";
+                                } else {
+                                    rank = "Newbie";
+                                    badgeClass = "bronze";
+                                    icon = "fa-user";
+                                }
+                                %>
+                                <div class="ranking">
+                                    <span class="ranking-badge <%= badgeClass %>">
+                                        <i class="fas <%= icon %>"></i>
+                                        <%= rank %>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" id="change-username" class="dropdown-item">
+                                <i class="fas fa-user-edit"></i>
+                                Change Username
+                            </a>
+                            <a href="/my-posts" class="dropdown-item">
+                                <i class="fas fa-chart-line"></i>
+                                Reputation
+                            </a>
+                            <a href="fordevelopers.html" class="dropdown-item">
+                                <i class="fas fa-info-circle"></i>
+                                About us
+                            </a>
+                            <a href="/github" class="dropdown-item">
+                                <i class="fas fa-newspaper"></i>
+                                News
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <div class="theme-toggle-container dropdown-item">
+                                <span>Theme:</span>
+                                <label class="theme-switch" title="Switch between light and dark theme">
+                                    <input type="checkbox" id="theme-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <a href="/logout" class="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </div>
                     </div>
                 </div>
             <% } else { %>
-                <div class="nav-links" style="position: relative;">
+                <div class="nav-links">
                     <a href="/login">Login</a>
                     <a href="/register">Register</a>
                     <a href="/github" class="github-btn">
