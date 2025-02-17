@@ -243,7 +243,57 @@
         line-height: 1.5;
         transition: background-color 0.3s, color 0.3s;
     }
+    .ranking {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+    }
 
+    .ranking-number {
+        font-weight: 600;
+        color: var(--primary);
+        min-width: 1.5rem;
+    }
+
+    .ranking-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .ranking-badge.gold {
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        color: #000;
+    }
+
+    .ranking-badge.silver {
+        background: linear-gradient(45deg, #C0C0C0, #A9A9A9);
+        color: #000;
+    }
+
+    .ranking-badge.bronze {
+        background: linear-gradient(45deg, #CD7F32, #8B4513);
+        color: #fff;
+    }
+
+    .ranking-badge i {
+        margin-right: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .ranking-points {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: var(--bg-card);
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border);
+    }
     .version-banner {
         background: linear-gradient(to right, var(--primary), var(--primary-hover));
         color: white;
@@ -1071,6 +1121,44 @@
             <% if (user) { %>
                 <div class="nav-links">
                     <span>Welcome, <strong><%= user.username %></strong></span>
+                    <% 
+                    // Calculate user rank based on total upvotes from my-posts.ejs
+                    let rank;
+                    let badgeClass;
+                    let icon;
+                    
+                    if (user.totalUpvotes >= 1000) {
+                        rank = "Legend";
+                        badgeClass = "gold";
+                        icon = "fa-crown";
+                    } else if (user.totalUpvotes >= 500) {
+                        rank = "Expert"; 
+                        badgeClass = "silver";
+                        icon = "fa-star";
+                    } else if (user.totalUpvotes >= 100) {
+                        rank = "Intermediate";
+                        badgeClass = "bronze";
+                        icon = "fa-medal";
+                    } else if (user.totalUpvotes >= 50) {
+                        rank = "Beginner";
+                        badgeClass = "bronze";
+                        icon = "fa-seedling";
+                    } else {
+                        rank = "Newbie";
+                        badgeClass = "bronze";
+                        icon = "fa-user";
+                    }
+                    %>
+                    <div class="ranking">
+                        <span class="ranking-badge <%= badgeClass %>">
+                            <i class="fas <%= icon %>"></i>
+                            <%= rank %>
+                        </span>
+                        <span class="ranking-points">
+                            <%= user.totalUpvotes %> points
+                        </span>
+                    </div>
+                    <span class="user-rank" title="Based on total upvotes">Rank: <%= rank %></span>
                     <a href="#" id="change-username">Change Username</a>
                     <a href="/my-posts">Reputation</a>
                     <a href="fordevelopers.html" class="for-developers-btn">About us</a>
