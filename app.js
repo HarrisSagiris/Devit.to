@@ -192,7 +192,9 @@ app.get('/', async (req, res) => {
     if (!req.session.user) {
       return res.redirect('/register');
     }
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate('comments.user', 'username'); // Populate user info for comments
     res.render('index', { user: req.session.user, posts });
   } catch (error) {
     console.error('Error fetching posts:', error);
@@ -513,7 +515,10 @@ app.post('/post/:id/comment', async (req, res) => {
     };
     post.comments.push(comment);
     await post.save();
-    res.json({ comments: post.comments });
+    
+    // Populate the user info for the new comment
+    const populatedPost = await Post.findById(post._id).populate('comments.user', 'username');
+    res.json({ comments: populatedPost.comments });
   } catch (error) {
     console.error('Comment error:', error);
     res.status(500).send('Error adding comment');
@@ -587,7 +592,8 @@ app.get('/user/:username', async (req, res) => {
     const profileUser = await User.findOne({ username: req.params.username });
     if (!profileUser) return res.status(404).send('User not found');
     
-    const posts = await Post.find({ user: profileUser._id });
+    const posts = await Post.find({ user: profileUser._id })
+      .populate('comments.user', 'username');
     const currentUser = req.session.user ? await User.findById(req.session.user._id) : null;
     const isFollowing = currentUser ? currentUser.following.includes(profileUser._id) : false;
     
