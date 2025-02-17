@@ -1155,8 +1155,12 @@
                         icon = "fa-user";
                     }
                     %>
-                  
-                    <span class="user-rank" title="Based on total upvotes">Rank: <%= rank %></span>
+                    <div class="ranking">
+                        <span class="ranking-badge <%= badgeClass %>">
+                            <i class="fas <%= icon %>"></i>
+                            <%= rank %>
+                        </span>
+                    </div>
                     <a href="#" id="change-username">Change Username</a>
                     <a href="/my-posts">Reputation</a>
                     <a href="fordevelopers.html" class="for-developers-btn">About us</a>
