@@ -1708,16 +1708,16 @@
                         <form class="comment-form" data-id="<%= post._id %>">
                             <input type="text" name="content" placeholder="Add a comment..." required>
                             <input type="hidden" name="username" value="<%= user.username %>">
+                            <input type="hidden" name="authorId" value="<%= user._id %>">
                             <button type="submit" class="btn">Comment</button>
                         </form>
                     <% } %>
-
                     <div class="comments" id="comments-<%= post._id %>">
                         <% post.comments.forEach(comment => { %>
                             <div class="comment" id="comment-<%= comment._id %>">
                                 <div class="comment-header">
                                     <span class="comment-username">
-                                        <%= comment.author ? comment.author.username : comment.username %>
+                                        <%= comment.username %>
                                     </span>
                                 </div>
                                 <div class="comment-content">
@@ -1731,7 +1731,7 @@
                                             <%= !user ? 'disabled' : '' %>>
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
-                                    <% if (user && user.username === (comment.author ? comment.author.username : comment.username)) { %>
+                                    <% if (user && user.username === comment.username) { %>
                                         <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
                                     <% } %>
                                 </div>
