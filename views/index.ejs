@@ -1644,59 +1644,93 @@
         const aiResponse = document.getElementById('ai-response');
         const aiResponseContent = aiResponse.querySelector('.ai-response-content');
 
-        searchBar.addEventListener('input', async () => {
+        let debounceTimeout;
+
+        searchBar.addEventListener('input', () => {
+            // Clear any existing timeout
+            clearTimeout(debounceTimeout);
+
             if (!aiToggle.checked) return;
             
-            const query = searchBar.value;
+            const query = searchBar.value.trim();
             if (!query) {
                 aiResponse.style.display = 'none';
+                aiLoading.style.display = 'none';
                 return;
             }
 
+            // Set loading state
             aiLoading.style.display = 'flex';
             aiResponse.style.display = 'none';
 
-            try {
-                const response = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-Coder-32B-Instruct', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer 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',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        inputs: query,
-                        parameters: {
-                            max_length: 500,
-                            temperature: 0.7,
-                            top_p: 0.95,
-                            top_k: 50,
-                            repetition_penalty: 1.2,
-                            return_full_text: false,
-                            max_new_tokens: 250,
-                            do_sample: true
-                        }
-                    })
-                });
+            // Debounce the API call by 500ms
+            debounceTimeout = setTimeout(async () => {
+                try {
+                    const prompt = `Given this search query: "${query}", provide a helpful response that could include:
+                    - Relevant technical explanations
+                    - Code examples if applicable
+                    - Best practices
+                    - Common pitfalls to avoid
+                    Please keep the response concise and focused.`;
 
-                const result = await response.json();
-                aiResponseContent.textContent = result[0].generated_text.trim();
-                
-                aiLoading.style.display = 'none';
-                aiResponse.style.display = 'block';
-            } catch (error) {
-                console.error('Error:', error);
-                aiResponseContent.textContent = 'Sorry, there was an error. Please try again later.';
-                
-                aiLoading.style.display = 'none';
-                aiResponse.style.display = 'block';
-            }
+                    const response = await fetch('https://api-inference.huggingface.co/models/Qwen/Qwen2.5-Coder-32B-Instruct', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer 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',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            inputs: prompt,
+                            parameters: {
+                                max_length: 500,
+                                temperature: 0.7,
+                                top_p: 0.95,
+                                top_k: 50,
+                                repetition_penalty: 1.2,
+                                return_full_text: false,
+                                max_new_tokens: 250,
+                                do_sample: true
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('API request failed');
+                    }
+
+                    const result = await response.json();
+                    
+                    // Format the response text with line breaks and proper spacing
+                    const formattedText = result[0].generated_text
+                        .trim()
+                        .replace(/\n/g, '<br>')
+                        .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
+                    
+                    aiResponseContent.innerHTML = formattedText;
+                    
+                    aiLoading.style.display = 'none';
+                    aiResponse.style.display = 'block';
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    aiResponseContent.innerHTML = `
+                        <div style="color: #ff4444; padding: 1rem;">
+                            Sorry, there was an error processing your request. Please try again later.
+                            <br><small>${error.message}</small>
+                        </div>
+                    `;
+                    
+                    aiLoading.style.display = 'none';
+                    aiResponse.style.display = 'block';
+                }
+            }, 500);
         });
 
         aiToggle.addEventListener('change', () => {
             if (!aiToggle.checked) {
                 aiResponse.style.display = 'none';
                 aiLoading.style.display = 'none';
-            } else if (searchBar.value) {
+            } else if (searchBar.value.trim()) {
                 // Trigger search if there's already text in the search bar
                 searchBar.dispatchEvent(new Event('input'));
             }
