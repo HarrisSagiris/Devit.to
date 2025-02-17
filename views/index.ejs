@@ -1135,7 +1135,7 @@
             <% if (user) { %>
                 <div class="nav-links">
                     <div class="profile-dropdown" style="position: relative;">
-                        <div class="profile-trigger" onclick="this.nextElementSibling.style.opacity = '1'; this.nextElementSibling.style.visibility = 'visible'; this.nextElementSibling.style.transform = 'translateY(0)';" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: background 0.2s;">
+                        <div class="profile-trigger" onclick="toggleDropdown(this)" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: background 0.2s;">
                             <img src="<%= user.avatar || '/images/default-avatar.png' %>" alt="Profile" class="profile-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                             <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
                         </div>
@@ -1239,6 +1239,21 @@
                 </div>
             <% } %>
         </div>
+    </header>
+    <script>
+    function toggleDropdown(trigger) {
+        const dropdownContent = trigger.nextElementSibling;
+        if (dropdownContent.style.visibility === 'visible') {
+            dropdownContent.style.opacity = '0';
+            dropdownContent.style.visibility = 'hidden';
+            dropdownContent.style.transform = 'translateY(-10px)';
+        } else {
+            dropdownContent.style.opacity = '1';
+            dropdownContent.style.visibility = 'visible';
+            dropdownContent.style.transform = 'translateY(0)';
+        }
+    }
+    </script>
     </header>
 
     <div class="search-container">
