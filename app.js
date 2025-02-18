@@ -644,6 +644,53 @@ app.post('/user/:username/unfollow', async (req, res) => {
     res.status(500).send('Error processing unfollow request');
   }
 });
+// Bookmark toggle route
+app.post('/post/:id/bookmark', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const user = await User.findById(req.session.user._id);
+    const postId = req.params.id;
+
+    const bookmarkIndex = user.bookmarks.indexOf(postId);
+    
+    if (bookmarkIndex === -1) {
+      // Add bookmark
+      user.bookmarks.push(postId);
+    } else {
+      // Remove bookmark
+      user.bookmarks.splice(bookmarkIndex, 1);
+    }
+
+    await user.save();
+
+    res.json({ 
+      success: true,
+      isBookmarked: bookmarkIndex === -1,
+      message: bookmarkIndex === -1 ? 'Post bookmarked' : 'Bookmark removed'
+    });
+  } catch (error) {
+    console.error('Bookmark toggle error:', error);
+    res.status(500).json({ error: 'Error processing bookmark' });
+  }
+});
+
+// Get bookmarked posts route
+app.get('/my-bookmarks', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/login');
+    }
+
+    const user = await User.findById(req.session.user._id).populate('bookmarks');
+    res.render('my-bookmarks', { bookmarkedPosts: user.bookmarks });
+  } catch (error) {
+    console.error('Error fetching bookmarks:', error);
+    res.status(500).send('Error loading bookmarks');
+  }
+});
 
 // Start server with health check
 app.listen(PORT, () => {

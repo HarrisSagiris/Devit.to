@@ -1274,6 +1274,10 @@
                 <div class="nav-links">
                     <a href="/login" style="color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">Login</a>
                     <a href="/register" style="color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">Register</a>
+                    <a href="/my-bookmarks" style="color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
+                        <i class="fas fa-bookmark"></i>
+                        Bookmarks
+                    </a>
                     <a href="/github" class="github-btn" style="display: flex; align-items: center; gap: 0.5rem; color: var(--text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: background 0.2s;">
                         <i class="fas fa-newspaper"></i>
                         News
@@ -1940,6 +1944,40 @@
                             <button class="comments-toggle">💬 <%= post.comments.length %> Comments</button>
                             <% if (user && user.username === post.username) { %>
                                 <button class="delete-btn" data-id="<%= post._id %>" onclick="deletePost('<%= post._id %>')">🗑️ Delete</button>
+                            <% } %>
+                            <% if (user) { %>
+                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id) ? 'bookmarked' : '' %>"
+                                        data-id="<%= post._id %>"
+                                        onclick="toggleBookmark(this, '<%= post._id %>')">
+                                    <%= user.bookmarks?.includes(post._id) ? '🔖 Bookmarked' : '🔖 Bookmark' %>
+                                </button>
+                                <script>
+                                    async function toggleBookmark(button, postId) {
+                                        try {
+                                            const response = await fetch(`/post/${postId}/bookmark`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                }
+                                            });
+                                            
+                                            if (response.ok) {
+                                                const data = await response.json();
+                                                if (data.bookmarked) {
+                                                    button.classList.add('bookmarked');
+                                                    button.textContent = '🔖 Bookmarked';
+                                                } else {
+                                                    button.classList.remove('bookmarked');
+                                                    button.textContent = '🔖 Bookmark';
+                                                }
+                                            } else {
+                                                console.error('Failed to toggle bookmark');
+                                            }
+                                        } catch (error) {
+                                            console.error('Error toggling bookmark:', error);
+                                        }
+                                    }
+                                </script>
                             <% } %>
                         </div>
                     </div>
