@@ -1850,7 +1850,7 @@
                                     // Replace GitHub links with repository cards
                                     content = content.replace(githubRegex, (match, username, repo) => {
                                         return `
-                                            <div class="github-card">
+                                            <div class="github-card" data-username="${username}" data-repo="${repo}">
                                                 <div class="github-header">
                                                     <svg class="github-icon" height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
@@ -1859,20 +1859,41 @@
                                                         ${username}/${repo}
                                                     </a>
                                                 </div>
+                                                <div class="github-description"></div>
                                                 <div class="github-stats">
-                                                    <span class="stat">
+                                                    <span class="stat stars">
                                                         <svg class="stat-icon" viewBox="0 0 16 16" width="16" height="16">
                                                             <path fill="currentColor" d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/>
                                                         </svg>
-                                                        Star
+                                                        <span class="stat-count">-</span> stars
                                                     </span>
-                                                    <span class="stat">
+                                                    <span class="stat forks">
                                                         <svg class="stat-icon" viewBox="0 0 16 16" width="16" height="16">
                                                             <path fill="currentColor" d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/>
                                                         </svg>
-                                                        Fork
+                                                        <span class="stat-count">-</span> forks
+                                                    </span>
+                                                    <span class="stat watchers">
+                                                        <svg class="stat-icon" viewBox="0 0 16 16" width="16" height="16">
+                                                            <path fill="currentColor" d="M8 2c1.981 0 3.671.992 4.933 2.078 1.27 1.091 2.187 2.345 2.637 3.023a1.62 1.62 0 0 1 0 1.798c-.45.678-1.367 1.932-2.637 3.023C11.67 13.008 9.981 14 8 14c-1.981 0-3.671-.992-4.933-2.078C1.797 10.83.88 9.576.43 8.898a1.62 1.62 0 0 1 0-1.798c.45-.677 1.367-1.931 2.637-3.022C4.33 2.992 6.019 2 8 2ZM1.679 7.932a.12.12 0 0 0 0 .136c.411.622 1.241 1.75 2.366 2.717C5.176 11.758 6.527 12.5 8 12.5c1.473 0 2.825-.742 3.955-1.715 1.124-.967 1.954-2.096 2.366-2.717a.12.12 0 0 0 0-.136c-.412-.621-1.242-1.75-2.366-2.717C10.824 4.242 9.473 3.5 8 3.5c-1.473 0-2.825.742-3.955 1.715-1.124.967-1.954 2.096-2.366 2.717ZM8 10a2 2 0 1 1-.001-3.999A2 2 0 0 1 8 10Z"/>
+                                                        </svg>
+                                                        <span class="stat-count">-</span> watchers
                                                     </span>
                                                 </div>
+                                                <script>
+                                                    fetch('https://api.github.com/repos/${username}/${repo}')
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            const card = document.querySelector('.github-card[data-username="${username}"][data-repo="${repo}"]');
+                                                            if (data.description) {
+                                                                card.querySelector('.github-description').textContent = data.description;
+                                                            }
+                                                            card.querySelector('.stars .stat-count').textContent = data.stargazers_count;
+                                                            card.querySelector('.forks .stat-count').textContent = data.forks_count;
+                                                            card.querySelector('.watchers .stat-count').textContent = data.subscribers_count;
+                                                        })
+                                                        .catch(console.error);
+                                                </script>
                                             </div>
                                         `;
                                     });
