@@ -1849,6 +1849,8 @@
 
                                     // Replace GitHub links with repository cards
                                     content = content.replace(githubRegex, (match, username, repo) => {
+                                        // Get the full repo name by extracting it from the original match
+                                        const fullRepo = match.split('/').pop().replace(/\/$/, '');
                                         return `<div class="github-card" style="
                                             background: var(--bg-card);
                                             border-radius: 16px;
@@ -1877,7 +1879,7 @@
                                                     text-decoration: none;
                                                     font-weight: 600;
                                                     font-size: 0.9rem;
-                                                ">${repo}</a>
+                                                ">${fullRepo}</a>
                                             </div>
                                             <p class="repo-description" style="
                                                 color: var(--text);
@@ -1915,7 +1917,7 @@
                                                 </div>
                                             </div>
                                             <script>
-                                                fetch('https://api.github.com/repos/${username}/${repo}')
+                                                fetch('https://api.github.com/repos/${username}/${fullRepo}')
                                                     .then(response => response.json())
                                                     .then(data => {
                                                         const card = document.currentScript.parentElement;
@@ -1928,6 +1930,7 @@
                                                     .catch(console.error);
                                             </script>
                                         </div>`;
+                                    });
                                     });
                                 %>
                                 <%- content %>
