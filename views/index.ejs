@@ -1946,11 +1946,12 @@
                                 <button class="delete-btn" data-id="<%= post._id %>" onclick="deletePost('<%= post._id %>')">🗑️ Delete</button>
                             <% } %>
                             <% if (user) { %>
-                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id.toString()) ? 'bookmarked' : '' %>"
+                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id) ? 'bookmarked' : '' %>"
                                         data-id="<%= post._id %>"
-                                        onclick="toggleBookmark(this, '<%= post._id %>')">
-                                    <i class="fas <%= user.bookmarks?.includes(post._id.toString()) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
-                                    <%= user.bookmarks?.includes(post._id.toString()) ? 'Bookmarked' : 'Bookmark' %>
+                                        onclick="toggleBookmark(this, '<%= post._id %>')"
+                                        style="<%= user.bookmarks?.includes(post._id) ? 'color: #28a745; background: #e6f4ea;' : '' %>">
+                                    <i class="fas <%= user.bookmarks?.includes(post._id) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
+                                    <%= user.bookmarks?.includes(post._id) ? 'Bookmarked' : 'Bookmark' %>
                                 </button>
                                 <script>
                                     async function toggleBookmark(button, postId) {
@@ -1971,6 +1972,8 @@
                                                     icon.classList.remove('fa-bookmark-o');
                                                     icon.classList.add('fa-bookmark');
                                                     button.innerHTML = `<i class="fas fa-bookmark"></i> Bookmarked`;
+                                                    button.style.color = '#28a745';
+                                                    button.style.background = '#e6f4ea';
                                                     
                                                     // Show success message
                                                     const toast = document.createElement('div');
@@ -1984,6 +1987,8 @@
                                                     icon.classList.remove('fa-bookmark');
                                                     icon.classList.add('fa-bookmark-o');
                                                     button.innerHTML = `<i class="fas fa-bookmark-o"></i> Bookmark`;
+                                                    button.style.color = '';
+                                                    button.style.background = '';
                                                     
                                                     // Show removal message
                                                     const toast = document.createElement('div');
@@ -2011,7 +2016,6 @@
                                         }
                                     }
                                 </script>
-                            <% } %>
                             <% } %>
                         </div>
                     </div>
