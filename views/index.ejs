@@ -1849,8 +1849,9 @@
 
                                     // Replace GitHub links with repository cards
                                     content = content.replace(githubRegex, (match, username, repo) => {
-                                        // Get the full repo name by extracting it from the original match
-                                        const fullRepo = match.split('/').pop().replace(/\/$/, '');
+                                        // Extract full repo name by removing username and slashes from match
+                                        const fullRepo = match.replace(`https://github.com/${username}/`, '').replace(/\/$/, '');
+                                        
                                         return `<div class="github-card" style="
                                             background: var(--bg-card);
                                             border-radius: 16px;
