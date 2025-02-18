@@ -1946,12 +1946,11 @@
                                 <button class="delete-btn" data-id="<%= post._id %>" onclick="deletePost('<%= post._id %>')">🗑️ Delete</button>
                             <% } %>
                             <% if (user) { %>
-                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id) ? 'bookmarked' : '' %>"
+                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id.toString()) ? 'bookmarked' : '' %>"
                                         data-id="<%= post._id %>"
-                                        onclick="toggleBookmark(this, '<%= post._id %>')"
-
-                                    <i class="fas <%= user.bookmarks?.includes(post._id) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
-                                    <%= user.bookmarks?.includes(post._id) ? 'Bookmarked' : 'Bookmark' %>
+                                        onclick="toggleBookmark(this, '<%= post._id %>')">
+                                    <i class="fas <%= user.bookmarks?.includes(post._id.toString()) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
+                                    <%= user.bookmarks?.includes(post._id.toString()) ? 'Bookmarked' : 'Bookmark' %>
                                 </button>
                                 <script>
                                     async function toggleBookmark(button, postId) {
@@ -1965,49 +1964,41 @@
                                             
                                             if (response.ok) {
                                                 const data = await response.json();
-                                                const icon = button.querySelector('i');
                                                 
                                                 if (data.isBookmarked) {
                                                     button.classList.add('bookmarked');
-                                                    icon.classList.remove('fa-bookmark-o');
-                                                    icon.classList.add('fa-bookmark');
                                                     button.innerHTML = `<i class="fas fa-bookmark"></i> Bookmarked`;
                                                     button.style.color = '#28a745';
                                                     button.style.background = '#e6f4ea';
                                                     
-                                                    // Show success message
                                                     const toast = document.createElement('div');
                                                     toast.className = 'toast success';
-                                                    toast.textContent = 'Post bookmarked successfully!';
+                                                    toast.textContent = data.message;
                                                     document.body.appendChild(toast);
                                                     setTimeout(() => toast.remove(), 3000);
                                                     
                                                 } else {
                                                     button.classList.remove('bookmarked');
-                                                    icon.classList.remove('fa-bookmark');
-                                                    icon.classList.add('fa-bookmark-o');
                                                     button.innerHTML = `<i class="fas fa-bookmark-o"></i> Bookmark`;
                                                     button.style.color = '';
                                                     button.style.background = '';
                                                     
-                                                    // Show removal message
                                                     const toast = document.createElement('div');
                                                     toast.className = 'toast info';
-                                                    toast.textContent = 'Bookmark removed';
+                                                    toast.textContent = data.message;
                                                     document.body.appendChild(toast);
                                                     setTimeout(() => toast.remove(), 3000);
                                                 }
                                             } else {
-                                                // Show error message
+                                                const data = await response.json();
                                                 const toast = document.createElement('div');
                                                 toast.className = 'toast error';
-                                                toast.textContent = 'Failed to toggle bookmark';
+                                                toast.textContent = data.error || 'Failed to toggle bookmark';
                                                 document.body.appendChild(toast);
                                                 setTimeout(() => toast.remove(), 3000);
                                             }
                                         } catch (error) {
                                             console.error('Error toggling bookmark:', error);
-                                            // Show error message
                                             const toast = document.createElement('div');
                                             toast.className = 'toast error';
                                             toast.textContent = 'Error toggling bookmark';
