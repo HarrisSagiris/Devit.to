@@ -698,6 +698,7 @@ app.get('/my-bookmarks', async (req, res) => {
       const postObj = post.toObject();
       postObj.upvotes = post.upvotedBy.length;
       postObj.downvotes = post.downvotedBy.length;
+      postObj.isBookmarked = true; // Set bookmarked status
       if (req.session.user) {
         postObj.upvotedBy = post.upvotedBy.map(u => u._id.toString());
         postObj.downvotedBy = post.downvotedBy.map(u => u._id.toString());
