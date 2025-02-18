@@ -1946,11 +1946,11 @@
                                 <button class="delete-btn" data-id="<%= post._id %>" onclick="deletePost('<%= post._id %>')">🗑️ Delete</button>
                             <% } %>
                             <% if (user) { %>
-                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id) ? 'bookmarked' : '' %>"
+                                <button class="bookmark-btn <%= user.bookmarks?.includes(post._id.toString()) ? 'bookmarked' : '' %>"
                                         data-id="<%= post._id %>"
                                         onclick="toggleBookmark(this, '<%= post._id %>')">
-                                    <i class="fas <%= user.bookmarks?.includes(post._id) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
-                                    <%= user.bookmarks?.includes(post._id) ? 'Bookmarked' : 'Bookmark' %>
+                                    <i class="fas <%= user.bookmarks?.includes(post._id.toString()) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
+                                    <%= user.bookmarks?.includes(post._id.toString()) ? 'Bookmarked' : 'Bookmark' %>
                                 </button>
                                 <script>
                                     async function toggleBookmark(button, postId) {
@@ -2011,6 +2011,7 @@
                                         }
                                     }
                                 </script>
+                            <% } %>
                             <% } %>
                         </div>
                     </div>
