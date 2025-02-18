@@ -1949,8 +1949,9 @@
                                 <button class="bookmark-btn <%= user.bookmarks?.includes(post._id.toString()) ? 'bookmarked' : '' %>"
                                         data-id="<%= post._id %>"
                                         onclick="toggleBookmark(this, '<%= post._id %>')"
-                                        style="position: absolute; top: 1rem; right: 1rem;">
-                                    <i class="fas <%= user.bookmarks?.includes(post._id.toString()) ? 'fa-bookmark' : 'fa-bookmark-o' %>"></i>
+                                        style="padding: 0.5rem; border-radius: 50%; width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas <%= user.bookmarks?.includes(post._id.toString()) ? 'fa-bookmark' : 'fa-bookmark-o' %>" 
+                                       style="font-size: 1.2rem;"></i>
                                 </button>
                                 <script>
                                     async function toggleBookmark(button, postId) {
