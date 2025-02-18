@@ -687,11 +687,30 @@ app.get('/my-bookmarks', async (req, res) => {
     const user = await User.findById(req.session.user._id);
     const bookmarkedPosts = await Post.find({
       '_id': { $in: user.bookmarks }
-    }).populate('comments.user', 'username');
+    })
+    .populate('comments.user', 'username')
+    .populate('upvotedBy')
+    .populate('downvotedBy')
+    .sort('-createdAt');
 
-    res.render('my-bookmarks', { 
+    // Calculate vote counts and check user votes
+    const postsWithVotes = bookmarkedPosts.map(post => {
+      const postObj = post.toObject();
+      postObj.upvotes = post.upvotedBy.length;
+      postObj.downvotes = post.downvotedBy.length;
+      if (req.session.user) {
+        postObj.upvotedBy = post.upvotedBy.map(u => u._id.toString());
+        postObj.downvotedBy = post.downvotedBy.map(u => u._id.toString());
+      }
+      return postObj;
+    });
+
+    // Render the index view with a filter for bookmarked posts
+    res.render('index', { 
       user: req.session.user,
-      bookmarkedPosts: bookmarkedPosts 
+      posts: postsWithVotes,
+      currentUser: req.session.user,
+      filter: 'bookmarks'
     });
   } catch (error) {
     console.error('Error fetching bookmarks:', error);
