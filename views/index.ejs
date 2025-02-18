@@ -1976,6 +1976,11 @@
                                                     toast.textContent = data.message;
                                                     document.body.appendChild(toast);
                                                     setTimeout(() => toast.remove(), 3000);
+
+                                                    // Check if we're on bookmarks page and refresh if last bookmark removed
+                                                    if (window.location.pathname === '/my-bookmarks') {
+                                                        location.reload();
+                                                    }
                                                     
                                                 } else {
                                                     button.classList.remove('bookmarked');
@@ -1988,6 +1993,11 @@
                                                     toast.textContent = data.message;
                                                     document.body.appendChild(toast);
                                                     setTimeout(() => toast.remove(), 3000);
+
+                                                    // Check if we're on bookmarks page and refresh if last bookmark removed
+                                                    if (window.location.pathname === '/my-bookmarks') {
+                                                        location.reload();
+                                                    }
                                                 }
                                             } else {
                                                 const data = await response.json();
