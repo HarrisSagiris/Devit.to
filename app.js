@@ -684,8 +684,15 @@ app.get('/my-bookmarks', async (req, res) => {
       return res.redirect('/login');
     }
 
-    const user = await User.findById(req.session.user._id).populate('bookmarks');
-    res.render('my-bookmarks', { bookmarkedPosts: user.bookmarks });
+    const user = await User.findById(req.session.user._id);
+    const bookmarkedPosts = await Post.find({
+      '_id': { $in: user.bookmarks }
+    }).populate('comments.user', 'username');
+
+    res.render('my-bookmarks', { 
+      user: req.session.user,
+      bookmarkedPosts: bookmarkedPosts 
+    });
   } catch (error) {
     console.error('Error fetching bookmarks:', error);
     res.status(500).send('Error loading bookmarks');
