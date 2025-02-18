@@ -1918,17 +1918,20 @@
                                                 </div>
                                             </div>
                                             <script>
-                                                fetch('https://api.github.com/repos/${username}/${fullRepo}')
-                                                    .then(response => response.json())
-                                                    .then(data => {
+                                                (async function() {
+                                                    try {
+                                                        const response = await fetch('https://api.github.com/repos/${username}/${fullRepo}');
+                                                        const data = await response.json();
                                                         const card = document.currentScript.parentElement;
                                                         card.querySelector('.repo-description').textContent = data.description || 'No description available';
                                                         card.querySelector('.repo-language').textContent = data.language || 'Unknown';
                                                         card.querySelector('.repo-language-color').style.backgroundColor = data.language ? '#' + Math.floor(Math.random()*16777215).toString(16) : '#888';
                                                         card.querySelector('.stars').textContent = data.stargazers_count.toLocaleString();
                                                         card.querySelector('.forks').textContent = data.forks_count.toLocaleString();
-                                                    })
-                                                    .catch(console.error);
+                                                    } catch (err) {
+                                                        console.error(err);
+                                                    }
+                                                })();
                                             </script>
                                         </div>`;
                                     });
