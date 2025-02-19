@@ -2119,6 +2119,62 @@
         <% }) %>
     </main>
 
+    <script>
+    function toggleReplyForm(commentId, username) {
+        const replyForm = document.getElementById(`reply-form-${commentId}`);
+        if (replyForm) {
+            // Toggle the display
+            replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+            
+            // If showing the form, focus on the input
+            if (replyForm.style.display === 'block') {
+                const input = replyForm.querySelector('input[name="content"]');
+                if (input) {
+                    input.focus();
+                }
+            }
+        }
+    }
+
+    // Add event listeners for reply forms
+    document.querySelectorAll('.reply-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const commentId = form.dataset.commentId;
+            const postId = form.dataset.postId;
+            const content = form.querySelector('input[name="content"]').value;
+            const username = form.querySelector('input[name="username"]').value;
+            const authorId = form.querySelector('input[name="authorId"]').value;
+
+            try {
+                const response = await fetch(`/api/posts/${postId}/comments/${commentId}/replies`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content,
+                        username,
+                        authorId
+                    })
+                });
+
+                if (response.ok) {
+                    // Refresh the page to show the new reply
+                    location.reload();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to post reply');
+                }
+            } catch (error) {
+                console.error('Error posting reply:', error);
+                alert('Error posting reply');
+            }
+        });
+    });
+    </script>
+
     <% if (user) { %>
         <button class="new-post-btn" id="new-post-btn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
