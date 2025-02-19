@@ -186,6 +186,61 @@ app.get('/api/github/repos', async (req, res) => {
   }
 });
 
+// Add user stats endpoint
+app.get('/api/user/stats', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const userId = req.session.user._id;
+
+    // Get posts count
+    const postsCount = await Post.countDocuments({ user: userId });
+
+    // Get comments count (excluding replies)
+    const commentsCount = await Post.aggregate([
+      { $unwind: '$comments' },
+      { $match: { 'comments.user': mongoose.Types.ObjectId(userId) }},
+      { $count: 'count' }
+    ]).then(result => result[0]?.count || 0);
+
+    // Get replies count
+    const repliesCount = await Post.aggregate([
+      { $unwind: '$comments' },
+      { $unwind: '$comments.replies' },
+      { $match: { 'comments.replies.user': mongoose.Types.ObjectId(userId) }},
+      { $count: 'count' }
+    ]).then(result => result[0]?.count || 0);
+
+    // Get upvotes given
+    const upvotesGiven = await Post.countDocuments({
+      upvotedBy: userId
+    });
+
+    // Get upvotes received
+    const upvotesReceived = await Post.aggregate([
+      { $match: { user: mongoose.Types.ObjectId(userId) }},
+      { $group: {
+        _id: null,
+        total: { $sum: { $size: '$upvotedBy' }}
+      }}
+    ]).then(result => result[0]?.total || 0);
+
+    res.json({
+      posts: postsCount,
+      comments: commentsCount,
+      replies: repliesCount,
+      upvotesGiven: upvotesGiven,
+      upvotesReceived: upvotesReceived
+    });
+
+  } catch (error) {
+    console.error('Error fetching user stats:', error);
+    res.status(500).json({ error: 'Error fetching user statistics' });
+  }
+});
+
 // Routes with error handling
 app.get('/', async (req, res) => {
   try {
