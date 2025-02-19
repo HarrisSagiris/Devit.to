@@ -2062,7 +2062,7 @@
                                     <% } %>
                                 </div>
                                 <div class="reply-form-container" id="reply-form-<%= comment._id %>" style="display: none; margin: 10px 0 10px 20px;">
-                                    <form class="comment-form reply-form" onsubmit="submitReply(event, '<%= post._id %>', '<%= comment._id %>', '<%= comment.username %>')">
+                                    <form class="reply-form" data-comment-id="<%= comment._id %>" data-post-id="<%= post._id %>">
                                         <div class="reply-header" style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 5px;">
                                             Replying to @<%= comment.username %>
                                         </div>
@@ -2072,13 +2072,15 @@
                                                    placeholder="Write your reply..." 
                                                    required
                                                    style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">
+                                            <input type="hidden" name="username" value="<%= user?.username %>">
+                                            <input type="hidden" name="authorId" value="<%= user?._id %>">
                                             <button type="submit" 
                                                     class="btn"
                                                     style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
                                                 Reply
                                             </button>
                                             <button type="button" 
-                                                    class="btn"
+                                                    class="btn cancel-reply"
                                                     onclick="toggleReplyForm('<%= comment._id %>')"
                                                     style="padding: 8px 16px; background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; cursor: pointer;">
                                                 Cancel
@@ -2087,15 +2089,24 @@
                                     </form>
                                 </div>
                                 <div class="replies" id="replies-<%= comment._id %>">
-                                    <% if (comment.replies) { %>
+                                    <% if (comment.replies && comment.replies.length > 0) { %>
                                         <% comment.replies.forEach(reply => { %>
-                                            <div class="reply" style="margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border);">
+                                            <div class="reply" id="reply-<%= reply._id %>" style="margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border);">
                                                 <div class="reply-header">
                                                     <span class="reply-username" style="font-weight: 500; color: var(--text);"><%= reply.username %></span>
                                                 </div>
                                                 <div class="reply-content" style="margin: 4px 0; color: var(--text);">
                                                     <%= reply.content %>
                                                 </div>
+                                                <% if (user && user.username === reply.username) { %>
+                                                    <button class="delete-reply-btn" 
+                                                            data-post-id="<%= post._id %>" 
+                                                            data-comment-id="<%= comment._id %>"
+                                                            data-reply-id="<%= reply._id %>"
+                                                            style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.8em; padding: 2px 4px;">
+                                                        Delete
+                                                    </button>
+                                                <% } %>
                                             </div>
                                         <% }) %>
                                     <% } %>
