@@ -392,6 +392,66 @@
             min-width: 200px;
         }
 
+        /* New Activity Feed Styles */
+        .activity-feed {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .activity-feed h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .activity-item {
+            padding: 1rem;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 1rem;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .activity-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .activity-content {
+            color: var(--text);
+            font-size: 0.925rem;
+        }
+
+        .activity-meta {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -510,6 +570,48 @@
                     }, {})[0] : 'N/A' %>
                 </div>
             </div>
+        </div>
+
+        <!-- New Activity Feed Section -->
+        <div class="activity-feed">
+            <h2><i class="fas fa-chart-line"></i> Recent Activity</h2>
+            
+            <% if (user.recentActivity && user.recentActivity.length > 0) { %>
+                <% user.recentActivity.slice(0, 10).forEach(activity => { %>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <% if (activity.type === 'comment') { %>
+                                <span class="activity-type">
+                                    <i class="fas fa-comment"></i> New Comment
+                                </span>
+                            <% } else if (activity.type === 'upvote') { %>
+                                <span class="activity-type">
+                                    <i class="fas fa-thumbs-up"></i> Upvoted Post
+                                </span>
+                            <% } else if (activity.type === 'reply') { %>
+                                <span class="activity-type">
+                                    <i class="fas fa-reply"></i> Replied to Comment
+                                </span>
+                            <% } %>
+                            <span><%= new Date(activity.timestamp).toLocaleDateString() %></span>
+                        </div>
+                        <div class="activity-content">
+                            <%= activity.content %>
+                        </div>
+                        <div class="activity-meta">
+                            <% if (activity.postTitle) { %>
+                                On post: <%= activity.postTitle %>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="activity-item">
+                    <div class="activity-content">
+                        No recent activity to show.
+                    </div>
+                </div>
+            <% } %>
         </div>
 
         <div class="filters">
