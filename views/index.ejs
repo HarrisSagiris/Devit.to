@@ -2042,13 +2042,51 @@
                                     <%= comment.content %>
                                 </div>
                                 <div class="comment-actions">
-                                    <button class="comment-like-btn <%= comment.likedBy?.includes(user?._id) ? 'liked' : '' %>"
+                                    <button class="comment-like-btn <%= comment.likedBy?.includes(user?.username) ? 'liked' : '' %>"
                                             data-comment-id="<%= comment._id %>"
                                             data-post-id="<%= post._id %>"
                                             onclick="likeComment(this, '<%= comment._id %>', '<%= post._id %>')"
                                             <%= !user ? 'disabled' : '' %>>
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
+                                    <script>
+                                        async function likeComment(button, commentId, postId) {
+                                            try {
+                                                const response = await fetch(`/api/posts/${postId}/comments/${commentId}/like`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    }
+                                                });
+
+                                                if (response.ok) {
+                                                    const data = await response.json();
+                                                    const likeCount = button.querySelector('.like-count');
+                                                    likeCount.textContent = data.likes;
+                                                    
+                                                    if (data.liked) {
+                                                        button.classList.add('liked');
+                                                    } else {
+                                                        button.classList.remove('liked');
+                                                    }
+                                                } else {
+                                                    const data = await response.json();
+                                                    const toast = document.createElement('div');
+                                                    toast.className = 'toast error';
+                                                    toast.textContent = data.error || 'Failed to like comment';
+                                                    document.body.appendChild(toast);
+                                                    setTimeout(() => toast.remove(), 3000);
+                                                }
+                                            } catch (error) {
+                                                console.error('Error liking comment:', error);
+                                                const toast = document.createElement('div');
+                                                toast.className = 'toast error';
+                                                toast.textContent = 'Error liking comment';
+                                                document.body.appendChild(toast);
+                                                setTimeout(() => toast.remove(), 3000);
+                                            }
+                                        }
+                                    </script>
                                     <% if (user) { %>
                                         <button class="comment-reply-btn"
                                                 onclick="toggleReplyForm('<%= comment._id %>', '<%= comment.username %>')"
