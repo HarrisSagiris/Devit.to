@@ -2050,8 +2050,37 @@
                                             <%= !user ? 'disabled' : '' %>>
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
+                                    <% if (user) { %>
+                                        <button class="reply-btn" onclick="showReplyForm('<%= comment._id %>', '<%= comment.username %>')">
+                                            Reply
+                                        </button>
+                                    <% } %>
                                     <% if (user && user.username === comment.username) { %>
                                         <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
+                                    <% } %>
+                                </div>
+                                <div class="reply-form-container" id="reply-form-<%= comment._id %>" style="display: none; margin-left: 20px; margin-top: 10px;">
+                                    <form class="reply-form" onsubmit="submitReply(event, '<%= post._id %>', '<%= comment._id %>', '<%= comment.username %>')">
+                                        <div class="reply-header" style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 5px;">
+                                            Replying to <%= comment.username %>'s comment
+                                        </div>
+                                        <input type="text" name="content" placeholder="Write your reply..." required>
+                                        <button type="submit" class="btn">Reply</button>
+                                        <button type="button" class="btn" onclick="hideReplyForm('<%= comment._id %>')">Cancel</button>
+                                    </form>
+                                </div>
+                                <div class="replies" id="replies-<%= comment._id %>">
+                                    <% if (comment.replies) { %>
+                                        <% comment.replies.forEach(reply => { %>
+                                            <div class="reply" style="margin-left: 20px; margin-top: 10px; padding-left: 10px; border-left: 2px solid var(--border);">
+                                                <div class="reply-header">
+                                                    <span class="reply-username"><%= reply.username %></span>
+                                                </div>
+                                                <div class="reply-content">
+                                                    <%= reply.content %>
+                                                </div>
+                                            </div>
+                                        <% }) %>
                                     <% } %>
                                 </div>
                             </div>
