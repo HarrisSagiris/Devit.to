@@ -1228,129 +1228,123 @@
                             <img src="<%= user.avatar || '/icons/icon.jpg' %>" alt="Profile" class="profile-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                             <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s;"></i>
                         </div>
+                        <!-- Profile Dropdown Content -->
                         <div class="dropdown-content" style="position: absolute; top: 100%; right: 0; min-width: 220px; background: var(--bg-card); border-radius: 0.75rem; box-shadow: var(--shadow); margin-top: 0.5rem; z-index: 100; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s;">
                             <div class="dropdown-header" style="padding: 1rem; background: var(--bg-card-hover);">
                                 <span style="display: block; margin-bottom: 0.5rem; color: var(--text);">Welcome, <strong><%= user.username %></strong></span>
-                                <div class="ranking" style="margin-top: 0.5rem;">
-                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                        <span id="ranking-badge" class="ranking-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; background: rgba(147, 51, 234, 0.1); color: #9333ea;">
-                                            <i class="fas fa-bolt" style="color: #9333ea;"></i>
-                                            <span id="rank-text">Loading...</span>
-                                        </span>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted);">
-                                            Dev Points: <strong id="total-points" style="color: #9333ea;">Loading...</strong>
-                                            <div style="font-size: 0.7rem; margin-top: 0.25rem;">
-                                                <button onclick="togglePoints(this)" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.7rem; padding: 0;">
-                                                    <i class="fas fa-chevron-right"></i> Show point details
-                                                </button>
-                                                <div class="points-details" style="display: none; margin-top: 0.5rem;">
-                                                    <div id="post-points">Posts: Loading...</div>
-                                                    <div id="comment-points">Comments: Loading...</div>
-                                                    <div id="reply-points">Replies: Loading...</div>
-                                                    <div id="upvotes-given-points">Upvotes Given: Loading...</div>
-                                                    <div id="upvotes-received-points">Upvotes Received: Loading...</div>
-                                                </div>
-                                            </div>
-                                            <script>
-                                                function togglePoints(btn) {
-                                                    const details = btn.nextElementSibling;
-                                                    const icon = btn.querySelector('i');
-                                                    if (details.style.display === 'none') {
-                                                        details.style.display = 'block';
-                                                        icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
-                                                        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Hide point details';
-                                                    } else {
-                                                        details.style.display = 'none';
-                                                        icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
-                                                        btn.innerHTML = '<i class="fas fa-chevron-right"></i> Show point details';
-                                                    }
-                                                }
+                            </div>
+                        </div>
+                        </div>
 
-                                                // Immediately fetch stats when script loads
-                                                (async function fetchInitialStats() {
-                                                    try {
-                                                        const response = await fetch('/api/user/stats');
-                                                        if (!response.ok) throw new Error('Failed to fetch stats');
-                                                        const data = await response.json();
+                        <!-- Ranking Dropdown -->
+                        <div class="profile-dropdown" style="position: relative; margin-left: 1rem;">
+                            <div class="profile-trigger" onclick="toggleDropdown(this)" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: background 0.2s;">
+                                <span id="ranking-badge" class="ranking-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; background: rgba(147, 51, 234, 0.1); color: #9333ea;">
+                                    <i class="fas fa-bolt" style="color: #9333ea;"></i>
+                                    <span id="total-points">Loading...</span>
+                                </span>
+                                <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s;"></i>
+                            </div>
+                            <div class="dropdown-content" style="position: absolute; top: 100%; right: 0; min-width: 220px; background: var(--bg-card); border-radius: 0.75rem; box-shadow: var(--shadow); margin-top: 0.5rem; z-index: 100; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s;">
+                                <div class="dropdown-header" style="padding: 1rem; background: var(--bg-card-hover);">
+                                    <span id="rank-text" style="display: block; margin-bottom: 0.5rem; color: #9333ea; font-weight: bold;">Loading...</span>
+                                    <div class="points-details">
+                                        <div id="post-points" style="color: var(--text-muted); font-size: 0.875rem;">Posts: Loading...</div>
+                                        <div id="comment-points" style="color: var(--text-muted); font-size: 0.875rem;">Comments: Loading...</div>
+                                        <div id="reply-points" style="color: var(--text-muted); font-size: 0.875rem;">Replies: Loading...</div>
+                                        <div id="upvotes-given-points" style="color: var(--text-muted); font-size: 0.875rem;">Upvotes Given: Loading...</div>
+                                        <div id="upvotes-received-points" style="color: var(--text-muted); font-size: 0.875rem;">Upvotes Received: Loading...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                                        // Calculate points
-                                                        const postPoints = data.posts * 10;
-                                                        const commentPoints = data.comments * 5;
-                                                        const replyPoints = data.replies * 3;
-                                                        const upvotePoints = data.upvotesGiven * 2;
-                                                        const receivedUpvotePoints = data.upvotesReceived * 3;
-                                                        const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
+                        <script>
+                            // Immediately fetch stats when script loads
+                            (async function fetchInitialStats() {
+                                try {
+                                    const response = await fetch('/api/user/stats');
+                                    if (!response.ok) throw new Error('Failed to fetch stats');
+                                    const data = await response.json();
 
-                                                        // Update points display
-                                                        document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
-                                                        document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
-                                                        document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
-                                                        document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
-                                                        document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
-                                                        document.getElementById('total-points').textContent = totalPoints.toLocaleString();
+                                    // Calculate points
+                                    const postPoints = data.posts * 10;
+                                    const commentPoints = data.comments * 5;
+                                    const replyPoints = data.replies * 3;
+                                    const upvotePoints = data.upvotesGiven * 2;
+                                    const receivedUpvotePoints = data.upvotesReceived * 3;
+                                    const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
 
-                                                        // Calculate and update rank
-                                                        let rank;
-                                                        if (totalPoints >= 10000) rank = "Dev Grandmaster";
-                                                        else if (totalPoints >= 5000) rank = "Dev Legend";
-                                                        else if (totalPoints >= 2500) rank = "Dev Master";
-                                                        else if (totalPoints >= 1000) rank = "Dev Pro";
-                                                        else if (totalPoints >= 500) rank = "Dev Expert";
-                                                        else if (totalPoints >= 250) rank = "Dev Enthusiast";
-                                                        else if (totalPoints >= 100) rank = "Dev Rookie";
-                                                        else rank = "Dev Newbie";
+                                    // Update points display
+                                    document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
+                                    document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
+                                    document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
+                                    document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
+                                    document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
+                                    document.getElementById('total-points').textContent = totalPoints.toLocaleString();
 
-                                                        document.getElementById('rank-text').textContent = rank;
-                                                    } catch (error) {
-                                                        console.error('Error fetching stats:', error);
-                                                        document.getElementById('total-points').textContent = 'Error loading stats';
-                                                        document.getElementById('rank-text').textContent = 'Error';
-                                                        ['post-points', 'comment-points', 'reply-points', 'upvotes-given-points', 'upvotes-received-points'].forEach(id => {
-                                                            document.getElementById(id).textContent = `${id.split('-')[0]}: Error loading`;
-                                                        });
-                                                    }
-                                                })();
+                                    // Calculate and update rank
+                                    let rank;
+                                    if (totalPoints >= 10000) rank = "Dev Grandmaster";
+                                    else if (totalPoints >= 5000) rank = "Dev Legend";
+                                    else if (totalPoints >= 2500) rank = "Dev Master";
+                                    else if (totalPoints >= 1000) rank = "Dev Pro";
+                                    else if (totalPoints >= 500) rank = "Dev Expert";
+                                    else if (totalPoints >= 250) rank = "Dev Enthusiast";
+                                    else if (totalPoints >= 100) rank = "Dev Rookie";
+                                    else rank = "Dev Newbie";
 
-                                                // Set up periodic updates
-                                                setInterval(async function updateStats() {
-                                                    try {
-                                                        const response = await fetch('/api/user/stats');
-                                                        if (!response.ok) throw new Error('Failed to fetch stats');
-                                                        const data = await response.json();
+                                    document.getElementById('rank-text').textContent = rank;
+                                } catch (error) {
+                                    console.error('Error fetching stats:', error);
+                                    document.getElementById('total-points').textContent = 'Error';
+                                    document.getElementById('rank-text').textContent = 'Error';
+                                    ['post-points', 'comment-points', 'reply-points', 'upvotes-given-points', 'upvotes-received-points'].forEach(id => {
+                                        document.getElementById(id).textContent = `${id.split('-')[0]}: Error loading`;
+                                    });
+                                }
+                            })();
 
-                                                        // Calculate points
-                                                        const postPoints = data.posts * 10;
-                                                        const commentPoints = data.comments * 5;
-                                                        const replyPoints = data.replies * 3;
-                                                        const upvotePoints = data.upvotesGiven * 2;
-                                                        const receivedUpvotePoints = data.upvotesReceived * 3;
-                                                        const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
+                            // Set up periodic updates
+                            setInterval(async function updateStats() {
+                                try {
+                                    const response = await fetch('/api/user/stats');
+                                    if (!response.ok) throw new Error('Failed to fetch stats');
+                                    const data = await response.json();
 
-                                                        // Update points display
-                                                        document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
-                                                        document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
-                                                        document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
-                                                        document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
-                                                        document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
-                                                        document.getElementById('total-points').textContent = totalPoints.toLocaleString();
+                                    // Calculate points
+                                    const postPoints = data.posts * 10;
+                                    const commentPoints = data.comments * 5;
+                                    const replyPoints = data.replies * 3;
+                                    const upvotePoints = data.upvotesGiven * 2;
+                                    const receivedUpvotePoints = data.upvotesReceived * 3;
+                                    const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
 
-                                                        // Calculate and update rank
-                                                        let rank;
-                                                        if (totalPoints >= 10000) rank = "Dev Grandmaster";
-                                                        else if (totalPoints >= 5000) rank = "Dev Legend";
-                                                        else if (totalPoints >= 2500) rank = "Dev Master";
-                                                        else if (totalPoints >= 1000) rank = "Dev Pro";
-                                                        else if (totalPoints >= 500) rank = "Dev Expert";
-                                                        else if (totalPoints >= 250) rank = "Dev Enthusiast";
-                                                        else if (totalPoints >= 100) rank = "Dev Rookie";
-                                                        else rank = "Dev Newbie";
+                                    // Update points display
+                                    document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
+                                    document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
+                                    document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
+                                    document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
+                                    document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
+                                    document.getElementById('total-points').textContent = totalPoints.toLocaleString();
 
-                                                        document.getElementById('rank-text').textContent = rank;
-                                                    } catch (error) {
-                                                        console.error('Error updating stats:', error);
-                                                    }
-                                                }, 30000);
-                                            </script>
+                                    // Calculate and update rank
+                                    let rank;
+                                    if (totalPoints >= 10000) rank = "Dev Grandmaster";
+                                    else if (totalPoints >= 5000) rank = "Dev Legend";
+                                    else if (totalPoints >= 2500) rank = "Dev Master";
+                                    else if (totalPoints >= 1000) rank = "Dev Pro";
+                                    else if (totalPoints >= 500) rank = "Dev Expert";
+                                    else if (totalPoints >= 250) rank = "Dev Enthusiast";
+                                    else if (totalPoints >= 100) rank = "Dev Rookie";
+                                    else rank = "Dev Newbie";
+
+                                    document.getElementById('rank-text').textContent = rank;
+                                } catch (error) {
+                                    console.error('Error updating stats:', error);
+                                }
+                            }, 30000);
+                        </script>
                                         </div>
                                     </div>
                                 </div>
