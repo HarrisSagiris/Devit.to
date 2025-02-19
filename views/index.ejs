@@ -1357,15 +1357,98 @@
             notificationsContent.style.opacity = '1';
             notificationsContent.style.visibility = 'visible';
             notificationsContent.style.transform = 'translateY(0)';
-            // Mark notifications as read when opened
-            if (document.querySelector('.notification-badge')) {
-                fetch('/api/notifications/mark-read', { method: 'POST' })
-                    .then(() => {
-                        document.querySelector('.notification-badge').remove();
-                    });
+            
+            // Mark notifications as read
+            const badge = document.querySelector('.notification-badge');
+            if (badge) {
+                fetch('/api/notifications/mark-read', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        badge.remove();
+                        // Update notification items to show as read
+                        const notificationItems = document.querySelectorAll('.notification-item');
+                        notificationItems.forEach(item => {
+                            item.style.backgroundColor = 'var(--bg-card)';
+                        });
+                    }
+                })
+                .catch(error => console.error('Error marking notifications as read:', error));
             }
         }
+
+        // Close other dropdowns when opening notifications
+        const profileDropdown = document.querySelector('.dropdown-content');
+        if (profileDropdown) {
+            profileDropdown.style.opacity = '0';
+            profileDropdown.style.visibility = 'hidden';
+            profileDropdown.style.transform = 'translateY(-10px)';
+        }
     }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (event) => {
+        const notificationsDropdown = document.querySelector('.notifications-dropdown');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        
+        if (!notificationsDropdown.contains(event.target)) {
+            const notificationsContent = notificationsDropdown.querySelector('.notifications-content');
+            notificationsContent.style.opacity = '0';
+            notificationsContent.style.visibility = 'hidden';
+            notificationsContent.style.transform = 'translateY(-10px)';
+        }
+        
+        if (!profileDropdown.contains(event.target)) {
+            const dropdownContent = profileDropdown.querySelector('.dropdown-content');
+            dropdownContent.style.opacity = '0';
+            dropdownContent.style.visibility = 'hidden';
+            dropdownContent.style.transform = 'translateY(-10px)';
+        }
+    });
+
+    // Real-time notifications using WebSocket
+    const ws = new WebSocket('ws://' + window.location.host);
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.type === 'notification') {
+            // Update notification badge
+            const badge = document.querySelector('.notification-badge');
+            if (badge) {
+                const count = parseInt(badge.textContent) + 1;
+                badge.textContent = count;
+            } else {
+                const trigger = document.querySelector('.notifications-trigger');
+                const newBadge = document.createElement('span');
+                newBadge.className = 'notification-badge';
+                newBadge.style = 'position: absolute; top: 0; right: 0; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;';
+                newBadge.textContent = '1';
+                trigger.appendChild(newBadge);
+            }
+
+            // Add new notification to list
+            const notificationsList = document.querySelector('.notifications-list');
+            const newNotification = document.createElement('div');
+            newNotification.className = 'notification-item';
+            newNotification.style = 'padding: 1rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; background: var(--bg-card-hover);';
+            
+            newNotification.innerHTML = `
+                <div class="notification-content" style="color: var(--text);">
+                    ${data.content}
+                </div>
+                <div class="notification-time" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                    ${new Date().toLocaleDateString()}
+                </div>
+            `;
+            
+            notificationsList.insertBefore(newNotification, notificationsList.firstChild);
+        }
+    };
     </script>
     </header>
 
