@@ -586,6 +586,58 @@ app.delete('/post/:postId/comment/:commentId', async (req, res) => {
   }
 });
 
+// Add replies to comments
+app.post('/api/posts/:postId/comments/:commentId/replies', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    if (!req.body.content) {
+      return res.status(400).json({ error: 'Reply content is required' });
+    }
+
+    const reply = {
+      user: req.session.user._id,
+      username: req.session.user.username,
+      content: req.body.content,
+      createdAt: new Date(),
+      likes: 0,
+      likedBy: []
+    };
+
+    if (!comment.replies) {
+      comment.replies = [];
+    }
+
+    comment.replies.push(reply);
+    await post.save();
+
+    const populatedPost = await Post.findById(post._id)
+      .populate('comments.user', 'username')
+      .populate('comments.replies.user', 'username');
+
+    res.json({ 
+      success: true,
+      comment: populatedPost.comments.id(req.params.commentId)
+    });
+
+  } catch (error) {
+    console.error('Reply error:', error);
+    res.status(500).json({ error: 'Error adding reply' });
+  }
+});
+
 // User profile and following system with validation
 app.get('/user/:username', async (req, res) => {
   try {
