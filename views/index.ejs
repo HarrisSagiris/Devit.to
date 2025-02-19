@@ -2071,8 +2071,6 @@
                                                    placeholder="Write your reply..." 
                                                    required
                                                    style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); box-sizing: border-box;">
-                                            <input type="hidden" name="username" value="<%= user?.username %>">
-                                            <input type="hidden" name="authorId" value="<%= user?._id %>">
                                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                                 <button type="submit" 
                                                         class="btn"
@@ -2099,15 +2097,22 @@
                                                 <div class="reply-content" style="margin: 4px 0; color: var(--text); word-wrap: break-word;">
                                                     <%= reply.content %>
                                                 </div>
-                                                <% if (user && user.username === reply.username) { %>
-                                                    <button class="delete-reply-btn" 
-                                                            data-post-id="<%= post._id %>" 
-                                                            data-comment-id="<%= comment._id %>"
-                                                            data-reply-id="<%= reply._id %>"
-                                                            style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.8em; padding: 2px 4px;">
-                                                        Delete
+                                                <div class="reply-actions">
+                                                    <button class="reply-like-btn <%= reply.likedBy?.includes(user?.username) ? 'liked' : '' %>"
+                                                            onclick="likeReply(this, '<%= post._id %>', '<%= comment._id %>', '<%= reply._id %>')"
+                                                            <%= !user ? 'disabled' : '' %>>
+                                                        ♥ <span class="like-count"><%= reply.likes || 0 %></span>
                                                     </button>
-                                                <% } %>
+                                                    <% if (user && user.username === reply.username) { %>
+                                                        <button class="delete-reply-btn" 
+                                                                data-post-id="<%= post._id %>" 
+                                                                data-comment-id="<%= comment._id %>"
+                                                                data-reply-id="<%= reply._id %>"
+                                                                style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.8em; padding: 2px 4px;">
+                                                            Delete
+                                                        </button>
+                                                    <% } %>
+                                                </div>
                                             </div>
                                         <% }) %>
                                     <% } %>
@@ -2124,10 +2129,7 @@
     function toggleReplyForm(commentId, username) {
         const replyForm = document.getElementById(`reply-form-${commentId}`);
         if (replyForm) {
-            // Toggle the display
             replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
-            
-            // If showing the form, focus on the input
             if (replyForm.style.display === 'block') {
                 const input = replyForm.querySelector('input[name="content"]');
                 if (input) {
@@ -2137,7 +2139,6 @@
         }
     }
 
-    // Add event listeners for reply forms
     document.querySelectorAll('.reply-form').forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -2145,8 +2146,6 @@
             const commentId = form.dataset.commentId;
             const postId = form.dataset.postId;
             const content = form.querySelector('input[name="content"]').value;
-            const username = form.querySelector('input[name="username"]').value;
-            const authorId = form.querySelector('input[name="authorId"]').value;
 
             try {
                 const response = await fetch(`/api/posts/${postId}/comments/${commentId}/replies`, {
@@ -2154,16 +2153,33 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        content,
-                        username,
-                        authorId
-                    })
+                    body: JSON.stringify({ content })
                 });
 
                 if (response.ok) {
-                    // Refresh the page to show the new reply
-                    location.reload();
+                    const data = await response.json();
+                    const repliesContainer = document.getElementById(`replies-${commentId}`);
+                    
+                    // Create new reply element
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'reply';
+                    replyDiv.id = `reply-${data.comment.replies[data.comment.replies.length-1]._id}`;
+                    replyDiv.style = 'margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border); width: calc(100% - 30px); box-sizing: border-box;';
+                    
+                    // Add reply content
+                    replyDiv.innerHTML = `
+                        <div class="reply-header">
+                            <span class="reply-username" style="font-weight: 500; color: var(--text);">${data.comment.replies[data.comment.replies.length-1].username}</span>
+                        </div>
+                        <div class="reply-content" style="margin: 4px 0; color: var(--text); word-wrap: break-word;">
+                            ${data.comment.replies[data.comment.replies.length-1].content}
+                        </div>
+                    `;
+                    
+                    repliesContainer.appendChild(replyDiv);
+                    form.reset();
+                    toggleReplyForm(commentId);
+
                 } else {
                     const data = await response.json();
                     alert(data.error || 'Failed to post reply');
