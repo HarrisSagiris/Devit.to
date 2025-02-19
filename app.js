@@ -201,7 +201,7 @@ app.get('/api/user/stats', async (req, res) => {
     // Get comments count (excluding replies)
     const commentsCount = await Post.aggregate([
       { $unwind: '$comments' },
-      { $match: { 'comments.user': mongoose.Types.ObjectId(userId) }},
+      { $match: { 'comments.user': new mongoose.Types.ObjectId(userId) }},
       { $count: 'count' }
     ]).then(result => result[0]?.count || 0);
 
@@ -209,7 +209,7 @@ app.get('/api/user/stats', async (req, res) => {
     const repliesCount = await Post.aggregate([
       { $unwind: '$comments' },
       { $unwind: '$comments.replies' },
-      { $match: { 'comments.replies.user': mongoose.Types.ObjectId(userId) }},
+      { $match: { 'comments.replies.user': new mongoose.Types.ObjectId(userId) }},
       { $count: 'count' }
     ]).then(result => result[0]?.count || 0);
 
@@ -220,7 +220,7 @@ app.get('/api/user/stats', async (req, res) => {
 
     // Get upvotes received
     const upvotesReceived = await Post.aggregate([
-      { $match: { user: mongoose.Types.ObjectId(userId) }},
+      { $match: { user: new mongoose.Types.ObjectId(userId) }},
       { $group: {
         _id: null,
         total: { $sum: { $size: '$upvotedBy' }}
