@@ -1,11 +1,21 @@
 const mongoose = require('mongoose');
 
+const replySchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  username: String,
+  content: String,
+  likes: { type: Number, default: 0 },
+  likedBy: [String],
+  createdAt: { type: Date, default: Date.now }
+});
+
 const commentSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  username: String, // Added username field
+  username: String,
   content: String,
   upvotes: { type: Number, default: 0 },
-  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Track who liked the comment
+  likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  replies: [replySchema],
   createdAt: { type: Date, default: Date.now }
 });
 
