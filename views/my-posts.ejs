@@ -576,17 +576,54 @@
         <div class="activity-feed">
             <h2><i class="fas fa-chart-line"></i> Recent Activity</h2>
             
-            <% if (user.recentActivity && user.recentActivity.length > 0) { %>
-                <% user.recentActivity.slice(0, 10).forEach(activity => { %>
+            <% if (posts && posts.length > 0) { %>
+                <% 
+                // Get all activities from posts
+                const activities = posts.reduce((acc, post) => {
+                    // Add post creation
+                    acc.push({
+                        type: 'post',
+                        timestamp: post.createdAt,
+                        content: post.title,
+                        postTitle: post.title
+                    });
+                    
+                    // Add comments
+                    post.comments.forEach(comment => {
+                        acc.push({
+                            type: 'comment',
+                            timestamp: comment.createdAt,
+                            content: comment.content,
+                            postTitle: post.title
+                        });
+                        
+                        // Add comment replies
+                        comment.replies.forEach(reply => {
+                            acc.push({
+                                type: 'reply', 
+                                timestamp: reply.createdAt,
+                                content: reply.content,
+                                postTitle: post.title
+                            });
+                        });
+                    });
+                    
+                    return acc;
+                }, []);
+                
+                // Sort by most recent and take first 10
+                activities.sort((a,b) => b.timestamp - a.timestamp);
+                activities.slice(0, 10).forEach(activity => { 
+                %>
                     <div class="activity-item">
                         <div class="activity-header">
-                            <% if (activity.type === 'comment') { %>
+                            <% if (activity.type === 'post') { %>
+                                <span class="activity-type">
+                                    <i class="fas fa-file-alt"></i> New Post
+                                </span>
+                            <% } else if (activity.type === 'comment') { %>
                                 <span class="activity-type">
                                     <i class="fas fa-comment"></i> New Comment
-                                </span>
-                            <% } else if (activity.type === 'upvote') { %>
-                                <span class="activity-type">
-                                    <i class="fas fa-thumbs-up"></i> Upvoted Post
                                 </span>
                             <% } else if (activity.type === 'reply') { %>
                                 <span class="activity-type">
@@ -599,7 +636,7 @@
                             <%= activity.content %>
                         </div>
                         <div class="activity-meta">
-                            <% if (activity.postTitle) { %>
+                            <% if (activity.postTitle && activity.type !== 'post') { %>
                                 On post: <%= activity.postTitle %>
                             <% } %>
                         </div>
