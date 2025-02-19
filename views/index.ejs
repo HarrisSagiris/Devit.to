@@ -2256,6 +2256,12 @@
                                 <div class="comment-header">
                                     <span class="comment-username">
                                         <%= comment.username %>
+                                        <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
+                                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
+                                            </svg>
+                                            <span style="color: #9c6ade; font-size: 0.8em; margin-left: 4px;"><%= comment.points || 0 %></span>
+                                        </span>
                                     </span>
                                 </div>
                                 <div class="comment-content">
@@ -2350,7 +2356,15 @@
                                         <% comment.replies.forEach(reply => { %>
                                             <div class="reply" id="reply-<%= reply._id %>" style="margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border); width: calc(100% - 30px); box-sizing: border-box;">
                                                 <div class="reply-header">
-                                                    <span class="reply-username" style="font-weight: 500; color: var(--text);"><%= reply.username %></span>
+                                                    <span class="reply-username" style="font-weight: 500; color: var(--text);">
+                                                        <%= reply.username %>
+                                                        <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
+                                                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
+                                                            </svg>
+                                                            <span style="color: #9c6ade; font-size: 0.8em; margin-left: 4px;"><%= reply.points || 0 %></span>
+                                                        </span>
+                                                    </span>
                                                 </div>
                                                 <div class="reply-content" style="margin: 4px 0; color: var(--text); word-wrap: break-word;">
                                                     <%= reply.content %>
@@ -2451,10 +2465,18 @@
                     replyDiv.id = `reply-${data.comment.replies[data.comment.replies.length-1]._id}`;
                     replyDiv.style = 'margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border); width: calc(100% - 30px); box-sizing: border-box;';
                     
-                    // Add reply content
+                    // Add reply content with rank
                     replyDiv.innerHTML = `
                         <div class="reply-header">
-                            <span class="reply-username" style="font-weight: 500; color: var(--text);">${data.comment.replies[data.comment.replies.length-1].username}</span>
+                            <span class="reply-username" style="font-weight: 500; color: var(--text);">
+                                ${data.comment.replies[data.comment.replies.length-1].username}
+                                <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
+                                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
+                                    </svg>
+                                    <span style="color: #9c6ade; font-size: 0.8em; margin-left: 4px;">${data.comment.replies[data.comment.replies.length-1].points || 0}</span>
+                                </span>
+                            </span>
                         </div>
                         <div class="reply-content" style="margin: 4px 0; color: var(--text); word-wrap: break-word;">
                             ${data.comment.replies[data.comment.replies.length-1].content}
