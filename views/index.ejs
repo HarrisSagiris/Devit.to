@@ -1187,6 +1187,42 @@
             </a>
             <% if (user) { %>
                 <div class="nav-links">
+                    <!-- Notifications Dropdown -->
+                    <div class="notifications-dropdown" style="position: relative; margin-right: 1rem;">
+                        <div class="notifications-trigger" onclick="toggleNotifications(this)" style="display: flex; align-items: center; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: background 0.2s;">
+                            <i class="fas fa-bell" style="font-size: 1.25rem; color: var(--text);"></i>
+                            <% if (user.unreadNotifications && user.unreadNotifications.length > 0) { %>
+                                <span class="notification-badge" style="position: absolute; top: 0; right: 0; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                    <%= user.unreadNotifications.length %>
+                                </span>
+                            <% } %>
+                        </div>
+                        <div class="notifications-content" style="position: absolute; top: 100%; right: 0; width: 300px; max-height: 400px; overflow-y: auto; background: var(--bg-card); border-radius: 0.75rem; box-shadow: var(--shadow); margin-top: 0.5rem; z-index: 100; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s;">
+                            <div class="notifications-header" style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                                <h3 style="margin: 0; font-size: 1rem; color: var(--text);">Notifications</h3>
+                            </div>
+                            <div class="notifications-list">
+                                <% if (user.notifications && user.notifications.length > 0) { %>
+                                    <% user.notifications.slice(0, 10).forEach(notification => { %>
+                                        <div class="notification-item" style="padding: 1rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;">
+                                            <div class="notification-content" style="color: var(--text);">
+                                                <%= notification.content %>
+                                            </div>
+                                            <div class="notification-time" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                                <%= new Date(notification.createdAt).toLocaleDateString() %>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <div class="no-notifications" style="padding: 1rem; text-align: center; color: var(--text-muted);">
+                                        No notifications yet
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Dropdown -->
                     <div class="profile-dropdown" style="position: relative;">
                         <div class="profile-trigger" onclick="toggleDropdown(this)" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem; border-radius: 0.5rem; transition: background 0.2s;">
                             <img src="<%= user.avatar || '/icons/icon.jpg' %>" alt="Profile" class="profile-avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
@@ -1308,6 +1344,26 @@
             dropdownContent.style.opacity = '1';
             dropdownContent.style.visibility = 'visible';
             dropdownContent.style.transform = 'translateY(0)';
+        }
+    }
+
+    function toggleNotifications(trigger) {
+        const notificationsContent = trigger.nextElementSibling;
+        if (notificationsContent.style.visibility === 'visible') {
+            notificationsContent.style.opacity = '0';
+            notificationsContent.style.visibility = 'hidden';
+            notificationsContent.style.transform = 'translateY(-10px)';
+        } else {
+            notificationsContent.style.opacity = '1';
+            notificationsContent.style.visibility = 'visible';
+            notificationsContent.style.transform = 'translateY(0)';
+            // Mark notifications as read when opened
+            if (document.querySelector('.notification-badge')) {
+                fetch('/api/notifications/mark-read', { method: 'POST' })
+                    .then(() => {
+                        document.querySelector('.notification-badge').remove();
+                    });
+            }
         }
     }
     </script>
