@@ -519,6 +519,107 @@
             transform: translateX(26px);
             background-color: white;
         }
+        .devcard {
+            background: linear-gradient(45deg, var(--primary), var(--primary-hover));
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            margin: 20px 0;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .devcard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .devcard-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .devcard-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .devcard-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 3px solid white;
+        }
+
+        .devcard-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .devcard-username {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .devcard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .devcard-stat {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .devcard-stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .devcard-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .devcard-footer {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .copy-markdown {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        .copy-markdown:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .copy-markdown i {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -747,7 +848,88 @@
             <% } %>
         </div>
     </div>
+    <!-- DevCard Generator Section -->
+    <div class="devcard-generator">
+        <h2><i class="fas fa-id-card"></i> Your DevCard</h2>
+        <div class="devcard-preview">
+            <div class="devcard-header">
+                <img src="https://github.com/<%= user.username %>.png" alt="Profile" class="devcard-avatar">
+                <div class="devcard-info">
+                    <h3><%= user.username %></h3>
+                    <p>Developer at Devit.to</p>
+                </div>
+            </div>
 
+            <div class="devcard-stats">
+                <div class="devcard-stat">
+                    <div class="devcard-stat-value"><%= posts.length %></div>
+                    <div class="devcard-stat-label">Posts</div>
+                </div>
+                <div class="devcard-stat">
+                    <div class="devcard-stat-value"><%= posts.reduce((sum, post) => sum + post.upvotes, 0) %></div>
+                    <div class="devcard-stat-label">Upvotes</div>
+                </div>
+                <div class="devcard-stat">
+                    <div class="devcard-stat-value"><%= posts.reduce((sum, post) => sum + post.comments.length, 0) %></div>
+                    <div class="devcard-stat-label">Comments</div>
+                </div>
+            </div>
+
+            <div class="devcard-footer">
+                <button class="copy-markdown" onclick="copyDevCardMarkdown()">
+                    <i class="fas fa-copy"></i>
+                    Copy Markdown
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function copyDevCardMarkdown() {
+        const username = '<%= user.username %>';
+        const stats = {
+            posts: <%= posts.length %>,
+            upvotes: <%= posts.reduce((sum, post) => sum + post.upvotes, 0) %>,
+            comments: <%= posts.reduce((sum, post) => sum + post.comments.length, 0) %>
+        };
+
+        const markdown = `
+<div align="center">
+  <img src="https://github.com/${username}.png" width="150" style="border-radius: 50%;">
+  <h3>${username}</h3>
+  <p>Developer at Devit.to</p>
+  
+  <table>
+    <tr>
+      <td align="center">
+        <b>${stats.posts}</b>
+        <br>
+        Posts
+      </td>
+      <td align="center">
+        <b>${stats.upvotes}</b>
+        <br>
+        Upvotes
+      </td>
+      <td align="center">
+        <b>${stats.comments}</b>
+        <br>
+        Comments
+      </td>
+    </tr>
+  </table>
+</div>`;
+
+        navigator.clipboard.writeText(markdown).then(() => {
+            const btn = document.querySelector('.copy-markdown');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        });
+    }
+    </script>
     <script>
         $(document).ready(function() {
             // Theme toggle
