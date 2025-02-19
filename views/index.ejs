@@ -2098,10 +2098,11 @@
                                                     <%= reply.content %>
                                                 </div>
                                                 <div class="reply-actions">
-                                                    <button class="reply-like-btn <%= reply.likedBy?.includes(user?.username) ? 'liked' : '' %>"
-                                                            onclick="likeReply(this, '<%= post._id %>', '<%= comment._id %>', '<%= reply._id %>')"
-                                                            <%= !user ? 'disabled' : '' %>>
-                                                        ♥ <span class="like-count"><%= reply.likes || 0 %></span>
+                                                    <button class="reply-upvote-btn <%= reply.likedBy?.includes(user?.username) ? 'upvoted' : '' %>"
+                                                            onclick="upvoteReply(this, '<%= post._id %>', '<%= comment._id %>', '<%= reply._id %>')"
+                                                            <%= !user ? 'disabled' : '' %>
+                                                            style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
+                                                        ⬆️ <span class="upvote-count"><%= reply.likes || 0 %></span>
                                                     </button>
                                                     <% if (user && user.username === reply.username) { %>
                                                         <button class="delete-reply-btn" 
