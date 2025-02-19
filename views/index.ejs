@@ -1232,23 +1232,25 @@
                             <div class="dropdown-header" style="padding: 1rem; background: var(--bg-card-hover);">
                                 <span style="display: block; margin-bottom: 0.5rem; color: var(--text);">Welcome, <strong><%= user.username %></strong></span>
                                 <% 
-                                // Calculate Dev Points
-                                const postPoints = (user.posts?.length || 0) * 10; // 10 points per post
-                                const commentPoints = (user.comments?.length || 0) * 5; // 5 points per comment
-                                const replyPoints = (user.replies?.length || 0) * 3; // 3 points per reply
-                                const upvotePoints = (user.totalUpvotes || 0) * 2; // 2 points per upvote given
+                                // Calculate Dev Points based on user's current stats
+                                const postPoints = (user.posts?.length || 0) * 10;
+                                const commentPoints = (user.comments?.length || 0) * 5;
+                                const replyPoints = (user.replies?.length || 0) * 3;
+                                const upvotePoints = (user.upvotesGiven?.length || 0) * 2;
+                                const receivedUpvotePoints = (user.upvotesReceived?.length || 0) * 3;
                                 
-                                const totalDevPoints = postPoints + commentPoints + replyPoints + upvotePoints;
+                                const totalDevPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
                                 
-                                // Calculate rank based on Dev Points
+                                // Calculate rank based on total points
                                 let rank;
-                                
-                                if (totalDevPoints >= 5000) {
+                                if (totalDevPoints >= 10000) {
+                                    rank = "Dev Grandmaster";
+                                } else if (totalDevPoints >= 5000) {
                                     rank = "Dev Legend";
                                 } else if (totalDevPoints >= 2500) {
                                     rank = "Dev Master";
                                 } else if (totalDevPoints >= 1000) {
-                                    rank = "Dev Pro"; 
+                                    rank = "Dev Pro";
                                 } else if (totalDevPoints >= 500) {
                                     rank = "Dev Expert";
                                 } else if (totalDevPoints >= 250) {
@@ -1268,11 +1270,32 @@
                                         <div style="font-size: 0.75rem; color: var(--text-muted);">
                                             Dev Points: <strong style="color: #9333ea;"><%= totalDevPoints.toLocaleString() %></strong>
                                             <div style="font-size: 0.7rem; margin-top: 0.25rem;">
-                                                <div>Posts: +<%= postPoints %></div>
-                                                <div>Comments: +<%= commentPoints %></div>
-                                                <div>Replies: +<%= replyPoints %></div>
-                                                <div>Upvotes: +<%= upvotePoints %></div>
+                                                <button onclick="togglePoints(this)" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.7rem; padding: 0;">
+                                                    <i class="fas fa-chevron-right"></i> Show point details
+                                                </button>
+                                                <div class="points-details" style="display: none; margin-top: 0.5rem;">
+                                                    <div>Posts: +<%= postPoints %></div>
+                                                    <div>Comments: +<%= commentPoints %></div>
+                                                    <div>Replies: +<%= replyPoints %></div>
+                                                    <div>Upvotes Given: +<%= upvotePoints %></div>
+                                                    <div>Upvotes Received: +<%= receivedUpvotePoints %></div>
+                                                </div>
                                             </div>
+                                            <script>
+                                                function togglePoints(btn) {
+                                                    const details = btn.nextElementSibling;
+                                                    const icon = btn.querySelector('i');
+                                                    if (details.style.display === 'none') {
+                                                        details.style.display = 'block';
+                                                        icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
+                                                        btn.innerHTML = '<i class="fas fa-chevron-down"></i> Hide point details';
+                                                    } else {
+                                                        details.style.display = 'none';
+                                                        icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
+                                                        btn.innerHTML = '<i class="fas fa-chevron-right"></i> Show point details';
+                                                    }
+                                                }
+                                            </script>
                                         </div>
                                     </div>
                                 </div>
