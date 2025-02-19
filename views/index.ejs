@@ -2021,7 +2021,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="comments-section">
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
@@ -2061,41 +2060,43 @@
                                         <button class="delete-comment-btn" data-post-id="<%= post._id %>" data-comment-id="<%= comment._id %>">Delete</button>
                                     <% } %>
                                 </div>
-                                <div class="reply-form-container" id="reply-form-<%= comment._id %>" style="display: none; margin: 10px 0 10px 20px;">
-                                    <form class="reply-form" data-comment-id="<%= comment._id %>" data-post-id="<%= post._id %>">
+                                <div class="reply-form-container" id="reply-form-<%= comment._id %>" style="display: none; margin: 10px 0 10px 20px; width: 100%; max-width: 100%;">
+                                    <form class="reply-form" data-comment-id="<%= comment._id %>" data-post-id="<%= post._id %>" style="width: 100%;">
                                         <div class="reply-header" style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 5px;">
                                             Replying to @<%= comment.username %>
                                         </div>
-                                        <div style="display: flex; gap: 8px;">
+                                        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
                                             <input type="text" 
                                                    name="content" 
                                                    placeholder="Write your reply..." 
                                                    required
-                                                   style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);">
+                                                   style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); box-sizing: border-box;">
                                             <input type="hidden" name="username" value="<%= user?.username %>">
                                             <input type="hidden" name="authorId" value="<%= user?._id %>">
-                                            <button type="submit" 
-                                                    class="btn"
-                                                    style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                                Reply
-                                            </button>
-                                            <button type="button" 
-                                                    class="btn cancel-reply"
-                                                    onclick="toggleReplyForm('<%= comment._id %>')"
-                                                    style="padding: 8px 16px; background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; cursor: pointer;">
-                                                Cancel
-                                            </button>
+                                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                                <button type="submit" 
+                                                        class="btn"
+                                                        style="flex: 1; min-width: 80px; padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                                    Reply
+                                                </button>
+                                                <button type="button" 
+                                                        class="btn cancel-reply"
+                                                        onclick="toggleReplyForm('<%= comment._id %>')"
+                                                        style="flex: 1; min-width: 80px; padding: 8px 16px; background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; cursor: pointer;">
+                                                    Cancel
+                                                </button>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="replies" id="replies-<%= comment._id %>">
                                     <% if (comment.replies && comment.replies.length > 0) { %>
                                         <% comment.replies.forEach(reply => { %>
-                                            <div class="reply" id="reply-<%= reply._id %>" style="margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border);">
+                                            <div class="reply" id="reply-<%= reply._id %>" style="margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border); width: calc(100% - 30px); box-sizing: border-box;">
                                                 <div class="reply-header">
                                                     <span class="reply-username" style="font-weight: 500; color: var(--text);"><%= reply.username %></span>
                                                 </div>
-                                                <div class="reply-content" style="margin: 4px 0; color: var(--text);">
+                                                <div class="reply-content" style="margin: 4px 0; color: var(--text); word-wrap: break-word;">
                                                     <%= reply.content %>
                                                 </div>
                                                 <% if (user && user.username === reply.username) { %>

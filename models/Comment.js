@@ -4,17 +4,21 @@ const Schema = mongoose.Schema;
 const ReplySchema = new Schema({
     text: String,
     username: String,
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Add userId reference
-    createdAt: { type: Date, default: Date.now }
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    createdAt: { type: Date, default: Date.now },
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: String }] // Store usernames of users who liked
 });
 
 const CommentSchema = new Schema({
     text: String,
     username: String,
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Add userId reference
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     postId: { type: Schema.Types.ObjectId, ref: 'Post' },
     createdAt: { type: Date, default: Date.now },
-    replies: [ReplySchema]  // Nested array of replies
+    likes: { type: Number, default: 0 },
+    likedBy: [{ type: String }], // Store usernames of users who liked
+    replies: [ReplySchema]
 });
 
 // Add pre-find middleware to populate username from User model
