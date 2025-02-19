@@ -1232,46 +1232,49 @@
                             <div class="dropdown-header" style="padding: 1rem; background: var(--bg-card-hover);">
                                 <span style="display: block; margin-bottom: 0.5rem; color: var(--text);">Welcome, <strong><%= user.username %></strong></span>
                                 <% 
-                                // Calculate user rank based on total upvotes
-                                let rank;
-                                let badgeClass;
-                                let icon;
+                                // Calculate Dev Points
+                                const postPoints = (user.posts?.length || 0) * 10; // 10 points per post
+                                const commentPoints = (user.comments?.length || 0) * 5; // 5 points per comment
+                                const replyPoints = (user.replies?.length || 0) * 3; // 3 points per reply
+                                const upvotePoints = (user.totalUpvotes || 0) * 2; // 2 points per upvote given
                                 
-                                if (user.totalUpvotes >= 5000) {
-                                    rank = "Elite";
-                                    badgeClass = "gold"; 
-                                    icon = "fa-crown";
-                                } else if (user.totalUpvotes >= 2500) {
-                                    rank = "Master";
-                                    badgeClass = "gold";
-                                    icon = "fa-star";
-                                } else if (user.totalUpvotes >= 1000) {
-                                    rank = "Expert"; 
-                                    badgeClass = "silver";
-                                    icon = "fa-medal";
-                                } else if (user.totalUpvotes >= 500) {
-                                    rank = "Advanced";
-                                    badgeClass = "silver";
-                                    icon = "fa-award";
-                                } else if (user.totalUpvotes >= 100) {
-                                    rank = "Intermediate";
-                                    badgeClass = "bronze";
-                                    icon = "fa-certificate";
-                                } else if (user.totalUpvotes >= 50) {
-                                    rank = "Beginner";
-                                    badgeClass = "bronze";
-                                    icon = "fa-seedling";
+                                const totalDevPoints = postPoints + commentPoints + replyPoints + upvotePoints;
+                                
+                                // Calculate rank based on Dev Points
+                                let rank;
+                                
+                                if (totalDevPoints >= 5000) {
+                                    rank = "Dev Legend";
+                                } else if (totalDevPoints >= 2500) {
+                                    rank = "Dev Master";
+                                } else if (totalDevPoints >= 1000) {
+                                    rank = "Dev Pro"; 
+                                } else if (totalDevPoints >= 500) {
+                                    rank = "Dev Expert";
+                                } else if (totalDevPoints >= 250) {
+                                    rank = "Dev Enthusiast";
+                                } else if (totalDevPoints >= 100) {
+                                    rank = "Dev Rookie";
                                 } else {
-                                    rank = "Newbie";
-                                    badgeClass = "bronze";
-                                    icon = "fa-user";
+                                    rank = "Dev Newbie";
                                 }
                                 %>
                                 <div class="ranking" style="margin-top: 0.5rem;">
-                                    <span class="ranking-badge <%= badgeClass %>" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; border-radius: 1rem; font-size: 0.75rem; background: var(--badge-bg); color: var(--badge-text);">
-                                        <i class="fas <%= icon %>"></i>
-                                        <%= rank %>
-                                    </span>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <span class="ranking-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; background: rgba(147, 51, 234, 0.1); color: #9333ea;">
+                                            <i class="fas fa-bolt" style="color: #9333ea;"></i>
+                                            <%= rank %>
+                                        </span>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                            Dev Points: <strong style="color: #9333ea;"><%= totalDevPoints.toLocaleString() %></strong>
+                                            <div style="font-size: 0.7rem; margin-top: 0.25rem;">
+                                                <div>Posts: +<%= postPoints %></div>
+                                                <div>Comments: +<%= commentPoints %></div>
+                                                <div>Replies: +<%= replyPoints %></div>
+                                                <div>Upvotes: +<%= upvotePoints %></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="dropdown-divider" style="height: 1px; background: var(--border);"></div>
