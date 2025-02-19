@@ -2115,6 +2115,32 @@
                                                     <% } %>
                                                 </div>
                                             </div>
+                                            <script>
+                                            async function upvoteReply(button, postId, commentId, replyId) {
+                                                try {
+                                                    const response = await fetch(`/api/posts/${postId}/comments/${commentId}/replies/${replyId}/like`, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json'
+                                                        }
+                                                    });
+
+                                                    if (response.ok) {
+                                                        const data = await response.json();
+                                                        const upvoteCount = button.querySelector('.upvote-count');
+                                                        upvoteCount.textContent = data.likes;
+                                                        
+                                                        if (data.isLiked) {
+                                                            button.classList.add('upvoted');
+                                                        } else {
+                                                            button.classList.remove('upvoted');
+                                                        }
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error upvoting reply:', error);
+                                                }
+                                            }
+                                            </script>
                                         <% }) %>
                                     <% } %>
                                 </div>
