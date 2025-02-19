@@ -588,6 +588,18 @@
                         postTitle: post.title
                     });
                     
+                    // Add upvotes
+                    if (post.upvoteActivities && post.upvoteActivities.length) {
+                        post.upvoteActivities.forEach(upvote => {
+                            acc.push({
+                                type: 'upvote',
+                                timestamp: upvote.timestamp,
+                                content: 'Someone upvoted your post!',
+                                postTitle: post.title
+                            });
+                        });
+                    }
+
                     // Add comments
                     post.comments.forEach(comment => {
                         acc.push({
@@ -628,6 +640,10 @@
                             <% } else if (activity.type === 'reply') { %>
                                 <span class="activity-type">
                                     <i class="fas fa-reply"></i> Replied to Comment
+                                </span>
+                            <% } else if (activity.type === 'upvote') { %>
+                                <span class="activity-type">
+                                    <i class="fas fa-thumbs-up"></i> New Upvote
                                 </span>
                             <% } %>
                             <span><%= new Date(activity.timestamp).toLocaleDateString() %></span>
