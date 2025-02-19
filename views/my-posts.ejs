@@ -853,10 +853,14 @@
         <h2><i class="fas fa-id-card"></i> Your DevCard</h2>
         <div class="devcard-preview">
             <div class="devcard-header">
-                <img src="https://github.com/<%= user.username %>.png" alt="Profile" class="devcard-avatar">
+                <img src="https://github.com/<%= user.username %>.png" onerror="this.src='/images/default-avatar.png'" alt="Profile" class="devcard-avatar">
                 <div class="devcard-info">
                     <h3><%= user.username %></h3>
                     <p>Developer at Devit.to</p>
+                    <div class="devcard-badges">
+                        <span class="badge"><i class="fas fa-star"></i> Top Contributor</span>
+                        <span class="badge"><i class="fas fa-award"></i> <%= posts.length > 10 ? 'Expert' : 'Rising Star' %></span>
+                    </div>
                 </div>
             </div>
 
@@ -864,14 +868,41 @@
                 <div class="devcard-stat">
                     <div class="devcard-stat-value"><%= posts.length %></div>
                     <div class="devcard-stat-label">Posts</div>
+                    <div class="stat-trend <%= posts.length > 5 ? 'positive' : '' %>">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
                 </div>
                 <div class="devcard-stat">
                     <div class="devcard-stat-value"><%= posts.reduce((sum, post) => sum + post.upvotes, 0) %></div>
                     <div class="devcard-stat-label">Upvotes</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
                 </div>
                 <div class="devcard-stat">
                     <div class="devcard-stat-value"><%= posts.reduce((sum, post) => sum + post.comments.length, 0) %></div>
                     <div class="devcard-stat-label">Comments</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="devcard-activity">
+                <h4><i class="fas fa-chart-bar"></i> Activity Overview</h4>
+                <div class="activity-graph">
+                    <% 
+                        const last7Days = Array(7).fill(0);
+                        posts.forEach(post => {
+                            const dayIndex = 6 - Math.min(6, Math.floor((Date.now() - new Date(post.createdAt)) / (1000 * 60 * 60 * 24)));
+                            if (dayIndex >= 0) last7Days[dayIndex]++;
+                        });
+                    %>
+                    <% last7Days.forEach((count, i) => { %>
+                        <div class="graph-bar" style="height: <%= Math.max(20, count * 30) %>px" title="<%= count %> posts">
+                            <span class="bar-label"><%= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(new Date().getDay() + i + 1) % 7] %></span>
+                        </div>
+                    <% }); %>
                 </div>
             </div>
 
@@ -879,6 +910,14 @@
                 <button class="copy-markdown" onclick="copyDevCardMarkdown()">
                     <i class="fas fa-copy"></i>
                     Copy Markdown
+                </button>
+                <button class="share-devcard" onclick="shareDevCard()">
+                    <i class="fas fa-share-alt"></i>
+                    Share
+                </button>
+                <button class="download-devcard" onclick="downloadDevCard()">
+                    <i class="fas fa-download"></i>
+                    Download PNG
                 </button>
             </div>
         </div>
@@ -918,16 +957,50 @@
       </td>
     </tr>
   </table>
+
+  <p>
+    <img src="https://img.shields.io/badge/status-${stats.posts > 10 ? 'expert' : 'rising star'}-brightgreen" />
+    <img src="https://img.shields.io/badge/contributions-${stats.posts + stats.comments}-blue" />
+  </p>
 </div>`;
 
         navigator.clipboard.writeText(markdown).then(() => {
-            const btn = document.querySelector('.copy-markdown');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-            }, 2000);
+            showToast('Markdown copied to clipboard!');
         });
+    }
+
+    function shareDevCard() {
+        const shareData = {
+            title: 'My DevCard',
+            text: 'Check out my developer stats!',
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            navigator.share(shareData)
+                .then(() => showToast('DevCard shared successfully!'))
+                .catch(err => console.error('Error sharing:', err));
+        } else {
+            showToast('Sharing not supported on this browser');
+        }
+    }
+
+    function downloadDevCard() {
+        html2canvas(document.querySelector('.devcard-preview')).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'devcard.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            showToast('DevCard downloaded!');
+        });
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     }
     </script>
     <script>
