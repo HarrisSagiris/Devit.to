@@ -638,6 +638,56 @@ app.post('/api/posts/:postId/comments/:commentId/replies', async (req, res) => {
   }
 });
 
+// Like/Unlike reply
+app.post('/api/posts/:postId/comments/:commentId/replies/:replyId/like', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    const reply = comment.replies.id(req.params.replyId);
+    if (!reply) {
+      return res.status(404).json({ error: 'Reply not found' });
+    }
+
+    const username = req.session.user.username;
+    const likedIndex = reply.likedBy.indexOf(username);
+
+    if (likedIndex === -1) {
+      // Like reply
+      reply.likes++;
+      reply.likedBy.push(username);
+    } else {
+      // Unlike reply
+      reply.likes--;
+      reply.likedBy.splice(likedIndex, 1);
+    }
+
+    await post.save();
+
+    res.json({
+      success: true,
+      likes: reply.likes,
+      liked: likedIndex === -1,
+      likedBy: reply.likedBy
+    });
+
+  } catch (error) {
+    console.error('Reply like error:', error);
+    res.status(500).json({ error: 'Error processing reply like' });
+  }
+});
+
 // User profile and following system with validation
 app.get('/user/:username', async (req, res) => {
   try {
