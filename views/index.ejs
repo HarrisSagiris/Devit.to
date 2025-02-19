@@ -1266,45 +1266,90 @@
                                                     }
                                                 }
 
-                                                function updateStats() {
-                                                    fetch('/api/user/stats')
-                                                        .then(response => response.json())
-                                                        .then(data => {
-                                                            // Calculate points
-                                                            const postPoints = data.posts * 10;
-                                                            const commentPoints = data.comments * 5;
-                                                            const replyPoints = data.replies * 3;
-                                                            const upvotePoints = data.upvotesGiven * 2;
-                                                            const receivedUpvotePoints = data.upvotesReceived * 3;
-                                                            const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
+                                                // Immediately fetch stats when script loads
+                                                (async function fetchInitialStats() {
+                                                    try {
+                                                        const response = await fetch('/api/user/stats');
+                                                        if (!response.ok) throw new Error('Failed to fetch stats');
+                                                        const data = await response.json();
 
-                                                            // Update points display
-                                                            document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
-                                                            document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
-                                                            document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
-                                                            document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
-                                                            document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
-                                                            document.getElementById('total-points').textContent = totalPoints.toLocaleString();
+                                                        // Calculate points
+                                                        const postPoints = data.posts * 10;
+                                                        const commentPoints = data.comments * 5;
+                                                        const replyPoints = data.replies * 3;
+                                                        const upvotePoints = data.upvotesGiven * 2;
+                                                        const receivedUpvotePoints = data.upvotesReceived * 3;
+                                                        const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
 
-                                                            // Calculate and update rank
-                                                            let rank;
-                                                            if (totalPoints >= 10000) rank = "Dev Grandmaster";
-                                                            else if (totalPoints >= 5000) rank = "Dev Legend";
-                                                            else if (totalPoints >= 2500) rank = "Dev Master";
-                                                            else if (totalPoints >= 1000) rank = "Dev Pro";
-                                                            else if (totalPoints >= 500) rank = "Dev Expert";
-                                                            else if (totalPoints >= 250) rank = "Dev Enthusiast";
-                                                            else if (totalPoints >= 100) rank = "Dev Rookie";
-                                                            else rank = "Dev Newbie";
+                                                        // Update points display
+                                                        document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
+                                                        document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
+                                                        document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
+                                                        document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
+                                                        document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
+                                                        document.getElementById('total-points').textContent = totalPoints.toLocaleString();
 
-                                                            document.getElementById('rank-text').textContent = rank;
-                                                        })
-                                                        .catch(console.error);
-                                                }
+                                                        // Calculate and update rank
+                                                        let rank;
+                                                        if (totalPoints >= 10000) rank = "Dev Grandmaster";
+                                                        else if (totalPoints >= 5000) rank = "Dev Legend";
+                                                        else if (totalPoints >= 2500) rank = "Dev Master";
+                                                        else if (totalPoints >= 1000) rank = "Dev Pro";
+                                                        else if (totalPoints >= 500) rank = "Dev Expert";
+                                                        else if (totalPoints >= 250) rank = "Dev Enthusiast";
+                                                        else if (totalPoints >= 100) rank = "Dev Rookie";
+                                                        else rank = "Dev Newbie";
 
-                                                // Update stats immediately and every 30 seconds
-                                                updateStats();
-                                                setInterval(updateStats, 30000);
+                                                        document.getElementById('rank-text').textContent = rank;
+                                                    } catch (error) {
+                                                        console.error('Error fetching stats:', error);
+                                                        document.getElementById('total-points').textContent = 'Error loading stats';
+                                                        document.getElementById('rank-text').textContent = 'Error';
+                                                        ['post-points', 'comment-points', 'reply-points', 'upvotes-given-points', 'upvotes-received-points'].forEach(id => {
+                                                            document.getElementById(id).textContent = `${id.split('-')[0]}: Error loading`;
+                                                        });
+                                                    }
+                                                })();
+
+                                                // Set up periodic updates
+                                                setInterval(async function updateStats() {
+                                                    try {
+                                                        const response = await fetch('/api/user/stats');
+                                                        if (!response.ok) throw new Error('Failed to fetch stats');
+                                                        const data = await response.json();
+
+                                                        // Calculate points
+                                                        const postPoints = data.posts * 10;
+                                                        const commentPoints = data.comments * 5;
+                                                        const replyPoints = data.replies * 3;
+                                                        const upvotePoints = data.upvotesGiven * 2;
+                                                        const receivedUpvotePoints = data.upvotesReceived * 3;
+                                                        const totalPoints = postPoints + commentPoints + replyPoints + upvotePoints + receivedUpvotePoints;
+
+                                                        // Update points display
+                                                        document.getElementById('post-points').textContent = `Posts: +${postPoints}`;
+                                                        document.getElementById('comment-points').textContent = `Comments: +${commentPoints}`;
+                                                        document.getElementById('reply-points').textContent = `Replies: +${replyPoints}`;
+                                                        document.getElementById('upvotes-given-points').textContent = `Upvotes Given: +${upvotePoints}`;
+                                                        document.getElementById('upvotes-received-points').textContent = `Upvotes Received: +${receivedUpvotePoints}`;
+                                                        document.getElementById('total-points').textContent = totalPoints.toLocaleString();
+
+                                                        // Calculate and update rank
+                                                        let rank;
+                                                        if (totalPoints >= 10000) rank = "Dev Grandmaster";
+                                                        else if (totalPoints >= 5000) rank = "Dev Legend";
+                                                        else if (totalPoints >= 2500) rank = "Dev Master";
+                                                        else if (totalPoints >= 1000) rank = "Dev Pro";
+                                                        else if (totalPoints >= 500) rank = "Dev Expert";
+                                                        else if (totalPoints >= 250) rank = "Dev Enthusiast";
+                                                        else if (totalPoints >= 100) rank = "Dev Rookie";
+                                                        else rank = "Dev Newbie";
+
+                                                        document.getElementById('rank-text').textContent = rank;
+                                                    } catch (error) {
+                                                        console.error('Error updating stats:', error);
+                                                    }
+                                                }, 30000);
                                             </script>
                                         </div>
                                     </div>
