@@ -152,9 +152,33 @@ app.post('/send-verification', async (req, res) => {
       to: email,
       subject: 'Devit.to Email Verification',
       html: `
-        <h2>Welcome to Devit.to!</h2>
-        <p>Your verification code is: <strong>${verificationCode}</strong></p>
-        <p>This code will expire in 10 minutes.</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+            .container { background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .logo { color: #8858ED; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+            .code { background: #f5f5f5; padding: 15px 25px; border-radius: 6px; font-size: 32px; font-weight: bold; letter-spacing: 3px; color: #8858ED; text-align: center; margin: 20px 0; }
+            .warning { color: #ff4444; font-size: 14px; margin-top: 20px; }
+            .footer { color: #666; font-size: 12px; margin-top: 30px; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">Devit.to</div>
+            <h2>Welcome to Our Developer Community! 👋</h2>
+            <p>Thanks for joining Devit.to! To ensure this is really you, we need to verify your email address.</p>
+            <p>Here's your verification code:</p>
+            <div class="code" style="display: inline-block; margin: 20px auto; padding: 15px 25px; background: #f5f5f5; border-radius: 6px; font-size: 32px; font-weight: bold; letter-spacing: 3px; color: #8858ED; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${verificationCode}</div>
+            <p class="warning">⚠️ This code will expire in 10 minutes for security reasons.</p>
+            <p>If you didn't request this code, please ignore this email.</p>
+            <div class="footer">
+              © ${new Date().getFullYear()} Devit.to - Where developers connect and share
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
 
