@@ -879,7 +879,7 @@
             <div class="devcard-stats">
                 <div class="devcard-stat">
                     <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
-                    <div class="devcard-stat-value" data-value="<%= posts.length %>">0</div>
+                    <div class="devcard-stat-value" data-value="<%= posts.length %>"><%= posts.length %></div>
                     <div class="devcard-stat-label">Posts</div>
                     <div class="stat-trend <%= posts.length > 5 ? 'positive pulse' : '' %>">
                         <i class="fas fa-chart-line"></i>
@@ -887,7 +887,7 @@
                 </div>
                 <div class="devcard-stat">
                     <div class="stat-icon"><i class="fas fa-thumbs-up"></i></div>
-                    <div class="devcard-stat-value" data-value="<%= posts.reduce((sum, post) => sum + post.upvotes, 0) %>">0</div>
+                    <div class="devcard-stat-value" data-value="<%= posts.reduce((sum, post) => sum + post.upvotes, 0) %>"><%= posts.reduce((sum, post) => sum + post.upvotes, 0) %></div>
                     <div class="devcard-stat-label">Upvotes</div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
@@ -895,7 +895,7 @@
                 </div>
                 <div class="devcard-stat">
                     <div class="stat-icon"><i class="fas fa-comments"></i></div>
-                    <div class="devcard-stat-value" data-value="<%= posts.reduce((sum, post) => sum + post.comments.length, 0) %>">0</div>
+                    <div class="devcard-stat-value" data-value="<%= posts.reduce((sum, post) => sum + post.comments.length, 0) %>"><%= posts.reduce((sum, post) => sum + post.comments.length, 0) %></div>
                     <div class="devcard-stat-label">Comments</div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
