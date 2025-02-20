@@ -618,26 +618,58 @@ app.post('/post/:postId/comment/:commentId/like', async (req, res) => {
 });
 
 // Delete comment
-app.delete('/post/:postId/comment/:commentId', async (req, res) => {
+app.delete('/api/posts/:postId/comments/:commentId', async (req, res) => {
   try {
-    if (!req.session.user) return res.status(403).json({ error: 'Login required' });
+    if (!req.session.user) {
+      return res.status(403).json({ 
+        error: 'Please login to delete comments',
+        success: false 
+      });
+    }
 
     const post = await Post.findById(req.params.postId);
-    if (!post) return res.status(404).json({ error: 'Post not found' });
+    if (!post) {
+      return res.status(404).json({ 
+        error: 'Post not found',
+        success: false
+      });
+    }
 
     const comment = post.comments.id(req.params.commentId);
-    if (!comment) return res.status(404).json({ error: 'Comment not found' });
+    if (!comment) {
+      return res.status(404).json({
+        error: 'Comment not found', 
+        success: false
+      });
+    }
 
     if (comment.username !== req.session.user.username) {
-      return res.status(403).json({ error: 'Unauthorized to delete this comment' });
+      return res.status(403).json({
+        error: 'You can only delete your own comments',
+        success: false
+      });
     }
 
     comment.remove();
     await post.save();
-    res.json({ success: true });
+
+    // Return updated comment list
+    const updatedPost = await Post.findById(post._id)
+      .populate('comments.user', 'username')
+      .populate('comments.replies.user', 'username');
+
+    res.json({
+      success: true,
+      message: 'Comment deleted successfully',
+      comments: updatedPost.comments
+    });
+
   } catch (error) {
-    console.error('Comment deletion error:', error);
-    res.status(500).json({ error: 'Error deleting comment' });
+    console.error('Error deleting comment:', error);
+    res.status(500).json({
+      error: 'An error occurred while deleting the comment',
+      success: false
+    });
   }
 });
 
