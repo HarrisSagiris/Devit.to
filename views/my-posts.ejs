@@ -853,34 +853,49 @@
         <h2><i class="fas fa-id-card"></i> Your DevCard</h2>
         <div class="devcard-preview">
             <div class="devcard-header">
-                <img src="https://github.com/<%= user.username %>.png" onerror="this.src='/images/default-avatar.png'" alt="Profile" class="devcard-avatar">
+                <div class="avatar-wrapper">
+                    <img src="https://github.com/<%= user.username %>.png" onerror="this.src='/images/default-avatar.png'" alt="Profile" class="devcard-avatar">
+                    <div class="avatar-glow"></div>
+                </div>
                 <div class="devcard-info">
                     <h3><%= user.username %></h3>
-                    <p>Developer at Devit.to</p>
+                    <p class="role">Developer at Devit.to</p>
                     <div class="devcard-badges">
-                        <span class="badge"><i class="fas fa-star"></i> Top Contributor</span>
-                        <span class="badge"><i class="fas fa-award"></i> <%= posts.length > 10 ? 'Expert' : 'Rising Star' %></span>
+                        <% if (posts.length > 20) { %>
+                            <span class="badge elite"><i class="fas fa-crown"></i> Elite Contributor</span>
+                        <% } else if (posts.length > 10) { %>
+                            <span class="badge expert"><i class="fas fa-star"></i> Expert</span>
+                        <% } else { %>
+                            <span class="badge rising"><i class="fas fa-rocket"></i> Rising Star</span>
+                        <% } %>
+                        <% const totalEngagement = posts.reduce((sum, post) => sum + post.upvotes + post.comments.length, 0) %>
+                        <% if (totalEngagement > 100) { %>
+                            <span class="badge influential"><i class="fas fa-bolt"></i> Influential</span>
+                        <% } %>
                     </div>
                 </div>
             </div>
 
             <div class="devcard-stats">
                 <div class="devcard-stat">
-                    <div class="devcard-stat-value"><%= posts.length %></div>
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="devcard-stat-value" data-value="<%= posts.length %>">0</div>
                     <div class="devcard-stat-label">Posts</div>
-                    <div class="stat-trend <%= posts.length > 5 ? 'positive' : '' %>">
+                    <div class="stat-trend <%= posts.length > 5 ? 'positive pulse' : '' %>">
                         <i class="fas fa-chart-line"></i>
                     </div>
                 </div>
                 <div class="devcard-stat">
-                    <div class="devcard-stat-value"><%= posts.reduce((sum, post) => sum + post.upvotes, 0) %></div>
+                    <div class="stat-icon"><i class="fas fa-thumbs-up"></i></div>
+                    <div class="devcard-stat-value" data-value="<%= posts.reduce((sum, post) => sum + post.upvotes, 0) %>">0</div>
                     <div class="devcard-stat-label">Upvotes</div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
                     </div>
                 </div>
                 <div class="devcard-stat">
-                    <div class="devcard-stat-value"><%= posts.reduce((sum, post) => sum + post.comments.length, 0) %></div>
+                    <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                    <div class="devcard-stat-value" data-value="<%= posts.reduce((sum, post) => sum + post.comments.length, 0) %>">0</div>
                     <div class="devcard-stat-label">Comments</div>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
@@ -897,27 +912,32 @@
                             const dayIndex = 6 - Math.min(6, Math.floor((Date.now() - new Date(post.createdAt)) / (1000 * 60 * 60 * 24)));
                             if (dayIndex >= 0) last7Days[dayIndex]++;
                         });
+                        const maxCount = Math.max(...last7Days);
                     %>
                     <% last7Days.forEach((count, i) => { %>
-                        <div class="graph-bar" style="height: <%= Math.max(20, count * 30) %>px" title="<%= count %> posts">
+                        <div class="graph-bar-wrapper">
+                            <div class="graph-bar" style="height: <%= Math.max(20, (count/maxCount) * 100) %>%" title="<%= count %> posts">
+                                <div class="bar-glow"></div>
+                            </div>
                             <span class="bar-label"><%= ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(new Date().getDay() + i + 1) % 7] %></span>
+                            <span class="bar-value"><%= count %></span>
                         </div>
                     <% }); %>
                 </div>
             </div>
 
             <div class="devcard-footer">
-                <button class="copy-markdown" onclick="copyDevCardMarkdown()">
+                <button class="action-btn copy-markdown" onclick="copyDevCardMarkdown()">
                     <i class="fas fa-copy"></i>
-                    Copy Markdown
+                    <span>Copy Markdown</span>
                 </button>
-                <button class="share-devcard" onclick="shareDevCard()">
+                <button class="action-btn share-devcard" onclick="shareDevCard()">
                     <i class="fas fa-share-alt"></i>
-                    Share
+                    <span>Share</span>
                 </button>
-                <button class="download-devcard" onclick="downloadDevCard()">
+                <button class="action-btn download-devcard" onclick="downloadDevCard()">
                     <i class="fas fa-download"></i>
-                    Download PNG
+                    <span>Download PNG</span>
                 </button>
             </div>
         </div>
@@ -932,109 +952,250 @@
 
         .devcard-preview {
             background: linear-gradient(135deg, #1a1c2c 0%, #2a2d3e 100%);
-            border-radius: 16px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 35px;
             color: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .devcard-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #4f46e5, #6366f1);
+            animation: shimmer 2s infinite linear;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .devcard-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.3), transparent 70%);
+            filter: blur(10px);
+            z-index: -1;
         }
 
         .devcard-header {
             display: flex;
             align-items: center;
-            gap: 24px;
-            margin-bottom: 30px;
-        }
-
-        .devcard-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            object-fit: cover;
+            gap: 30px;
+            margin-bottom: 35px;
         }
 
         .devcard-info h3 {
-            font-size: 28px;
-            margin-bottom: 8px;
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .role {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+        }
+
+        .devcard-badges {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge.elite {
+            background: linear-gradient(45deg, #ffd700, #ffa500);
+            color: #1a1c2c;
+        }
+
+        .badge.expert {
+            background: linear-gradient(45deg, #6366f1, #4f46e5);
+        }
+
+        .badge.rising {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+
+        .badge.influential {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+        }
+
+        .devcard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 35px 0;
+        }
+
+        .devcard-stat {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .devcard-stat:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #6366f1;
+        }
+
+        .devcard-stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
             background: linear-gradient(90deg, #fff, #a5b4fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .devcard-badges {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .badge {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(5px);
-        }
-
         .activity-graph {
             display: flex;
             align-items: flex-end;
-            gap: 12px;
-            height: 150px;
-            padding: 20px 0;
-            border-radius: 8px;
+            gap: 15px;
+            height: 180px;
+            padding: 25px;
+            border-radius: 15px;
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .graph-bar {
+        .graph-bar-wrapper {
             flex: 1;
-            background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
-            border-radius: 6px 6px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .graph-bar {
+            width: 100%;
+            background: linear-gradient(180deg, #6366f1, #4f46e5);
+            border-radius: 8px;
             position: relative;
-            transition: height 0.3s ease;
-            min-height: 20px;
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bar-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            border-radius: inherit;
+            filter: blur(8px);
+            opacity: 0.5;
         }
 
         .bar-label {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
             font-size: 12px;
             color: rgba(255, 255, 255, 0.7);
         }
 
-        .stat-trend {
-            margin-top: 8px;
+        .bar-value {
+            font-size: 12px;
+            color: #6366f1;
+            font-weight: 600;
+        }
+
+        .devcard-footer {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
             font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .stat-trend {
+            margin-top: 10px;
+            font-size: 16px;
             color: #ef4444;
+            transition: all 0.3s ease;
         }
 
         .stat-trend.positive {
             color: #10b981;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
         }
     </style>
 
@@ -1106,7 +1267,7 @@
     }
 
     function showToast(message) {
-        const toast = document.createElement('div');
+        const toast = document.createElement('disv');
         toast.className = 'toast';
         toast.innerHTML = message;
         document.body.appendChild(toast);
