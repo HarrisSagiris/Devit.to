@@ -1005,19 +1005,29 @@
                     .copy-toast {
                         display: none;
                         position: fixed;
-                        bottom: 20px;
-                        right: 20px;
-                        background: rgba(99, 102, 241, 0.9);
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(99, 102, 241, 0.95);
                         color: white;
-                        padding: 12px 24px;
-                        border-radius: 8px;
-                        font-size: 14px;
+                        padding: 20px 40px;
+                        border-radius: 12px;
+                        font-size: 16px;
                         z-index: 1000;
-                        animation: fadeIn 0.3s ease;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                        animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        backdrop-filter: blur(8px);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
                     }
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(20px); }
-                        to { opacity: 1; transform: translateY(0); }
+                    @keyframes popIn {
+                        from { 
+                            opacity: 0;
+                            transform: translate(-50%, -50%) scale(0.8);
+                        }
+                        to { 
+                            opacity: 1;
+                            transform: translate(-50%, -50%) scale(1);
+                        }
                     }
                 </style>
             </div>
