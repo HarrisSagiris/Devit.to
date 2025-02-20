@@ -925,7 +925,6 @@
                     <% }); %>
                 </div>
             </div>
-
             <div class="devcard-footer">
                 <button class="action-btn copy-markdown" onclick="copyDevCardMarkdown()">
                     <i class="fas fa-copy"></i>
@@ -939,6 +938,63 @@
                     <i class="fas fa-download"></i>
                     <span>Download PNG</span>
                 </button>
+                <script>
+                    function copyDevCardMarkdown() {
+                        const devcard = document.querySelector('.devcard-preview');
+                        const markdown = `<div align="center">
+  <img src="${devcard.querySelector('.devcard-avatar').src}" width="200" height="200" style="border-radius: 50%">
+  <h2>${devcard.querySelector('.devcard-username').textContent}</h2>
+  
+  <div>
+    <img src="https://img.shields.io/badge/Posts-${devcard.querySelector('.devcard-stat:nth-child(1) .devcard-stat-value').textContent}-6366f1?style=for-the-badge"/>
+    <img src="https://img.shields.io/badge/Upvotes-${devcard.querySelector('.devcard-stat:nth-child(2) .devcard-stat-value').textContent}-10b981?style=for-the-badge"/>
+    <img src="https://img.shields.io/badge/Comments-${devcard.querySelector('.devcard-stat:nth-child(3) .devcard-stat-value').textContent}-3b82f6?style=for-the-badge"/>
+  </div>
+
+  <p><i>Generated with 💜 by <a href="https://devit.to">Devit.to</a></i></p>
+</div>`;
+                        navigator.clipboard.writeText(markdown);
+                        showToast('✨ Markdown copied to clipboard!');
+                    }
+
+                    function shareDevCard() {
+                        html2canvas(document.querySelector('.devcard-preview')).then(canvas => {
+                            canvas.toBlob(blob => {
+                                const filesArray = [new File([blob], 'devcard.png', { type: 'image/png' })];
+                                if (navigator.share && navigator.canShare({ files: filesArray })) {
+                                    navigator.share({
+                                        files: filesArray,
+                                        title: 'My DevCard',
+                                        text: 'Check out my developer stats!'
+                                    }).then(() => {
+                                        showToast('🎉 DevCard shared successfully!');
+                                    }).catch(err => {
+                                        showToast('❌ Error sharing DevCard');
+                                        console.error(err);
+                                    });
+                                } else {
+                                    showToast('📱 Sharing not supported on this browser');
+                                }
+                            });
+                        });
+                    }
+
+                    function downloadDevCard() {
+                        html2canvas(document.querySelector('.devcard-preview'), {
+                            backgroundColor: null,
+                            scale: 2
+                        }).then(canvas => {
+                            const link = document.createElement('a');
+                            link.download = 'devcard.png';
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                            showToast('💾 DevCard downloaded!');
+                        }).catch(err => {
+                            showToast('❌ Error downloading DevCard');
+                            console.error(err);
+                        });
+                    }
+                </script>
             </div>
         </div>
     </div>
