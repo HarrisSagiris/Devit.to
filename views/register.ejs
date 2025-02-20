@@ -369,7 +369,6 @@
                 padding: 1rem;
                 font-size: 1.1rem;
             }
-
             .input-group input {
                 padding: 1.2rem 1rem 1.2rem 3rem;
             }
@@ -400,14 +399,10 @@
                     <span class="strength-text"></span>
                 </div>
             </div>
-            <div class="input-group">
-                <input type="text" name="verificationCode" id="verificationCode" placeholder="Verification Code" required>
+            <div class="input-group" id="otpGroup" style="display: none;">
+                <input type="text" name="verificationCode" id="verificationCode" placeholder="Enter OTP from email" required>
                 <i class="fas fa-shield-alt"></i>
             </div>
-            <button type="button" id="sendCodeBtn">
-                Send Verification Code
-                <i class="fas fa-paper-plane"></i>
-            </button>
             <button type="submit" id="submitBtn">
                 Create Account
                 <i class="fas fa-arrow-right"></i>
@@ -444,10 +439,11 @@
         const passwordInput = document.getElementById('password');
         const verificationCodeInput = document.getElementById('verificationCode');
         const submitBtn = document.getElementById('submitBtn');
-        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const otpGroup = document.getElementById('otpGroup');
         const passwordStrength = document.getElementById('passwordStrength');
         const strengthBar = passwordStrength.querySelector('.strength-bar');
         const strengthText = passwordStrength.querySelector('.strength-text');
+        let otpSent = false;
 
         emailInput.addEventListener('input', validateForm);
         usernameInput.addEventListener('input', validateForm);
@@ -457,13 +453,7 @@
         });
         verificationCodeInput.addEventListener('input', validateForm);
 
-        sendCodeBtn.addEventListener('click', async () => {
-            const email = emailInput.value;
-            if (!validateEmail()) {
-                alert('Please enter a valid email address');
-                return;
-            }
-
+        async function sendVerificationCode(email) {
             try {
                 const response = await fetch('/send-verification', {
                     method: 'POST',
@@ -476,15 +466,20 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert('Verification code sent to your email!');
+                    alert('OTP sent to your email! Please check and enter the code.');
+                    otpSent = true;
+                    otpGroup.style.display = 'block';
+                    return true;
                 } else {
-                    alert(data.error || 'Error sending verification code. Please try again.');
+                    alert(data.error || 'Error sending OTP. Please try again.');
+                    return false;
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error sending verification code. Please try again.');
+                alert('Error sending OTP. Please try again.');
+                return false;
             }
-        });
+        }
 
         function validateEmail() {
             const email = emailInput.value;
@@ -498,6 +493,8 @@
         }
 
         async function validateVerificationCode() {
+            if (!otpSent) return false;
+            
             try {
                 const response = await fetch('/verify-code', {
                     method: 'POST',
@@ -563,8 +560,14 @@
             const isEmailValid = validateEmail();
             const isUsernameValid = validateUsername();
             const isPasswordValid = validatePassword();
+
+            if (!otpSent && isEmailValid && isUsernameValid && isPasswordValid) {
+                event.preventDefault();
+                await sendVerificationCode(emailInput.value);
+                return false;
+            }
+
             const isCodeValid = await validateVerificationCode();
-            
             const isValid = isEmailValid && isUsernameValid && isPasswordValid && isCodeValid;
             submitBtn.disabled = !isValid;
             
