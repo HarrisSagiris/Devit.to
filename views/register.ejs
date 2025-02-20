@@ -432,7 +432,6 @@
             By signing up, you agree to our <a href="/terms">Terms</a>
         </div>
     </div>
-
     <script>
         const emailInput = document.getElementById('email');
         const usernameInput = document.getElementById('username');
@@ -458,25 +457,30 @@
                 const response = await fetch('/send-verification', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({ email })
                 });
 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
                 const data = await response.json();
 
-                if (response.ok) {
-                    alert('OTP sent to your email! Please check and enter the code.');
+                if (data.success) {
                     otpSent = true;
                     otpGroup.style.display = 'block';
+                    alert('Verification code sent! Please check your email.');
                     return true;
                 } else {
-                    alert(data.error || 'Error sending OTP. Please try again.');
+                    alert(data.error || 'Failed to send verification code. Please try again.');
                     return false;
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error sending OTP. Please try again.');
+                console.error('Error sending verification code:', error);
+                alert('Error sending verification code. Please try again later.');
                 return false;
             }
         }
@@ -499,7 +503,8 @@
                 const response = await fetch('/verify-code', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         email: emailInput.value,
@@ -507,10 +512,15 @@
                     })
                 });
 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
                 const data = await response.json();
-                return response.ok;
+                return data.success;
             } catch (error) {
                 console.error('Error validating code:', error);
+                alert('Error validating verification code. Please try again.');
                 return false;
             }
         }
@@ -556,13 +566,13 @@
             return password.length >= 6;
         }
 
-        async function validateForm() {
+        async function validateForm(event) {
             const isEmailValid = validateEmail();
             const isUsernameValid = validateUsername();
             const isPasswordValid = validatePassword();
 
             if (!otpSent && isEmailValid && isUsernameValid && isPasswordValid) {
-                event.preventDefault();
+                if (event) event.preventDefault();
                 await sendVerificationCode(emailInput.value);
                 return false;
             }
