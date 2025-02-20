@@ -400,6 +400,14 @@
                     <span class="strength-text"></span>
                 </div>
             </div>
+            <div class="input-group">
+                <input type="text" name="verificationCode" id="verificationCode" placeholder="Verification Code" required>
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <button type="button" id="sendCodeBtn">
+                Send Verification Code
+                <i class="fas fa-paper-plane"></i>
+            </button>
             <button type="submit" id="submitBtn">
                 Create Account
                 <i class="fas fa-arrow-right"></i>
@@ -434,7 +442,9 @@
         const emailInput = document.getElementById('email');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
+        const verificationCodeInput = document.getElementById('verificationCode');
         const submitBtn = document.getElementById('submitBtn');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
         const passwordStrength = document.getElementById('passwordStrength');
         const strengthBar = passwordStrength.querySelector('.strength-bar');
         const strengthText = passwordStrength.querySelector('.strength-text');
@@ -444,6 +454,36 @@
         passwordInput.addEventListener('input', () => {
             validateForm();
             updatePasswordStrength();
+        });
+        verificationCodeInput.addEventListener('input', validateForm);
+
+        sendCodeBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            if (!validateEmail()) {
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            try {
+                const response = await fetch('/send-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Verification code sent to your email!');
+                } else {
+                    alert(data.error || 'Error sending verification code. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error sending verification code. Please try again.');
+            }
         });
 
         function validateEmail() {
@@ -455,6 +495,27 @@
         function validateUsername() {
             const username = usernameInput.value;
             return username.length >= 3;
+        }
+
+        async function validateVerificationCode() {
+            try {
+                const response = await fetch('/verify-code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: emailInput.value,
+                        code: verificationCodeInput.value
+                    })
+                });
+
+                const data = await response.json();
+                return response.ok;
+            } catch (error) {
+                console.error('Error validating code:', error);
+                return false;
+            }
         }
 
         function updatePasswordStrength() {
@@ -498,15 +559,20 @@
             return password.length >= 6;
         }
 
-        function validateForm() {
-            const isValid = validateEmail() && validateUsername() && validatePassword();
+        async function validateForm() {
+            const isEmailValid = validateEmail();
+            const isUsernameValid = validateUsername();
+            const isPasswordValid = validatePassword();
+            const isCodeValid = await validateVerificationCode();
+            
+            const isValid = isEmailValid && isUsernameValid && isPasswordValid && isCodeValid;
             submitBtn.disabled = !isValid;
+            
             if (isValid) {
-                // Add hidden input for redirect
                 const redirectInput = document.createElement('input');
                 redirectInput.type = 'hidden';
                 redirectInput.name = 'redirect';
-                redirectInput.value = '/index';
+                redirectInput.value = '/';
                 document.getElementById('registerForm').appendChild(redirectInput);
             }
             return isValid;

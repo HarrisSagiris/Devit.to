@@ -7,6 +7,8 @@ const axios = require('axios');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -48,6 +50,18 @@ app.use(express.static(path.join(__dirname, 'views')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Configure nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// Store verification codes temporarily
+const verificationCodes = new Map();
+
 // Passport config
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -78,7 +92,8 @@ passport.use(new GitHubStrategy({
           email: profile.emails ? profile.emails[0].value : `${profile.username}@github.com`,
           password: await bcryptjs.hash(Math.random().toString(36), 10),
           githubId: profile.id,
-          githubToken: accessToken
+          githubToken: accessToken,
+          isVerified: true
         });
       }
       
@@ -105,7 +120,8 @@ passport.use(new TwitterStrategy({
           email: `${profile.username}@twitter.com`,
           password: await bcryptjs.hash(Math.random().toString(36), 10),
           twitterId: profile.id,
-          twitterToken: token
+          twitterToken: token,
+          isVerified: true
         });
       }
       
@@ -115,6 +131,69 @@ passport.use(new TwitterStrategy({
     }
   }
 ));
+
+// Send verification code endpoint
+app.post('/send-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    // Generate random 6-digit code
+    const verificationCode = crypto.randomInt(100000, 999999).toString();
+    
+    // Store code with 10 minute expiration
+    verificationCodes.set(email, {
+      code: verificationCode,
+      expires: Date.now() + 600000 // 10 minutes
+    });
+
+    // Send verification email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Devit.to Email Verification',
+      html: `
+        <h2>Welcome to Devit.to!</h2>
+        <p>Your verification code is: <strong>${verificationCode}</strong></p>
+        <p>This code will expire in 10 minutes.</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true, message: 'Verification code sent' });
+
+  } catch (error) {
+    console.error('Error sending verification code:', error);
+    res.status(500).json({ error: 'Error sending verification code' });
+  }
+});
+
+// Verify code endpoint
+app.post('/verify-code', async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    const storedData = verificationCodes.get(email);
+
+    if (!storedData) {
+      return res.status(400).json({ error: 'No verification code found' });
+    }
+
+    if (Date.now() > storedData.expires) {
+      verificationCodes.delete(email);
+      return res.status(400).json({ error: 'Verification code expired' });
+    }
+
+    if (code !== storedData.code) {
+      return res.status(400).json({ error: 'Invalid verification code' });
+    }
+
+    verificationCodes.delete(email);
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error('Error verifying code:', error);
+    res.status(500).json({ error: 'Error verifying code' });
+  }
+});
 
 // Auth routes
 app.get('/auth/github',
@@ -389,16 +468,36 @@ app.post('/change-username', async (req, res) => {
 
 app.post('/register', async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, verificationCode } = req.body;
     
     // Validate inputs
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !verificationCode) {
       return res.status(400).send('All fields are required');
     }
-    
+
+    // Verify the code
+    const storedData = verificationCodes.get(email);
+    if (!storedData || verificationCode !== storedData.code) {
+      return res.status(400).send('Invalid verification code');
+    }
+
+    if (Date.now() > storedData.expires) {
+      verificationCodes.delete(email);
+      return res.status(400).send('Verification code expired');
+    }
+
     const hashedPassword = await bcryptjs.hash(password, 10);
-    const user = new User({ username, email, password: hashedPassword });
+    const user = new User({ 
+      username, 
+      email, 
+      password: hashedPassword,
+      isVerified: true 
+    });
     await user.save();
+
+    // Clean up verification code
+    verificationCodes.delete(email);
+
     req.session.user = { username: user.username, _id: user._id };
     res.redirect('/');
   } catch (error) {
