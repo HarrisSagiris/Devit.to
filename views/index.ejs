@@ -6,27 +6,31 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Devit.to">
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Devit.to - A developer platform for sharing knowledge, connecting with other developers, and staying up to date with the latest in tech. Join our community to discuss programming, tech news, and more.">
-    <meta name="keywords" content="developer platform, programming, coding, tech news, developer community, javascript, python, web development, software engineering">
-    <meta name="author" content="Devit.to">
     
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Devit.to - Your Developer Community">
-    <meta property="og:description" content="Join Devit.to to connect with developers, share knowledge, and stay updated with the latest in tech.">
+    <!-- Primary SEO Meta Tags -->
+    <title>Devit.to - The Developer Community Platform</title>
+    <meta name="description" content="Join Devit.to, the leading developer community platform. Share knowledge, connect with developers worldwide, discuss programming, and stay updated with the latest tech trends.">
+    <meta name="keywords" content="developer community, programming forum, coding discussions, tech news, software development, web development, javascript, python, react, node.js, developer platform">
+    <meta name="author" content="Devit.to Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://devit.to">
-    <meta property="og:image" content="/icons/devit.jpg">
+    <meta property="og:title" content="Devit.to - The Developer Community Platform">
+    <meta property="og:description" content="Join Devit.to, the leading developer community platform. Share knowledge, connect with developers worldwide, and stay updated with the latest tech trends.">
+    <meta property="og:image" content="https://devit.to/icons/devit-og.jpg">
+    <meta property="og:site_name" content="Devit.to">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Devit.to - Your Developer Community">
-    <meta name="twitter:description" content="Join Devit.to to connect with developers, share knowledge, and stay updated with the latest in tech.">
-    <meta name="twitter:image" content="/icons/devit.jpg">
+    <meta name="twitter:site" content="@devit_platform">
+    <meta name="twitter:title" content="Devit.to - The Developer Community Platform">
+    <meta name="twitter:description" content="Join Devit.to, the leading developer community platform. Share knowledge, connect with developers worldwide, and stay updated with the latest tech trends.">
+    <meta name="twitter:image" content="https://devit.to/icons/devit-twitter.jpg">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://devit.to">
-    <title>Devit.to - Your Feed</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2L2 7L12 12L22 7L12 2Z' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M2 17L12 22L22 17' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M2 12L12 17L22 12' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -49,6 +53,11 @@
     <link rel="apple-touch-startup-image" href="/splash/ipadpro2.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)">
     <link rel="apple-touch-startup-image" href="/splash/ipadpro3.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)">
 
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
+    
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -129,7 +138,27 @@
         font-size: 1.75rem;
     }
 
-    /* Theme variables */
+    /* Theme variables - Dark theme first for default dark mode */
+    :root {
+        --primary: #818cf8;
+        --primary-hover: #6366f1;
+        --bg: #111827;
+        --bg-card: #1f2937;
+        --text: #f9fafb;
+        --text-muted: #9ca3af;
+        --border: #374151;
+        --upvote: #34d399;
+        --downvote: #f87171;
+        --header-bg: #1f2937;
+        --nav-bg: #1f2937;
+        --link: #818cf8;
+        --link-hover: #6366f1;
+        --code-bg: #374151;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+    }
+
     html[data-theme="light"] {
         --primary: #6366f1;
         --primary-hover: #4f46e5;
@@ -148,25 +177,6 @@
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
         --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
         --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    }
-    html[data-theme="dark"] {
-        --primary: #818cf8;
-        --primary-hover: #6366f1;
-        --bg: #111827;
-        --bg-card: #1f2937;
-        --text: #f9fafb;
-        --text-muted: #9ca3af;
-        --border: #374151;
-        --upvote: #34d399;
-        --downvote: #f87171;
-        --header-bg: #1f2937;
-        --nav-bg: #1f2937;
-        --link: #818cf8;
-        --link-hover: #6366f1;
-        --code-bg: #374151;
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-        --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
     }
     /* Theme switch styles */
     .theme-switch {
