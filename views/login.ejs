@@ -286,20 +286,16 @@
             <span>or</span>
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
+        <form action="/login" method="post">
             <div class="input-group">
-                <input type="email" name="email" id="email" placeholder="Email address" required autocomplete="email">
+                <input type="email" name="email" placeholder="Email address" required autocomplete="email">
                 <i class="fas fa-envelope"></i>
             </div>
             <div class="input-group">
-                <input type="password" name="password" id="password" placeholder="Password" required autocomplete="current-password">
+                <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
                 <i class="fas fa-lock"></i>
             </div>
-            <div class="input-group" id="otpGroup" style="display: none;">
-                <input type="text" name="verificationCode" id="verificationCode" placeholder="Enter 2FA Code">
-                <i class="fas fa-shield-alt"></i>
-            </div>
-            <button type="submit" id="submitBtn">
+            <button type="submit">
                 Sign In
                 <i class="fas fa-arrow-right"></i>
             </button>
@@ -309,79 +305,27 @@
     </div>
 
     <script>
-    async function handleLogin(event) {
-        event.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const otpGroup = document.getElementById('otpGroup');
-        const verificationCode = document.getElementById('verificationCode').value;
-        const submitBtn = document.getElementById('submitBtn');
-
-        if (!verificationCode) {
-            // First step: Submit email/password and get 2FA code
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password, step: '2fa-request' })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    otpGroup.style.display = 'block';
-                    submitBtn.innerHTML = 'Verify & Sign In <i class="fas fa-arrow-right"></i>';
-                } else {
-                    alert(data.message || 'Invalid credentials');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('An error occurred during login');
-            }
-        } else {
-            // Second step: Verify 2FA code
-            try {
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        email, 
-                        password, 
-                        verificationCode,
-                        step: '2fa-verify' 
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.location.href = '/';
-                } else {
-                    alert(data.message || 'Invalid verification code');
-                }
-            } catch (error) {
-                console.error('Verification error:', error);
-                alert('An error occurred during verification');
-            }
-        }
-    }
-
     function handleGitHubAuth(event) {
         event.preventDefault();
+        
+        // Store the current URL as the return destination
         localStorage.setItem('authReturnTo', window.location.href);
+        
+        // Redirect to GitHub auth
         window.location.href = '/auth/github';
     }
 
     function handleTwitterAuth(event) {
         event.preventDefault();
+        
+        // Store the current URL as the return destination
         localStorage.setItem('authReturnTo', window.location.href);
+        
+        // Redirect to Twitter auth
         window.location.href = '/auth/twitter';
     }
 
+    // Check for auth errors on page load
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('error')) {
