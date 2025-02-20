@@ -2979,7 +2979,16 @@
             // Updated voting system with separate counts
             $('.vote-btn').on('click', function() {
                 if (!currentUser) {
-                    alert('Please login to vote');
+                    const loginMessage = $('<div class="alert alert-warning" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: var(--bg-card); color: var(--text); padding: 1rem; border-radius: 0.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border); font-size: 0.875rem;">Please login to vote</div>')
+                        .hide()
+                        .appendTo('body')
+                        .fadeIn(400);
+                        
+                    setTimeout(() => {
+                        loginMessage.fadeOut(400, function() {
+                            $(this).remove();
+                        });
+                    }, 3000);
                     return;
                 }
 
