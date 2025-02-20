@@ -938,6 +938,7 @@
                     <i class="fas fa-download"></i>
                     <span>Download PNG</span>
                 </button>
+                <div id="copy-toast" class="copy-toast">Successfully copied!</div>
                 <script>
                     function copyDevCardMarkdown() {
                         const devcard = document.querySelector('.devcard-preview');
@@ -954,6 +955,11 @@
   <p><i>Generated with 💜 by <a href="https://devit.to">Devit.to</a></i></p>
 </div>`;
                         navigator.clipboard.writeText(markdown);
+                        const toast = document.getElementById('copy-toast');
+                        toast.style.display = 'block';
+                        setTimeout(() => {
+                            toast.style.display = 'none';
+                        }, 3000);
                         showToast('✨ Markdown copied to clipboard!');
                     }
 
@@ -995,6 +1001,25 @@
                         });
                     }
                 </script>
+                <style>
+                    .copy-toast {
+                        display: none;
+                        position: fixed;
+                        bottom: 20px;
+                        right: 20px;
+                        background: rgba(99, 102, 241, 0.9);
+                        color: white;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        z-index: 1000;
+                        animation: fadeIn 0.3s ease;
+                    }
+                    @keyframes fadeIn {
+                        from { opacity: 0; transform: translateY(20px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                </style>
             </div>
         </div>
     </div>
