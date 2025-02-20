@@ -1322,7 +1322,7 @@
                         </div>
                         <div class="dropdown-content" style="position: absolute; top: 100%; right: 0; min-width: 220px; background: var(--bg-card); border-radius: 0.75rem; box-shadow: var(--shadow); margin-top: 0.5rem; z-index: 100; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s;">
                             <div class="dropdown-header" style="padding: 1rem; background: var(--bg-card-hover);">
-                                <span style="display: block; margin-bottom: 0.5rem; color: var(--text);">Welcome, <strong><%= user.username %></strong></span>
+                                <span style="display: block; margin-bottom: 0.5rem; color: var(--text);">Welcome, <strong>@<%= user.username %></strong></span>
                                 <div class="ranking" style="margin-top: 0.5rem;">
                                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                         <span id="ranking-badge" class="ranking-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; background: rgba(147, 51, 234, 0.1); color: #9333ea;">
@@ -2121,7 +2121,7 @@
                             <div class="post-meta">
                                 Posted in <%= post.category %> by 
                                 <span class="user-info">
-                                    <%= post.username %> (<%= post.author ? post.author.totalUpvotes : 0 %> total upvotes)
+                                    @<%= post.username %>
                                     <% if (user && user.username !== post.username) { %>
                                         <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
                                                 data-username="<%= post.username %>">
@@ -2347,7 +2347,7 @@
                             <div class="comment" id="comment-<%= comment._id %>">
                                 <div class="comment-header">
                                     <span class="comment-username">
-                                        <%= comment.username %>
+                                        @<%= comment.username %>
                                         <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
                                                 <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
@@ -2407,7 +2407,7 @@
                                     </script>
                                     <% if (user) { %>
                                         <button class="comment-reply-btn"
-                                                onclick="toggleReplyForm('<%= comment._id %>', '<%= comment.username %>')"
+                                                onclick="toggleReplyForm('<%= comment._id %>', '@<%= comment.username %>')"
                                                 style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
                                             💬 Reply
                                         </button>
@@ -2449,7 +2449,7 @@
                                             <div class="reply" id="reply-<%= reply._id %>" style="margin: 10px 0 10px 20px; padding-left: 10px; border-left: 2px solid var(--border); width: calc(100% - 30px); box-sizing: border-box;">
                                                 <div class="reply-header">
                                                     <span class="reply-username" style="font-weight: 500; color: var(--text);">
-                                                        <%= reply.username %>
+                                                        @<%= reply.username %>
                                                         <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
                                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
                                                                 <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
