@@ -400,10 +400,14 @@
                 </div>
             </div>
             <div class="input-group" id="otpGroup" style="display: none;">
-                <input type="text" name="verificationCode" id="verificationCode" placeholder="Enter OTP from email" required>
+                <input type="text" name="verificationCode" id="verificationCode" placeholder="Enter OTP from email">
                 <i class="fas fa-shield-alt"></i>
             </div>
-            <button type="submit" id="submitBtn">
+            <button type="button" id="sendCodeBtn">
+                Send Verification Code
+                <i class="fas fa-paper-plane"></i>
+            </button>
+            <button type="submit" id="submitBtn" style="display: none;">
                 Create Account
                 <i class="fas fa-arrow-right"></i>
             </button>
@@ -438,19 +442,31 @@
         const passwordInput = document.getElementById('password');
         const verificationCodeInput = document.getElementById('verificationCode');
         const submitBtn = document.getElementById('submitBtn');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
         const otpGroup = document.getElementById('otpGroup');
         const passwordStrength = document.getElementById('passwordStrength');
         const strengthBar = passwordStrength.querySelector('.strength-bar');
         const strengthText = passwordStrength.querySelector('.strength-text');
         let otpSent = false;
 
-        emailInput.addEventListener('input', validateForm);
-        usernameInput.addEventListener('input', validateForm);
+        emailInput.addEventListener('input', validateInputs);
+        usernameInput.addEventListener('input', validateInputs);
         passwordInput.addEventListener('input', () => {
-            validateForm();
+            validateInputs();
             updatePasswordStrength();
         });
-        verificationCodeInput.addEventListener('input', validateForm);
+
+        sendCodeBtn.addEventListener('click', async () => {
+            if (validateInputs()) {
+                const sent = await sendVerificationCode(emailInput.value);
+                if (sent) {
+                    sendCodeBtn.style.display = 'none';
+                    submitBtn.style.display = 'block';
+                    otpGroup.style.display = 'block';
+                    verificationCodeInput.required = true;
+                }
+            }
+        });
 
         async function sendVerificationCode(email) {
             try {
@@ -471,7 +487,6 @@
 
                 if (data.success) {
                     otpSent = true;
-                    otpGroup.style.display = 'block';
                     alert('Verification code sent! Please check your email.');
                     return true;
                 } else {
@@ -496,15 +511,36 @@
             return username.length >= 3;
         }
 
-        async function validateVerificationCode() {
-            if (!otpSent) return false;
+        function validatePassword() {
+            const password = passwordInput.value;
+            return password.length >= 6;
+        }
+
+        function validateInputs() {
+            const isEmailValid = validateEmail();
+            const isUsernameValid = validateUsername();
+            const isPasswordValid = validatePassword();
             
+            sendCodeBtn.disabled = !(isEmailValid && isUsernameValid && isPasswordValid);
+            return isEmailValid && isUsernameValid && isPasswordValid;
+        }
+
+        async function validateForm() {
+            if (!otpSent) {
+                alert('Please send and verify your email first');
+                return false;
+            }
+
+            if (!verificationCodeInput.value) {
+                alert('Please enter the verification code');
+                return false;
+            }
+
             try {
                 const response = await fetch('/verify-code', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         email: emailInput.value,
@@ -512,15 +548,17 @@
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
                 const data = await response.json();
-                return data.success;
+
+                if (data.success) {
+                    return true;
+                } else {
+                    alert('Invalid verification code. Please try again.');
+                    return false;
+                }
             } catch (error) {
-                console.error('Error validating code:', error);
-                alert('Error validating verification code. Please try again.');
+                console.error('Error verifying code:', error);
+                alert('Error verifying code. Please try again.');
                 return false;
             }
         }
@@ -561,6 +599,11 @@
             }
         }
 
+        function handleGitHubAuth(event) {
+            event.preventDefault();
+            localStorage.setItem('authReturnTo', window.location.href);
+            window.location.href = '/auth/github';
+        }
         function validatePassword() {
             const password = passwordInput.value;
             return password.length >= 6;
@@ -590,13 +633,6 @@
             }
             return isValid;
         }
-
-        function handleGitHubAuth(event) {
-            event.preventDefault();
-            localStorage.setItem('authReturnTo', window.location.href);
-            window.location.href = '/auth/github';
-        }
-
         function handleTwitterAuth(event) {
             event.preventDefault();
             localStorage.setItem('authReturnTo', window.location.href);
