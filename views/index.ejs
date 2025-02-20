@@ -2797,7 +2797,28 @@
                                         location.reload();
                                     }, 2000);
                                 } else {
-                                    alert(response.message || 'Username already taken');
+                                    const errorAlert = $(`
+                                        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                                                    background: var(--bg-card); padding: 2rem; border-radius: 1rem;
+                                                    box-shadow: var(--shadow-lg); z-index: 2000;
+                                                    text-align: center; min-width: 300px;">
+                                            <h4 style="margin-bottom: 1rem; color: var(--error);">Error</h4>
+                                            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">${response.message || 'Username already taken'}</p>
+                                            <button class="btn" style="background: var(--error); color: white; border: none; 
+                                                                      padding: 0.5rem 1.5rem; border-radius: 0.5rem; 
+                                                                      cursor: pointer;">OK</button>
+                                        </div>
+                                    `).appendTo('body');
+
+                                    errorAlert.find('button').on('click', function() {
+                                        errorAlert.remove();
+                                    });
+
+                                    setTimeout(() => {
+                                        errorAlert.fadeOut(300, function() {
+                                            $(this).remove();
+                                        });
+                                    }, 3000);
                                 }
                             },
                             error: function() {
