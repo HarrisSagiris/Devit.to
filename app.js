@@ -146,7 +146,7 @@ app.post('/send-verification', async (req, res) => {
       expires: Date.now() + 600000 // 10 minutes
     });
 
-    // Send verification email
+    // Send verification email and welcome message
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -182,7 +182,58 @@ app.post('/send-verification', async (req, res) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
+    const welcomeMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Welcome to Devit.to!',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+            .container { background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .logo { color: #8858ED; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+            .highlight { color: #8858ED; font-weight: bold; }
+            .features { margin: 20px 0; padding-left: 20px; }
+            .footer { color: #666; font-size: 12px; margin-top: 30px; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="logo">Devit.to</div>
+            <h2>🎉 Welcome to Devit.to!</h2>
+            <p>We're thrilled to have you join our community of passionate developers!</p>
+            <p>Here's what you can do on Devit.to:</p>
+            <ul class="features">
+              <li>Share your coding journey and experiences</li>
+              <li>Connect with fellow developers</li>
+              <li>Learn from others' experiences</li>
+              <li>Get help with coding challenges</li>
+              <li>Stay updated with the latest tech trends</li>
+            </ul>
+            <p>Ready to get started? <span class="highlight">Here are some tips:</span></p>
+            <ul class="features">
+              <li>Complete your profile</li>
+              <li>Follow topics you're interested in</li>
+              <li>Share your first post</li>
+              <li>Connect with other developers</li>
+            </ul>
+            <p>If you have any questions, our community is here to help!</p>
+            <div class="footer">
+              © ${new Date().getFullYear()} Devit.to - Where developers connect and share
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+
+    await Promise.all([
+      transporter.sendMail(mailOptions),
+      transporter.sendMail(welcomeMailOptions)
+    ]);
+    
     res.json({ success: true, message: 'Verification code sent' });
 
   } catch (error) {
