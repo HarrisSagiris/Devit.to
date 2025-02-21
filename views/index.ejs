@@ -1811,7 +1811,7 @@
                     <h2>Create New Community</h2>
                     <span class="close" onclick="closeCreateCommunityModal()">&times;</span>
                 </div>
-                <form id="createCommunityForm" onsubmit="handleCreateCommunity(event)">
+                <form id="createCommunityForm" onsubmit="return false">
                     <div class="form-group">
                         <label for="communityName">Community Name</label>
                         <input type="text" id="communityName" name="name" required placeholder="Enter community name" maxlength="50">
@@ -1836,7 +1836,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="submit-btn">
+                        <button type="button" class="submit-btn" onclick="handleCreateCommunity()">
                             <i class="fas fa-plus"></i> Create Community
                         </button>
                     </div>
