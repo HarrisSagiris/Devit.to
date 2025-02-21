@@ -1709,11 +1709,22 @@
                     </div>
                 </div>
 
-                <!-- Communities Section -->
+                <!-- My Communities Section -->
+                <div class="sidebar-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-star"></i>
+                        My Communities
+                    </h4>
+                    <div id="my-communities-list" class="categories-list">
+                        <!-- My communities will be populated here -->
+                    </div>
+                </div>
+
+                <!-- All Communities Section -->
                 <div class="sidebar-section">
                     <h4 class="section-title">
                         <i class="fas fa-users"></i>
-                        Your Communities
+                        All Communities
                     </h4>
                     <div class="categories-list">
                         <% 
@@ -2210,6 +2221,7 @@
                     });
                 }, 150);
             });
+
             // Modal functions
             function openCreateCommunityModal() {
                 document.getElementById('createCommunityModal').style.display = 'block';
@@ -2246,11 +2258,32 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        // Close modal and refresh page on success
+                        // Add the new community to My Communities section
+                        const myCommunityList = document.getElementById('my-communities-list');
+                        const newCommunityItem = document.createElement('a');
+                        newCommunityItem.href = 'javascript:void(0)';
+                        newCommunityItem.className = 'community-item';
+                        newCommunityItem.setAttribute('data-value', name);
+                        newCommunityItem.setAttribute('onclick', `filterPosts('${name}')`);
+                        
+                        newCommunityItem.innerHTML = `
+                            <i class="${icon || 'fas fa-users'}"></i>
+                            <div class="community-info">
+                                <span class="community-name">r/${name}</span>
+                                <span class="community-members">1 member</span>
+                            </div>
+                        `;
+                        
+                        myCommunityList.appendChild(newCommunityItem);
+
+                        // Close modal
                         closeCreateCommunityModal();
-                        window.location.reload();
+                        
+                        // Clear form
+                        document.getElementById('communityName').value = '';
+                        document.getElementById('communityDescription').value = '';
+                        document.getElementById('communityIcon').value = 'fas fa-users';
                     } else {
-                        // Show error message from server
                         throw new Error(data.error || 'Failed to create community');
                     }
                 } catch (error) {
