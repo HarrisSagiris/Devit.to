@@ -26,7 +26,9 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Verify models are loaded correctly
 const User = require('./models/User');
 const Post = require('./models/post.js');
-if (!User || !Post) {
+const Community = require('./models/community.js');
+
+if (!User || !Post || !Community) {
   console.error('Error loading models');
   process.exit(1);
 }
@@ -131,6 +133,55 @@ passport.use(new TwitterStrategy({
     }
   }
 ));
+
+// API endpoint for creating communities
+app.post('/api/communities', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const { name, description, icon } = req.body;
+
+    // Validate required fields
+    if (!name || !description) {
+      return res.status(400).json({ error: 'Name and description are required' });
+    }
+
+    // Check if community already exists
+    const existingCommunity = await Community.findOne({ name: name.toLowerCase() });
+    if (existingCommunity) {
+      return res.status(400).json({ error: 'Community already exists' });
+    }
+
+    // Create new community
+    const community = new Community({
+      name: name.toLowerCase(),
+      description,
+      icon: icon || 'fas fa-users',
+      moderators: [req.session.user._id],
+      members: [req.session.user._id]
+    });
+
+    await community.save();
+
+    // Add community to user's communities
+    await User.findByIdAndUpdate(
+      req.session.user._id,
+      { $push: { communities: community._id }}
+    );
+
+    res.json({ 
+      success: true, 
+      message: 'Community created successfully',
+      community
+    });
+
+  } catch (error) {
+    console.error('Error creating community:', error);
+    res.status(500).json({ error: 'Error creating community' });
+  }
+});
 
 // Send verification code endpoint
 app.post('/send-verification', async (req, res) => {
