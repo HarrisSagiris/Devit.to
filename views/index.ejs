@@ -1658,24 +1658,32 @@
             <i class="fas fa-spinner"></i>
             <span>AI is thinking...</span>
         </div>
-        <button class="toggle-sidebar" onclick="toggleSidebar()">
-            <div class="toggle-lines">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </button>
+        <div class="sidebar-toggle-wrapper">
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <div class="toggle-lines">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+        </div>
 
         <div class="categories-sidebar">
-            <h3 class="sidebar-title">
-                <i class="fas fa-layer-group"></i>
-                Categories
-            </h3>
+            <div class="sidebar-header">
+                <h3 class="sidebar-title">
+                    <i class="fas fa-layer-group"></i>
+                    Categories
+                </h3>
+                <div class="sidebar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search categories..." id="category-search">
+                </div>
+            </div>
+
             <div class="categories-list">
                 <% 
-                // Initialize categories object with default values
                 const categories = {
-                    'all': 0, // Will be updated if posts exist
+                    'all': 0,
                     'General': 0,
                     'Javascript/Typescript': 0,
                     'C++': 0,
@@ -1702,11 +1710,8 @@
                     'Data Science': 0
                 };
 
-                // Update 'all' count if posts exists
                 if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
                     categories.all = locals.posts.length;
-                    
-                    // Count posts per category
                     locals.posts.forEach(post => {
                         if (categories.hasOwnProperty(post.category)) {
                             categories[post.category]++;
@@ -1714,11 +1719,9 @@
                     });
                 }
 
-                // Sort categories by post count (descending)
                 const sortedCategories = Object.entries(categories)
                     .sort((a, b) => b[1] - a[1]);
 
-                // Define icon map here
                 const iconMap = {
                     'General': 'fas fa-globe',
                     'Javascript/Typescript': 'fab fa-js',
@@ -1747,36 +1750,69 @@
                 };
                 %>
 
-                <a href="javascript:void(0)" class="category-item active" data-value="" onclick="filterPosts('')">
-                    <i class="fas fa-th-large"></i>
-                    <span>All Categories</span>
-                    <span class="post-count"><%= categories['all'] %></span>
-                </a>
+                <div class="category-section featured">
+                    <a href="javascript:void(0)" class="category-item active" data-value="" onclick="filterPosts('')">
+                        <i class="fas fa-th-large"></i>
+                        <div class="category-info">
+                            <span class="category-name">All Categories</span>
+                            <span class="category-desc">Browse all posts</span>
+                        </div>
+                        <span class="post-count"><%= categories['all'] %></span>
+                    </a>
+                </div>
 
-                <% sortedCategories.forEach(([category, count]) => { 
-                    if(category !== 'all' && count > 0) { %>
-                        <a href="javascript:void(0)" 
-                           class="category-item" 
-                           data-value="<%= category %>" 
-                           onclick="filterPosts('<%= category %>')">
-                            <i class="<%= iconMap[category] || 'fas fa-tag' %>"></i>
-                            <span><%= category %></span>
-                            <span class="post-count"><%= count %></span>
-                        </a>
-                    <% }
-                }); %>
+                <div class="category-section">
+                    <h4 class="section-title">Popular Categories</h4>
+                    <% sortedCategories.slice(0, 5).forEach(([category, count]) => { 
+                        if(category !== 'all' && count > 0) { %>
+                            <a href="javascript:void(0)" 
+                               class="category-item" 
+                               data-value="<%= category %>" 
+                               onclick="filterPosts('<%= category %>')">
+                                <i class="<%= iconMap[category] || 'fas fa-tag' %>"></i>
+                                <div class="category-info">
+                                    <span class="category-name"><%= category %></span>
+                                    <span class="category-desc"><%= count %> posts</span>
+                                </div>
+                                <span class="post-count"><%= count %></span>
+                            </a>
+                        <% }
+                    }); %>
+                </div>
+
+                <div class="category-section">
+                    <h4 class="section-title">All Categories</h4>
+                    <% sortedCategories.slice(5).forEach(([category, count]) => { 
+                        if(category !== 'all' && count > 0) { %>
+                            <a href="javascript:void(0)" 
+                               class="category-item" 
+                               data-value="<%= category %>" 
+                               onclick="filterPosts('<%= category %>')">
+                                <i class="<%= iconMap[category] || 'fas fa-tag' %>"></i>
+                                <div class="category-info">
+                                    <span class="category-name"><%= category %></span>
+                                    <span class="category-desc"><%= count %> posts</span>
+                                </div>
+                                <span class="post-count"><%= count %></span>
+                            </a>
+                        <% }
+                    }); %>
+                </div>
             </div>
         </div>
 
         <style>
-            .toggle-sidebar {
+            .sidebar-toggle-wrapper {
                 position: fixed;
                 top: 45px;
                 left: 15px;
                 z-index: 1000;
+            }
+
+            .toggle-sidebar {
                 background: var(--primary);
                 border: none;
-                border-radius: 8px;
+                border-radius: 12px;
                 width: 44px;
                 height: 44px;
                 cursor: pointer;
@@ -1784,12 +1820,13 @@
                 align-items: center;
                 justify-content: center;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                box-shadow: var(--shadow);
             }
 
             .toggle-sidebar:hover {
                 transform: scale(1.05);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                background: var(--primary-hover);
+                box-shadow: var(--shadow-lg);
             }
 
             .toggle-lines {
@@ -1827,19 +1864,164 @@
                 left: 0;
                 top: 60px;
                 bottom: 0;
-                width: 300px;
+                width: 320px;
                 background: var(--bg-card);
                 border-right: 1px solid var(--border);
-                padding: 2rem;
                 overflow-y: auto;
                 box-shadow: var(--shadow-lg);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 100;
                 transform: translateX(-100%);
+                display: flex;
+                flex-direction: column;
             }
 
             .categories-sidebar.active {
                 transform: translateX(0);
+            }
+
+            .sidebar-header {
+                position: sticky;
+                top: 0;
+                background: var(--bg-card);
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border);
+                z-index: 10;
+            }
+
+            .sidebar-title {
+                color: var(--text);
+                font-size: 1.25rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .sidebar-title i {
+                color: var(--primary);
+                font-size: 1.5rem;
+            }
+
+            .sidebar-search {
+                position: relative;
+                margin-top: 1rem;
+            }
+
+            .sidebar-search i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+            }
+
+            .sidebar-search input {
+                width: 100%;
+                padding: 0.75rem 1rem 0.75rem 2.5rem;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                background: var(--bg);
+                color: var(--text);
+                font-size: 0.9rem;
+            }
+
+            .sidebar-search input:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
+
+            .categories-list {
+                padding: 1rem;
+            }
+
+            .category-section {
+                margin-bottom: 2rem;
+            }
+
+            .section-title {
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 1rem;
+                padding-left: 0.5rem;
+            }
+
+            .category-item {
+                display: flex;
+                align-items: center;
+                padding: 1rem;
+                color: var(--text);
+                text-decoration: none;
+                border-radius: 12px;
+                transition: all 0.2s;
+                margin-bottom: 0.5rem;
+                background: var(--bg);
+                border: 1px solid var(--border);
+            }
+
+            .category-item i {
+                font-size: 1.25rem;
+                color: var(--primary);
+                margin-right: 1rem;
+                transition: transform 0.2s;
+                width: 24px;
+                text-align: center;
+            }
+
+            .category-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .category-name {
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+            .category-desc {
+                font-size: 0.8rem;
+                color: var(--text-muted);
+                margin-top: 0.25rem;
+            }
+
+            .post-count {
+                background: var(--primary);
+                color: white;
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .category-item:hover {
+                background: var(--bg-card);
+                transform: translateY(-2px);
+                border-color: var(--primary);
+            }
+
+            .category-item:hover i {
+                transform: scale(1.1);
+            }
+
+            .category-item.active {
+                background: var(--primary);
+                border-color: var(--primary);
+            }
+
+            .category-item.active i,
+            .category-item.active .category-name,
+            .category-item.active .category-desc {
+                color: white;
+            }
+
+            .category-item.active .post-count {
+                background: white;
+                color: var(--primary);
             }
 
             @media (max-width: 768px) {
@@ -1849,168 +2031,49 @@
                 }
             }
 
-            .sidebar-title {
-                color: var(--text);
-                font-size: 1.25rem;
-                font-weight: 700;
-                margin-bottom: 2rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid var(--border);
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-
-            .sidebar-title i {
-                color: var(--primary);
-                font-size: 1.5rem;
-            }
-
-            .categories-list {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .category-item {
-                display: flex;
-                align-items: center;
-                padding: 1rem 1.25rem;
-                color: var(--text);
-                text-decoration: none;
-                border-radius: 1rem;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                font-size: 1rem;
-                font-weight: 500;
-                background: var(--bg);
-                border: 1.5px solid var(--border);
-                position: relative;
-                overflow: hidden;
-                backdrop-filter: blur(4px);
-            }
-
-            .category-item::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 100%;
-                width: 4px;
-                background: var(--primary);
-                opacity: 0;
-                transition: opacity 0.3s;
-            }
-
-            .category-item i {
-                width: 28px;
-                text-align: center;
-                font-size: 1.2rem;
-                color: var(--primary);
-                margin-right: 1rem;
-                transition: transform 0.3s;
-            }
-
-            .category-item span {
-                flex: 1;
-            }
-
-            .category-item .post-count {
-                background: var(--primary);
-                color: white;
-                padding: 0.35rem 0.75rem;
-                border-radius: 2rem;
-                font-size: 0.85rem;
-                min-width: 28px;
-                text-align: center;
-                transition: all 0.3s;
-                font-weight: 600;
-            }
-
-            .category-item:hover {
-                background: var(--primary-light);
-                border-color: var(--primary);
-                transform: translateY(-2px);
-            }
-
-            .category-item:hover::before {
-                opacity: 1;
-            }
-
-            .category-item:hover i {
-                transform: scale(1.15) rotate(5deg);
-            }
-
-            .category-item:hover .post-count {
-                transform: scale(1.1);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            }
-
-            .category-item.active {
-                background: var(--primary);
-                color: white;
-                border-color: var(--primary);
-                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
-            }
-
-            .category-item.active i {
-                color: white;
-            }
-
-            .category-item.active .post-count {
-                background: white;
-                color: var(--primary);
-            }
-
-            .categories-sidebar::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            .categories-sidebar::-webkit-scrollbar-track {
-                background: var(--bg);
-                border-radius: 4px;
-            }
-
-            .categories-sidebar::-webkit-scrollbar-thumb {
-                background: var(--primary);
-                border-radius: 4px;
-                border: 2px solid var(--bg);
-            }
-
-            .categories-sidebar::-webkit-scrollbar-thumb:hover {
-                background: var(--primary-hover);
-            }
-
-            @keyframes fadeIn {
+            @keyframes slideIn {
                 from { 
-                    opacity: 0; 
-                    transform: translateY(20px); 
+                    opacity: 0;
+                    transform: translateX(-20px);
                 }
-                to { 
-                    opacity: 1; 
-                    transform: translateY(0); 
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
                 }
             }
 
             .category-item {
-                animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-                animation-delay: calc(var(--index) * 0.08s);
+                animation: slideIn 0.3s ease-out forwards;
+                animation-delay: calc(var(--index) * 0.05s);
                 opacity: 0;
             }
         </style>
 
         <script>
-            // Add animation delay to categories
             document.querySelectorAll('.category-item').forEach((item, index) => {
                 item.style.setProperty('--index', index);
             });
 
-            // Toggle sidebar functionality
             function toggleSidebar() {
                 const sidebar = document.querySelector('.categories-sidebar');
                 const toggleBtn = document.querySelector('.toggle-sidebar');
                 sidebar.classList.toggle('active');
                 toggleBtn.classList.toggle('active');
             }
+
+            // Category search functionality
+            const categorySearch = document.getElementById('category-search');
+            categorySearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.category-item').forEach(item => {
+                    const categoryName = item.querySelector('.category-name').textContent.toLowerCase();
+                    if (categoryName.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
         </script>
     <script>
         const searchBar = document.getElementById('search-bar');
