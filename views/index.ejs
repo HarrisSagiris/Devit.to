@@ -2456,12 +2456,28 @@
                                                 <div class="reply-header">
                                                     <span class="reply-username" style="font-weight: 500; color: var(--text);">
                                                         @<%= reply.username %>
-                                                        <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
-                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
-                                                                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
-                                                            </svg>
-                                                            <span style="color: #9c6ade; font-size: 0.8em; margin-left: 4px;"><%= reply.authorId ? reply.authorId.points : 0 %></span>
-                                                        </span>
+                                                        <% if (reply.author && reply.author.points) { %>
+                                                            <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
+                                                                <% 
+                                                                let rank = 'Newbie';
+                                                                let rankColor = '#6b7280';
+                                                                if (reply.author.points >= 1000) {
+                                                                    rank = 'Expert';
+                                                                    rankColor = '#ff6b6b'; 
+                                                                } else if (reply.author.points >= 500) {
+                                                                    rank = 'Advanced';
+                                                                    rankColor = '#4f46e5';
+                                                                } else if (reply.author.points >= 100) {
+                                                                    rank = 'Intermediate';
+                                                                    rankColor = '#10b981';
+                                                                }
+                                                                %>
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: <%= rankColor %>">
+                                                                    <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
+                                                                </svg>
+                                                                <span style="color: var(--text-muted); font-size: 0.8em; margin-left: 4px;"><%= rank %> (<%= reply.author.points %>)</span>
+                                                            </span>
+                                                        <% } %>
                                                     </span>
                                                 </div>
                                                 <div class="reply-content" style="margin: 4px 0; color: var(--text); word-wrap: break-word;">
