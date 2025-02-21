@@ -1658,17 +1658,7 @@
             <i class="fas fa-spinner"></i>
             <span>AI is thinking...</span>
         </div>
-        <div class="sidebar-toggle-wrapper">
-            <button class="toggle-sidebar" onclick="toggleSidebar()">
-                <div class="toggle-lines">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </button>
-        </div>
-
-        <div class="categories-sidebar">
+        <div class="categories-sidebar active">
             <div class="sidebar-header">
                 <h3 class="sidebar-title">
                     <i class="fas fa-compass"></i>
@@ -1855,63 +1845,6 @@
         </div>
 
         <style>
-            .sidebar-toggle-wrapper {
-                position: fixed;
-                top: 45px;
-                left: 15px;
-                z-index: 1000;
-            }
-
-            .toggle-sidebar {
-                background: var(--primary);
-                border: none;
-                border-radius: 12px;
-                width: 44px;
-                height: 44px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: var(--shadow);
-            }
-
-            .toggle-sidebar:hover {
-                transform: scale(1.05);
-                background: var(--primary-hover);
-                box-shadow: var(--shadow-lg);
-            }
-
-            .toggle-lines {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-                width: 24px;
-            }
-
-            .toggle-lines span {
-                display: block;
-                width: 100%;
-                height: 2.5px;
-                background: white;
-                border-radius: 2px;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                transform-origin: center;
-            }
-
-            .toggle-sidebar.active .toggle-lines span:nth-child(1) {
-                transform: translateY(7.5px) rotate(45deg);
-            }
-
-            .toggle-sidebar.active .toggle-lines span:nth-child(2) {
-                opacity: 0;
-                transform: scale(0);
-            }
-
-            .toggle-sidebar.active .toggle-lines span:nth-child(3) {
-                transform: translateY(-7.5px) rotate(-45deg);
-            }
-
             .categories-sidebar {
                 position: fixed;
                 left: 0;
@@ -1922,15 +1855,9 @@
                 border-right: 1px solid var(--border);
                 overflow-y: auto;
                 box-shadow: var(--shadow-lg);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 100;
-                transform: translateX(-100%);
                 display: flex;
                 flex-direction: column;
-            }
-
-            .categories-sidebar.active {
-                transform: translateX(0);
             }
 
             .sidebar-header {
@@ -2052,13 +1979,59 @@
                 margin-top: 0.25rem;
             }
 
-            /* Existing styles remain unchanged */
-            /* ... */
-
             @media (max-width: 768px) {
                 .categories-sidebar {
                     width: 100%;
                     backdrop-filter: blur(8px);
+                    transform: translateX(-100%);
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                .categories-sidebar.active {
+                    transform: translateX(0);
+                }
+
+                .sidebar-toggle-wrapper {
+                    display: block;
+                    position: fixed;
+                    top: 45px;
+                    left: 15px;
+                    z-index: 1000;
+                }
+
+                .toggle-sidebar {
+                    background: var(--primary);
+                    border: none;
+                    border-radius: 12px;
+                    width: 44px;
+                    height: 44px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: var(--shadow);
+                }
+
+                .toggle-lines {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                    width: 24px;
+                }
+
+                .toggle-lines span {
+                    display: block;
+                    width: 100%;
+                    height: 2.5px;
+                    background: white;
+                    border-radius: 2px;
+                }
+            }
+
+            @media (min-width: 769px) {
+                .sidebar-toggle-wrapper {
+                    display: none;
                 }
             }
         </style>
@@ -2068,11 +2041,27 @@
                 item.style.setProperty('--index', index);
             });
 
-            function toggleSidebar() {
-                const sidebar = document.querySelector('.categories-sidebar');
-                const toggleBtn = document.querySelector('.toggle-sidebar');
-                sidebar.classList.toggle('active');
-                toggleBtn.classList.toggle('active');
+            // Only show toggle button and handle toggle functionality on mobile
+            if (window.innerWidth <= 768) {
+                const sidebarToggle = document.createElement('div');
+                sidebarToggle.className = 'sidebar-toggle-wrapper';
+                sidebarToggle.innerHTML = `
+                    <button class="toggle-sidebar">
+                        <div class="toggle-lines">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                `;
+                document.body.appendChild(sidebarToggle);
+
+                const toggleBtn = sidebarToggle.querySelector('.toggle-sidebar');
+                toggleBtn.addEventListener('click', () => {
+                    const sidebar = document.querySelector('.categories-sidebar');
+                    sidebar.classList.toggle('active');
+                    toggleBtn.classList.toggle('active');
+                });
             }
 
             // Category search functionality
