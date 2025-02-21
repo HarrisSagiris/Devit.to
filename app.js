@@ -191,37 +191,150 @@ app.post('/send-verification', async (req, res) => {
         <html>
         <head>
           <style>
-            body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
-            .container { background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-            .logo { color: #8858ED; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
-            .highlight { color: #8858ED; font-weight: bold; }
-            .features { margin: 20px 0; padding-left: 20px; }
-            .footer { color: #666; font-size: 12px; margin-top: 30px; text-align: center; }
+            body { 
+              font-family: 'Inter', sans-serif;
+              line-height: 1.6;
+              color: #333;
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+              background: #f7f7f7;
+            }
+            .container {
+              background: #fff;
+              border-radius: 16px;
+              padding: 40px;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+              border: 1px solid #eaeaea;
+            }
+            .logo {
+              color: #8858ED;
+              font-size: 32px;
+              font-weight: 800;
+              margin-bottom: 30px;
+              text-align: center;
+              letter-spacing: -1px;
+            }
+            .welcome-banner {
+              background: linear-gradient(135deg, #8858ED, #6E3AD6);
+              color: white;
+              padding: 25px;
+              border-radius: 12px;
+              margin: 20px 0 30px;
+              text-align: center;
+            }
+            .welcome-banner h2 {
+              margin: 0;
+              font-size: 28px;
+              font-weight: 700;
+            }
+            .highlight {
+              color: #8858ED;
+              font-weight: 600;
+              font-size: 18px;
+              display: block;
+              margin: 25px 0 15px;
+            }
+            .features {
+              margin: 20px 0;
+              padding-left: 0;
+              list-style: none;
+            }
+            .features li {
+              padding: 12px 0 12px 35px;
+              position: relative;
+              border-bottom: 1px solid #f0f0f0;
+            }
+            .features li:last-child {
+              border-bottom: none;
+            }
+            .features li:before {
+              content: "✨";
+              position: absolute;
+              left: 0;
+              color: #8858ED;
+            }
+            .tips li:before {
+              content: "💡";
+            }
+            .cta-button {
+              display: block;
+              background: #8858ED;
+              color: white;
+              text-decoration: none;
+              text-align: center;
+              padding: 16px 24px;
+              border-radius: 8px;
+              margin: 30px auto;
+              font-weight: 600;
+              transition: all 0.3s ease;
+              width: fit-content;
+            }
+            .cta-button:hover {
+              background: #6E3AD6;
+              transform: translateY(-2px);
+            }
+            .footer {
+              color: #666;
+              font-size: 14px;
+              margin-top: 40px;
+              text-align: center;
+              padding-top: 20px;
+              border-top: 1px solid #eaeaea;
+            }
+            .social-links {
+              margin: 20px 0;
+              text-align: center;
+            }
+            .social-links a {
+              color: #8858ED;
+              text-decoration: none;
+              margin: 0 10px;
+              font-weight: 500;
+            }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="logo">Devit.to</div>
-            <h2>🎉 Welcome to Devit.to!</h2>
-            <p>We're thrilled to have you join our community of passionate developers!</p>
-            <p>Here's what you can do on Devit.to:</p>
+            
+            <div class="welcome-banner">
+              <h2>🎉 Welcome to Devit.to!</h2>
+              <p>We're thrilled to have you join our community of passionate developers!</p>
+            </div>
+
+            <p>Get ready to embark on an exciting journey of learning, sharing, and growing with fellow developers.</p>
+            
+            <span class="highlight">✨ Here's what makes Devit.to special:</span>
             <ul class="features">
-              <li>Share your coding journey and experiences</li>
-              <li>Connect with fellow developers</li>
-              <li>Learn from others' experiences</li>
-              <li>Get help with coding challenges</li>
-              <li>Stay updated with the latest tech trends</li>
+              <li>Share your unique coding journey and experiences</li>
+              <li>Connect with brilliant minds in tech</li>
+              <li>Learn from real-world developer stories</li>
+              <li>Get expert help with coding challenges</li>
+              <li>Stay ahead with latest tech trends</li>
             </ul>
-            <p>Ready to get started? <span class="highlight">Here are some tips:</span></p>
-            <ul class="features">
-              <li>Complete your profile</li>
-              <li>Follow topics you're interested in</li>
-              <li>Share your first post</li>
-              <li>Connect with other developers</li>
+
+            <span class="highlight">🚀 Quick Start Guide:</span>
+            <ul class="features tips">
+              <li>Complete your developer profile</li>
+              <li>Follow topics that excite you</li>
+              <li>Share your first post or project</li>
+              <li>Join discussions and make connections</li>
             </ul>
-            <p>If you have any questions, our community is here to help!</p>
+
+            <a href="https://devit.to/getting-started" class="cta-button">Start Your Journey</a>
+
+            <p style="text-align: center">Have questions? Our friendly community is always here to help!</p>
+
+            <div class="social-links">
+              <a href="https://twitter.com/devit">Twitter</a>
+              <a href="https://github.com/devit">GitHub</a>
+              <a href="https://discord.gg/devit">Discord</a>
+            </div>
+
             <div class="footer">
-              © ${new Date().getFullYear()} Devit.to - Where developers connect and share
+              © ${new Date().getFullYear()} Devit.to - Where developers connect and share<br>
+              Made with 💜 by developers, for developers
             </div>
           </div>
         </body>
