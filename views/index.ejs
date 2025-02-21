@@ -1662,20 +1662,31 @@
             <div class="sidebar-header">
                 <h3 class="sidebar-title">
                     <i class="fas fa-compass"></i>
-                    Discover
+                    Explore
                 </h3>
                 <div class="sidebar-search">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search categories..." id="category-search">
+                    <input type="text" placeholder="Search communities..." id="category-search">
                 </div>
             </div>
 
             <div class="sidebar-content">
-                <!-- Trending Posts Section -->
+                <!-- Home Section -->
+                <div class="category-section featured">
+                    <a href="javascript:void(0)" class="category-item active" data-value="" onclick="filterPosts('')">
+                        <i class="fas fa-home"></i>
+                        <div class="category-info">
+                            <span class="category-name">Home</span>
+                            <span class="category-desc">Your personalized feed</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Trending Section -->
                 <div class="sidebar-section">
                     <h4 class="section-title">
-                        <i class="fas fa-fire"></i>
-                        Trending This Week
+                        <i class="fas fa-arrow-trend-up"></i>
+                        Trending Today
                     </h4>
                     <div class="trending-posts">
                         <% const trendingPosts = locals.posts
@@ -1694,148 +1705,93 @@
                     </div>
                 </div>
 
-                <!-- Top Contributors Section -->
+                <!-- Communities Section -->
                 <div class="sidebar-section">
                     <h4 class="section-title">
-                        <i class="fas fa-trophy"></i>
-                        Top Contributors
+                        <i class="fas fa-users"></i>
+                        Your Communities
                     </h4>
-                    <div class="top-contributors">
-                        <% const topUsers = locals.users
-                            ?.sort((a, b) => (b.totalUpvotes || 0) - (a.totalUpvotes || 0))
-                            ?.slice(0, 5) || [];
-                            
-                        topUsers.forEach((user, index) => { %>
-                            <div class="contributor-item">
-                                <div class="contributor-rank"><%= index + 1 %></div>
-                                <img src="<%= user.avatar || '/images/default-avatar.png' %>" alt="<%= user.username %>" class="contributor-avatar">
-                                <div class="contributor-info">
-                                    <div class="contributor-name"><%= user.username %></div>
-                                    <div class="contributor-stats">
-                                        <span><%= user.totalUpvotes || 0 %> upvotes</span>
-                                        <span><%= user.posts?.length || 0 %> posts</span>
-                                    </div>
-                                </div>
-                            </div>
-                        <% }); %>
-                    </div>
-                </div>
+                    <div class="categories-list">
+                        <% 
+                        const categories = {
+                            'all': 0,
+                            'General': 0,
+                            'Javascript/Typescript': 0,
+                            'C++': 0,
+                            'Devit.to': 0,
+                            'Python': 0,
+                            'PHP': 0,
+                            'Tech': 0,
+                            'AI': 0,
+                            'Java': 0,
+                            'Ruby': 0,
+                            'Go': 0,
+                            'Rust': 0,
+                            'Swift': 0,
+                            'Kotlin': 0,
+                            'React': 0,
+                            'Vue': 0,
+                            'Angular': 0,
+                            'Node.js': 0,
+                            'DevOps': 0,
+                            'Cloud Computing': 0,
+                            'Cybersecurity': 0,
+                            'Blockchain': 0,
+                            'Machine Learning': 0,
+                            'Data Science': 0
+                        };
 
-                <!-- Categories Section -->
-                <div class="categories-list">
-                    <% 
-                    const categories = {
-                        'all': 0,
-                        'General': 0,
-                        'Javascript/Typescript': 0,
-                        'C++': 0,
-                        'Devit.to': 0,
-                        'Python': 0,
-                        'PHP': 0,
-                        'Tech': 0,
-                        'AI': 0,
-                        'Java': 0,
-                        'Ruby': 0,
-                        'Go': 0,
-                        'Rust': 0,
-                        'Swift': 0,
-                        'Kotlin': 0,
-                        'React': 0,
-                        'Vue': 0,
-                        'Angular': 0,
-                        'Node.js': 0,
-                        'DevOps': 0,
-                        'Cloud Computing': 0,
-                        'Cybersecurity': 0,
-                        'Blockchain': 0,
-                        'Machine Learning': 0,
-                        'Data Science': 0
-                    };
+                        if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
+                            categories.all = locals.posts.length;
+                            locals.posts.forEach(post => {
+                                if (categories.hasOwnProperty(post.category)) {
+                                    categories[post.category]++;
+                                }
+                            });
+                        }
 
-                    if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
-                        categories.all = locals.posts.length;
-                        locals.posts.forEach(post => {
-                            if (categories.hasOwnProperty(post.category)) {
-                                categories[post.category]++;
-                            }
-                        });
-                    }
+                        const sortedCategories = Object.entries(categories)
+                            .sort((a, b) => b[1] - a[1]);
 
-                    const sortedCategories = Object.entries(categories)
-                        .sort((a, b) => b[1] - a[1]);
+                        const iconMap = {
+                            'General': 'fas fa-globe',
+                            'Javascript/Typescript': 'fab fa-js',
+                            'C++': 'fas fa-code',
+                            'Devit.to': 'fas fa-code-branch',
+                            'Python': 'fab fa-python',
+                            'PHP': 'fab fa-php',
+                            'Tech': 'fas fa-microchip',
+                            'AI': 'fas fa-robot',
+                            'Java': 'fab fa-java',
+                            'Ruby': 'fas fa-gem',
+                            'Go': 'fas fa-code',
+                            'Rust': 'fas fa-cog',
+                            'Swift': 'fab fa-swift',
+                            'Kotlin': 'fas fa-mobile-alt',
+                            'React': 'fab fa-react',
+                            'Vue': 'fab fa-vuejs',
+                            'Angular': 'fab fa-angular',
+                            'Node.js': 'fab fa-node-js',
+                            'DevOps': 'fas fa-server',
+                            'Cloud Computing': 'fas fa-cloud',
+                            'Cybersecurity': 'fas fa-shield-alt',
+                            'Blockchain': 'fas fa-link',
+                            'Machine Learning': 'fas fa-brain',
+                            'Data Science': 'fas fa-chart-bar'
+                        };
+                        %>
 
-                    const iconMap = {
-                        'General': 'fas fa-globe',
-                        'Javascript/Typescript': 'fab fa-js',
-                        'C++': 'fas fa-code',
-                        'Devit.to': 'fas fa-gamepad',
-                        'Python': 'fab fa-python',
-                        'PHP': 'fab fa-php',
-                        'Tech': 'fas fa-microchip',
-                        'AI': 'fas fa-robot',
-                        'Java': 'fab fa-java',
-                        'Ruby': 'fas fa-gem',
-                        'Go': 'fab fa-golang',
-                        'Rust': 'fas fa-cog',
-                        'Swift': 'fab fa-swift',
-                        'Kotlin': 'fas fa-mobile-alt',
-                        'React': 'fab fa-react',
-                        'Vue': 'fab fa-vuejs',
-                        'Angular': 'fab fa-angular',
-                        'Node.js': 'fab fa-node-js',
-                        'DevOps': 'fas fa-server',
-                        'Cloud Computing': 'fas fa-cloud',
-                        'Cybersecurity': 'fas fa-shield-alt',
-                        'Blockchain': 'fas fa-link',
-                        'Machine Learning': 'fas fa-brain',
-                        'Data Science': 'fas fa-chart-bar'
-                    };
-                    %>
-
-                    <div class="category-section featured">
-                        <a href="javascript:void(0)" class="category-item active" data-value="" onclick="filterPosts('')">
-                            <i class="fas fa-th-large"></i>
-                            <div class="category-info">
-                                <span class="category-name">All Categories</span>
-                                <span class="category-desc">Browse all posts</span>
-                            </div>
-                            <span class="post-count"><%= categories['all'] %></span>
-                        </a>
-                    </div>
-
-                    <div class="category-section">
-                        <h4 class="section-title">Popular Categories</h4>
-                        <% sortedCategories.slice(0, 5).forEach(([category, count]) => { 
+                        <% sortedCategories.forEach(([category, count]) => { 
                             if(category !== 'all' && count > 0) { %>
                                 <a href="javascript:void(0)" 
-                                   class="category-item" 
+                                   class="community-item" 
                                    data-value="<%= category %>" 
                                    onclick="filterPosts('<%= category %>')">
-                                    <i class="<%= iconMap[category] || 'fas fa-tag' %>"></i>
-                                    <div class="category-info">
-                                        <span class="category-name"><%= category %></span>
-                                        <span class="category-desc"><%= count %> posts</span>
+                                    <i class="<%= iconMap[category] || 'fas fa-users' %>"></i>
+                                    <div class="community-info">
+                                        <span class="community-name">r/<%= category %></span>
+                                        <span class="community-members"><%= count %> members</span>
                                     </div>
-                                    <span class="post-count"><%= count %></span>
-                                </a>
-                            <% }
-                        }); %>
-                    </div>
-
-                    <div class="category-section">
-                        <h4 class="section-title">All Categories</h4>
-                        <% sortedCategories.slice(5).forEach(([category, count]) => { 
-                            if(category !== 'all' && count > 0) { %>
-                                <a href="javascript:void(0)" 
-                                   class="category-item" 
-                                   data-value="<%= category %>" 
-                                   onclick="filterPosts('<%= category %>')">
-                                    <i class="<%= iconMap[category] || 'fas fa-tag' %>"></i>
-                                    <div class="category-info">
-                                        <span class="category-name"><%= category %></span>
-                                        <span class="category-desc"><%= count %> posts</span>
-                                    </div>
-                                    <span class="post-count"><%= count %></span>
                                 </a>
                             <% }
                         }); %>
@@ -1850,40 +1806,46 @@
                 left: 0;
                 top: 60px;
                 bottom: 0;
-                width: 320px;
+                width: 300px;
                 background: var(--bg-card);
                 border-right: 1px solid var(--border);
                 overflow-y: auto;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 z-index: 100;
                 display: flex;
                 flex-direction: column;
-                transition: all 0.3s ease;
             }
 
             .sidebar-header {
                 position: sticky;
                 top: 0;
                 background: var(--bg-card);
-                padding: 1.5rem;
+                padding: 1rem;
                 border-bottom: 1px solid var(--border);
                 z-index: 10;
-                backdrop-filter: blur(10px);
             }
 
             .sidebar-title {
-                font-size: 1.25rem;
+                font-size: 1.2rem;
                 font-weight: 700;
                 color: var(--text);
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
+                gap: 0.5rem;
                 margin-bottom: 1rem;
             }
 
             .sidebar-search {
                 position: relative;
-                margin-top: 1rem;
+            }
+
+            .sidebar-search input {
+                width: 100%;
+                padding: 0.75rem 2.5rem;
+                border: 1px solid var(--border);
+                border-radius: 9999px;
+                background: var(--bg);
+                color: var(--text);
+                font-size: 0.9rem;
             }
 
             .sidebar-search i {
@@ -1894,312 +1856,98 @@
                 color: var(--text-muted);
             }
 
-            .sidebar-search input {
-                width: 100%;
-                padding: 0.75rem 1rem 0.75rem 2.5rem;
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                background: var(--bg);
-                color: var(--text);
-                font-size: 0.9rem;
-                transition: all 0.2s ease;
-            }
-
-            .sidebar-search input:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 2px var(--primary-transparent);
-                outline: none;
-            }
-
             .sidebar-content {
                 flex: 1;
-                overflow-y: auto;
-                padding-bottom: 2rem;
-            }
-
-            .sidebar-section {
-                padding: 1.5rem;
-                border-bottom: 1px solid var(--border);
-                animation: fadeIn 0.3s ease;
+                padding: 0.5rem;
             }
 
             .section-title {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--text-muted);
+                padding: 0.75rem 0.5rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .community-item {
                 display: flex;
                 align-items: center;
+                padding: 0.75rem;
                 gap: 0.75rem;
                 color: var(--text);
-                font-size: 1rem;
-                font-weight: 600;
-                margin-bottom: 1.25rem;
-            }
-
-            .section-title i {
-                color: var(--primary);
-            }
-
-            /* Trending Posts Styles */
-            .trending-post-item {
-                display: flex;
-                flex-direction: column;
-                gap: 0.75rem;
-                padding: 1rem;
-                background: var(--bg);
-                border-radius: 12px;
-                border: 1px solid var(--border);
                 text-decoration: none;
-                transition: all 0.2s ease;
+                border-radius: 0.5rem;
+                transition: background 0.2s;
             }
 
-            .trending-post-item:hover {
-                transform: translateY(-2px);
-                border-color: var(--primary);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-
-            .trending-post-title {
-                color: var(--text);
-                font-weight: 500;
-                font-size: 0.95rem;
-                line-height: 1.4;
-            }
-
-            .trending-post-stats {
-                display: flex;
-                gap: 1rem;
-                font-size: 0.85rem;
-                color: var(--text-muted);
-            }
-
-            .trending-post-stats i {
-                color: var(--primary);
-            }
-
-            /* Top Contributors Styles */
-            .contributor-item {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                background: var(--bg);
-                border-radius: 12px;
-                border: 1px solid var(--border);
-                transition: all 0.2s ease;
-            }
-
-            .contributor-item:hover {
-                transform: translateX(4px);
-                border-color: var(--primary);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            }
-
-            .contributor-rank {
-                font-size: 1.25rem;
-                font-weight: 700;
-                color: var(--primary);
-                min-width: 24px;
-            }
-
-            .contributor-avatar {
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid var(--primary);
-            }
-
-            .contributor-name {
-                color: var(--text);
-                font-weight: 600;
-                font-size: 0.95rem;
-            }
-
-            .contributor-stats {
-                display: flex;
-                gap: 1rem;
-                font-size: 0.85rem;
-                color: var(--text-muted);
-                margin-top: 0.25rem;
-            }
-
-            /* Category Items */
-            .category-item {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                border-radius: 12px;
-                text-decoration: none;
-                transition: all 0.2s ease;
-                border: 1px solid transparent;
-                background: var(--bg);
-                margin-bottom: 0.5rem;
-            }
-
-            .category-item:hover {
+            .community-item:hover {
                 background: var(--bg-hover);
-                border-color: var(--primary);
-                transform: translateX(4px);
             }
 
-            .category-item.active {
-                background: var(--primary-transparent);
-                border-color: var(--primary);
-            }
-
-            .category-item i {
+            .community-item i {
                 font-size: 1.25rem;
-                color: var(--primary);
+                color: var(--text-muted);
                 width: 24px;
                 text-align: center;
             }
 
-            .category-info {
+            .community-info {
                 flex: 1;
             }
 
-            .category-name {
-                color: var(--text);
+            .community-name {
                 font-weight: 500;
                 font-size: 0.95rem;
             }
 
-            .category-desc {
+            .community-members {
+                display: block;
+                font-size: 0.8rem;
                 color: var(--text-muted);
-                font-size: 0.85rem;
-                margin-top: 0.25rem;
             }
 
-            .post-count {
-                background: var(--primary-transparent);
-                color: var(--primary);
-                padding: 0.25rem 0.75rem;
-                border-radius: 999px;
-                font-size: 0.85rem;
-                font-weight: 500;
+            .trending-posts {
+                padding: 0.5rem;
+            }
+
+            .trending-post-item {
+                padding: 0.75rem;
+                border-radius: 0.5rem;
+                margin-bottom: 0.5rem;
+                background: var(--bg);
+                text-decoration: none;
+                display: block;
+            }
+
+            .trending-post-item:hover {
+                background: var(--bg-hover);
+            }
+
+            .trending-post-title {
+                color: var(--text);
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .trending-post-stats {
+                font-size: 0.8rem;
+                color: var(--text-muted);
             }
 
             @media (max-width: 768px) {
                 .categories-sidebar {
-                    width: 100%;
                     transform: translateX(-100%);
-                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    backdrop-filter: blur(10px);
-                    background: rgba(var(--bg-card-rgb), 0.95);
+                    transition: transform 0.3s ease;
                 }
 
                 .categories-sidebar.active {
                     transform: translateX(0);
                 }
-
-                .sidebar-toggle-wrapper {
-                    position: fixed;
-                    top: 70px;
-                    left: 20px;
-                    z-index: 1000;
-                }
-
-                .toggle-sidebar {
-                    background: var(--primary);
-                    border: none;
-                    border-radius: 12px;
-                    width: 48px;
-                    height: 48px;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                }
-
-                .toggle-sidebar:hover {
-                    transform: scale(1.05);
-                }
-
-                .toggle-sidebar:active {
-                    transform: scale(0.95);
-                }
-
-                .toggle-lines {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 5px;
-                    width: 24px;
-                }
-
-                .toggle-lines span {
-                    display: block;
-                    width: 100%;
-                    height: 2.5px;
-                    background: white;
-                    border-radius: 2px;
-                    transition: all 0.3s ease;
-                }
-
-                .toggle-sidebar.active .toggle-lines span:nth-child(1) {
-                    transform: translateY(7.5px) rotate(45deg);
-                }
-
-                .toggle-sidebar.active .toggle-lines span:nth-child(2) {
-                    opacity: 0;
-                }
-
-                .toggle-sidebar.active .toggle-lines span:nth-child(3) {
-                    transform: translateY(-7.5px) rotate(-45deg);
-                }
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
             }
         </style>
 
         <script>
-            document.querySelectorAll('.category-item').forEach((item, index) => {
-                item.style.setProperty('--index', index);
-                item.style.animation = `fadeIn 0.3s ease forwards ${index * 0.05}s`;
-            });
-
-            // Mobile sidebar toggle
-            if (window.innerWidth <= 768) {
-                const sidebarToggle = document.createElement('div');
-                sidebarToggle.className = 'sidebar-toggle-wrapper';
-                sidebarToggle.innerHTML = `
-                    <button class="toggle-sidebar">
-                        <div class="toggle-lines">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </button>
-                `;
-                document.body.appendChild(sidebarToggle);
-
-                const toggleBtn = sidebarToggle.querySelector('.toggle-sidebar');
-                const sidebar = document.querySelector('.categories-sidebar');
-
-                toggleBtn.addEventListener('click', () => {
-                    sidebar.classList.toggle('active');
-                    toggleBtn.classList.toggle('active');
-                });
-
-                // Close sidebar when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target) && sidebar.classList.contains('active')) {
-                        sidebar.classList.remove('active');
-                        toggleBtn.classList.remove('active');
-                    }
-                });
-            }
-
-            // Enhanced category search with debouncing
             const categorySearch = document.getElementById('category-search');
             let searchTimeout;
 
@@ -2208,19 +1956,33 @@
                 
                 searchTimeout = setTimeout(() => {
                     const searchTerm = e.target.value.toLowerCase();
-                    const items = document.querySelectorAll('.category-item');
+                    const items = document.querySelectorAll('.community-item');
                     
                     items.forEach(item => {
-                        const categoryName = item.querySelector('.category-name').textContent.toLowerCase();
-                        const matches = categoryName.includes(searchTerm);
-                        
-                        item.style.display = matches ? 'flex' : 'none';
-                        if (matches) {
-                            item.style.animation = 'fadeIn 0.3s ease forwards';
-                        }
+                        const name = item.querySelector('.community-name').textContent.toLowerCase();
+                        item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
                     });
                 }, 150);
             });
+
+            if (window.innerWidth <= 768) {
+                const sidebarToggle = document.createElement('button');
+                sidebarToggle.className = 'sidebar-toggle';
+                sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                document.body.appendChild(sidebarToggle);
+
+                const sidebar = document.querySelector('.categories-sidebar');
+
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+            }
         </script>
     <script>
         const searchBar = document.getElementById('search-bar');
