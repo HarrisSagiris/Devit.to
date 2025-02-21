@@ -1716,7 +1716,20 @@
                         My Communities
                     </h4>
                     <div id="my-communities-list" class="categories-list">
-                        <!-- My communities will be populated here -->
+                        <% if (locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
+                            <% locals.myCommunities.forEach(community => { %>
+                                <a href="javascript:void(0)" 
+                                   class="community-item" 
+                                   data-value="<%= community.name %>" 
+                                   onclick="filterPosts('<%= community.name %>')">
+                                    <i class="<%= community.icon || 'fas fa-users' %>"></i>
+                                    <div class="community-info">
+                                        <span class="community-name">r/<%= community.name %></span>
+                                        <span class="community-members"><%= community.memberCount || 1 %> member<%= (community.memberCount || 1) !== 1 ? 's' : '' %></span>
+                                    </div>
+                                </a>
+                            <% }); %>
+                        <% } %>
                     </div>
                 </div>
 
@@ -2283,6 +2296,9 @@
                         document.getElementById('communityName').value = '';
                         document.getElementById('communityDescription').value = '';
                         document.getElementById('communityIcon').value = 'fas fa-users';
+
+                        // Refresh the page to update the communities list
+                        window.location.reload();
                     } else {
                         throw new Error(data.error || 'Failed to create community');
                     }
