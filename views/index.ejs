@@ -2210,7 +2210,6 @@
                     });
                 }, 150);
             });
-
             // Modal functions
             function openCreateCommunityModal() {
                 document.getElementById('createCommunityModal').style.display = 'block';
@@ -2220,9 +2219,7 @@
                 document.getElementById('createCommunityModal').style.display = 'none';
             }
 
-            async function handleCreateCommunity(event) {
-                event.preventDefault();
-                
+            async function handleCreateCommunity() {
                 const name = document.getElementById('communityName').value;
                 const description = document.getElementById('communityDescription').value;
                 const icon = document.getElementById('communityIcon').value;
