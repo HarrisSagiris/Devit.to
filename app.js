@@ -322,13 +322,13 @@ app.post('/send-verification', async (req, res) => {
               <li>Join discussions and make connections</li>
             </ul>
 
-            <a href="https://devit.to/getting-started" class="cta-button">Start Your Journey</a>
+            <a href="https://devit.to" class="cta-button">Start Your Journey</a>
 
             <p style="text-align: center">Have questions? Our friendly community is always here to help!</p>
 
             <div class="social-links">
               <a href="https://twitter.com/devit">Twitter</a>
-              <a href="https://github.com/devit">GitHub</a>
+              <a href="https://github.com/HarrisSagiris/Devit.to">GitHub</a>
               <a href="https://discord.gg/devit">Discord</a>
             </div>
 
