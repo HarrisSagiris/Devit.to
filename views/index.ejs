@@ -2358,7 +2358,17 @@
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #9c6ade;">
                                                 <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" fill="currentColor"/>
                                             </svg>
-                                            <span style="color: #9c6ade; font-size: 0.8em; margin-left: 4px;"><%= comment.authorId ? comment.authorId.points : 0 %></span>
+                                            <span style="color: #9c6ade; font-size: 0.8em; margin-left: 4px;">
+                                                <% 
+                                                const points = comment.authorId ? comment.authorId.points : 0;
+                                                let rank = 'Newbie';
+                                                if (points >= 1000) rank = 'Expert';
+                                                else if (points >= 500) rank = 'Advanced';
+                                                else if (points >= 100) rank = 'Intermediate';
+                                                else if (points >= 50) rank = 'Beginner';
+                                                %>
+                                                <%= rank %> (<%= points %>)
+                                            </span>
                                         </span>
                                     </span>
                                 </div>
