@@ -1697,7 +1697,6 @@
                         <% }); %>
                     </div>
                 </div>
-
                 <!-- My Communities Section -->
                 <div class="sidebar-section">
                     <h4 class="section-title">
@@ -1705,14 +1704,14 @@
                         My Communities
                     </h4>
                     <div id="my-communities-list" class="categories-list">
-                        <% if (locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
-                            <% locals.myCommunities.forEach(community => { %>
+                        <% if (locals.user && locals.user.communities && Array.isArray(locals.user.communities)) { %>
+                            <% locals.user.communities.forEach(community => { %>
                                 <a href="/community/<%= community._id %>" 
                                    class="community-item">
                                     <i class="<%= community.icon || 'fas fa-users' %>"></i>
                                     <div class="community-info">
                                         <span class="community-name">r/<%= community.name %></span>
-                                        <span class="community-members"><%= community.memberCount || 1 %> member<%= (community.memberCount || 1) !== 1 ? 's' : '' %></span>
+                                        <span class="community-members"><%= community.members.length %> member<%= community.members.length !== 1 ? 's' : '' %></span>
                                     </div>
                                 </a>
                             <% }); %>
@@ -1722,92 +1721,95 @@
 
                 <!-- All Communities Section -->
                 <div class="sidebar-section">
+                    <% 
+                    const categories = {
+                        'all': 0,
+                        'General': 0,
+                        'Javascript/Typescript': 0,
+                        'C++': 0,
+                        'Devit.to': 0,
+                        'Python': 0,
+                        'PHP': 0,
+                        'Tech': 0,
+                        'AI': 0,
+                        'Java': 0,
+                        'Ruby': 0,
+                        'Go': 0,
+                        'Rust': 0,
+                        'Swift': 0,
+                        'Kotlin': 0,
+                        'React': 0,
+                        'Vue': 0,
+                        'Angular': 0,
+                        'Node.js': 0,
+                        'DevOps': 0,
+                        'Cloud Computing': 0,
+                        'Cybersecurity': 0,
+                        'Blockchain': 0,
+                        'Machine Learning': 0,
+                        'Data Science': 0
+                    };
+
+                    if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
+                        categories.all = locals.posts.length;
+                        locals.posts.forEach(post => {
+                            if (categories.hasOwnProperty(post.category)) {
+                                categories[post.category]++;
+                            }
+                        });
+                    }
+
+                    const sortedCategories = Object.entries(categories)
+                        .sort((a, b) => b[1] - a[1]);
+
+                    const iconMap = {
+                        'General': 'fas fa-globe',
+                        'Javascript/Typescript': 'fab fa-js',
+                        'C++': 'fas fa-code',
+                        'Devit.to': 'fas fa-code-branch',
+                        'Python': 'fab fa-python',
+                        'PHP': 'fab fa-php',
+                        'Tech': 'fas fa-microchip',
+                        'AI': 'fas fa-robot',
+                        'Java': 'fab fa-java',
+                        'Ruby': 'fas fa-gem',
+                        'Go': 'fas fa-code',
+                        'Rust': 'fas fa-cog',
+                        'Swift': 'fab fa-swift',
+                        'Kotlin': 'fas fa-mobile-alt',
+                        'React': 'fab fa-react',
+                        'Vue': 'fab fa-vuejs',
+                        'Angular': 'fab fa-angular',
+                        'Node.js': 'fab fa-node-js',
+                        'DevOps': 'fas fa-server',
+                        'Cloud Computing': 'fas fa-cloud',
+                        'Cybersecurity': 'fas fa-shield-alt',
+                        'Blockchain': 'fas fa-link',
+                        'Machine Learning': 'fas fa-brain',
+                        'Data Science': 'fas fa-chart-bar'
+                    };
+                    %>
+
+                    <% sortedCategories.forEach(([category, count]) => { 
+                        if(category !== 'all' && count > 0) { %>
+                            <a href="/category/<%= category %>" 
                     <h4 class="section-title">
                         <i class="fas fa-users"></i>
                         All Communities
                     </h4>
                     <div class="categories-list">
-                        <% 
-                        const categories = {
-                            'all': 0,
-                            'General': 0,
-                            'Javascript/Typescript': 0,
-                            'C++': 0,
-                            'Devit.to': 0,
-                            'Python': 0,
-                            'PHP': 0,
-                            'Tech': 0,
-                            'AI': 0,
-                            'Java': 0,
-                            'Ruby': 0,
-                            'Go': 0,
-                            'Rust': 0,
-                            'Swift': 0,
-                            'Kotlin': 0,
-                            'React': 0,
-                            'Vue': 0,
-                            'Angular': 0,
-                            'Node.js': 0,
-                            'DevOps': 0,
-                            'Cloud Computing': 0,
-                            'Cybersecurity': 0,
-                            'Blockchain': 0,
-                            'Machine Learning': 0,
-                            'Data Science': 0
-                        };
-
-                        if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
-                            categories.all = locals.posts.length;
-                            locals.posts.forEach(post => {
-                                if (categories.hasOwnProperty(post.category)) {
-                                    categories[post.category]++;
-                                }
-                            });
-                        }
-
-                        const sortedCategories = Object.entries(categories)
-                            .sort((a, b) => b[1] - a[1]);
-
-                        const iconMap = {
-                            'General': 'fas fa-globe',
-                            'Javascript/Typescript': 'fab fa-js',
-                            'C++': 'fas fa-code',
-                            'Devit.to': 'fas fa-code-branch',
-                            'Python': 'fab fa-python',
-                            'PHP': 'fab fa-php',
-                            'Tech': 'fas fa-microchip',
-                            'AI': 'fas fa-robot',
-                            'Java': 'fab fa-java',
-                            'Ruby': 'fas fa-gem',
-                            'Go': 'fas fa-code',
-                            'Rust': 'fas fa-cog',
-                            'Swift': 'fab fa-swift',
-                            'Kotlin': 'fas fa-mobile-alt',
-                            'React': 'fab fa-react',
-                            'Vue': 'fab fa-vuejs',
-                            'Angular': 'fab fa-angular',
-                            'Node.js': 'fab fa-node-js',
-                            'DevOps': 'fas fa-server',
-                            'Cloud Computing': 'fas fa-cloud',
-                            'Cybersecurity': 'fas fa-shield-alt',
-                            'Blockchain': 'fas fa-link',
-                            'Machine Learning': 'fas fa-brain',
-                            'Data Science': 'fas fa-chart-bar'
-                        };
-                        %>
-
-                        <% sortedCategories.forEach(([category, count]) => { 
-                            if(category !== 'all' && count > 0) { %>
-                                <a href="/category/<%= category %>" 
+                        <% if (locals.communities && Array.isArray(locals.communities)) { %>
+                            <% locals.communities.forEach(community => { %>
+                                <a href="/community/<%= community._id %>" 
                                    class="community-item">
-                                    <i class="<%= iconMap[category] || 'fas fa-users' %>"></i>
+                                    <i class="<%= community.icon || 'fas fa-users' %>"></i>
                                     <div class="community-info">
-                                        <span class="community-name">r/<%= category %></span>
-                                        <span class="community-members"><%= count %> post<%= count !== 1 ? 's' : '' %></span>
+                                        <span class="community-name">r/<%= community.name %></span>
+                                        <span class="community-members"><%= community.members.length %> member<%= community.members.length !== 1 ? 's' : '' %></span>
                                     </div>
                                 </a>
-                            <% }
-                        }); %>
+                            <% }); %>
+                        <% } %>
                     </div>
                 </div>
             </div>
