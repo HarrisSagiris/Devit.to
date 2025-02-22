@@ -2512,27 +2512,75 @@
                                     <span class="user-info">
                                         <span class="comment-username" data-username="<%= post.username %>">
                                             @<%= post.username %>
-                                            <div class="user-hover-card">
-                                                <div class="user-stats">
-                                                    <div class="stat">
+                                            <div class="user-hover-card" style="
+                                                position: absolute;
+                                                background: var(--bg-card);
+                                                border: 1px solid var(--border);
+                                                border-radius: 12px;
+                                                padding: 1rem;
+                                                min-width: 250px;
+                                                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                                                z-index: 100;
+                                                display: none;
+                                                animation: fadeIn 0.2s ease;
+                                            ">
+                                                <div class="user-stats" style="
+                                                    display: grid;
+                                                    grid-template-columns: repeat(2, 1fr);
+                                                    gap: 0.75rem;
+                                                ">
+                                                    <div class="stat" style="
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 0.5rem;
+                                                        font-size: 0.9rem;
+                                                    ">
                                                         <i class="fas fa-pencil-alt"></i>
                                                         <span id="posts-count-<%= post.username %>">-</span> posts
                                                     </div>
-                                                    <div class="stat">
+                                                    <div class="stat" style="
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 0.5rem;
+                                                        font-size: 0.9rem;
+                                                    ">
                                                         <i class="fas fa-comment"></i>
                                                         <span id="comments-count-<%= post.username %>">-</span> comments
                                                     </div>
-                                                    <div class="stat">
+                                                    <div class="stat" style="
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 0.5rem;
+                                                        font-size: 0.9rem;
+                                                    ">
                                                         <i class="fas fa-arrow-up"></i>
                                                         <span id="upvotes-count-<%= post.username %>">-</span> upvotes
                                                     </div>
-                                                    <div class="stat">
+                                                    <div class="stat" style="
+                                                        display: flex;
+                                                        align-items: center;
+                                                        gap: 0.5rem;
+                                                        font-size: 0.9rem;
+                                                    ">
                                                         <i class="fas fa-chart-line"></i>
                                                         <span id="engagement-<%= post.username %>">-</span> engagement
                                                     </div>
                                                 </div>
-                                                <div id="badges-<%= post.username %>" class="user-badges"></div>
-                                                <div class="followers-info">
+                                                <div id="badges-<%= post.username %>" class="user-badges" style="
+                                                    margin: 1rem 0;
+                                                    display: flex;
+                                                    gap: 0.5rem;
+                                                    flex-wrap: wrap;
+                                                "></div>
+                                                <div class="followers-info" style="
+                                                    display: flex;
+                                                    align-items: center;
+                                                    gap: 0.5rem;
+                                                    font-size: 0.9rem;
+                                                    margin-top: 0.5rem;
+                                                    padding-top: 0.5rem;
+                                                    border-top: 1px solid var(--border);
+                                                ">
                                                     <i class="fas fa-users"></i>
                                                     <span id="followers-count-<%= post.username %>" class="followers-count">-</span> followers
                                                 </div>
@@ -2544,7 +2592,22 @@
                                 <% if (user && user.username !== post.username) { %>
                                     <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
                                             onclick="toggleFollow(this)"
-                                            data-username="<%= post.username %>">
+                                            data-username="<%= post.username %>"
+                                            style="
+                                                padding: 0.5rem 1rem;
+                                                border: none;
+                                                border-radius: 8px;
+                                                background: var(--primary-color);
+                                                color: white;
+                                                font-weight: 500;
+                                                cursor: pointer;
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 0.5rem;
+                                                transition: all 0.2s ease;
+                                            "
+                                            onmouseover="this.style.transform='translateY(-1px)'"
+                                            onmouseout="this.style.transform='translateY(0)'">
                                         <i class="<%= user.following?.includes(post.username) ? 'fas fa-user-check' : 'fas fa-user-plus' %>"></i>
                                         <%= user.following?.includes(post.username) ? 'Following' : 'Follow' %>
                                     </button>
