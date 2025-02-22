@@ -56,6 +56,7 @@
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
+      cursor: pointer;
     }
 
     .create-btn:hover {
@@ -177,6 +178,53 @@
       background: var(--primary);
       color: white;
     }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      position: relative;
+      background: var(--bg-card);
+      width: 90%;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 2rem;
+      border-radius: 12px;
+    }
+
+    .close-modal {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .modal-form input,
+    .modal-form textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    .modal-form button {
+      width: 100%;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -184,7 +232,7 @@
     <div class="header">
       <h1>Communities</h1>
       <% if (user) { %>
-        <a href="/create-community" class="create-btn">Create Community</a>
+        <button class="create-btn" onclick="openCreateModal()">Create Community</button>
       <% } %>
     </div>
 
@@ -199,7 +247,7 @@
 
     <div class="communities-grid">
       <% communities.forEach(community => { %>
-        <div class="community-card" onclick="window.location.href='/communities/<%= community._id %>/posts'">
+        <div class="community-card" onclick="window.location.href='/community/<%= community._id %>'">
           <div class="community-header">
             <div class="community-icon">
               <i class="<%= community.icon %>"></i>
@@ -220,7 +268,7 @@
           <% if (user) { %>
             <button class="join-btn <%= community.members.includes(user._id) ? 'joined' : '' %>" 
                     data-community-id="<%= community._id %>"
-                    onclick="event.stopPropagation()">
+                    onclick="event.stopPropagation(); handleJoinClick(this)">
               <%= community.members.includes(user._id) ? 'Joined' : 'Join Community' %>
             </button>
           <% } %>
@@ -229,110 +277,111 @@
     </div>
   </div>
 
+  <!-- Create Community Modal -->
+  <div id="createModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeCreateModal()">&times;</span>
+      <h2 style="margin-bottom: 1.5rem; color: var(--primary);">Create New Community</h2>
+      <form class="modal-form" onsubmit="handleCreateCommunity(event)">
+        <input type="text" id="communityName" placeholder="Community Name" required>
+        <textarea id="communityDescription" placeholder="Community Description" rows="4" required></textarea>
+        <input type="text" id="communityIcon" placeholder="Icon Class (e.g. fas fa-code)" required>
+        <button type="submit" class="create-btn">Create Community</button>
+      </form>
+    </div>
+  </div>
+
   <script>
+    // Modal functions
+    function openCreateModal() {
+      document.getElementById('createModal').style.display = 'block';
+    }
+
+    function closeCreateModal() {
+      document.getElementById('createModal').style.display = 'none';
+    }
+
+    // Handle create community submission
+    async function handleCreateCommunity(event) {
+      event.preventDefault();
+      
+      const formData = {
+        name: document.getElementById('communityName').value,
+        description: document.getElementById('communityDescription').value,
+        icon: document.getElementById('communityIcon').value
+      };
+
+      try {
+        const response = await fetch('/api/communities', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const error = await response.json();
+          alert(error.message || 'Failed to create community');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to create community');
+      }
+    }
+
+    // Handle join/leave functionality
+    async function handleJoinClick(button) {
+      const communityId = button.dataset.communityId;
+      const action = button.classList.contains('joined') ? 'leave' : 'join';
+
+      try {
+        const response = await fetch(`/api/communities/${communityId}/${action}`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          button.classList.toggle('joined');
+          button.textContent = action === 'join' ? 'Joined' : 'Join Community';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to ' + action + ' community');
+      }
+    }
+
+    // Search and filter functionality
     document.addEventListener('DOMContentLoaded', () => {
-      // Search functionality
       const searchInput = document.querySelector('.search-input');
       const filterSelect = document.querySelector('.filter-select');
       
-      const handleSearch = () => {
+      async function handleSearch() {
         const searchTerm = searchInput.value.toLowerCase();
         const filter = filterSelect.value;
         
-        fetch(`/api/communities/search?query=${searchTerm}&sort=${filter}`)
-          .then(res => res.json())
-          .then(data => {
-            updateCommunitiesDisplay(data.communities);
-          })
-          .catch(err => console.error('Search error:', err));
-      };
+        try {
+          const response = await fetch(`/api/communities/search?query=${searchTerm}&sort=${filter}`);
+          const data = await response.json();
+          updateCommunitiesDisplay(data.communities);
+        } catch (error) {
+          console.error('Search error:', error);
+        }
+      }
 
       searchInput.addEventListener('input', handleSearch);
       filterSelect.addEventListener('change', handleSearch);
-
-      // Join/Leave functionality
-      document.querySelectorAll('.join-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const communityId = btn.dataset.communityId;
-          const action = btn.classList.contains('joined') ? 'leave' : 'join';
-
-          try {
-            const res = await fetch(`/api/communities/${communityId}/${action}`, {
-              method: 'POST',
-              credentials: 'include'
-            });
-            const data = await res.json();
-
-            if (data.success) {
-              btn.classList.toggle('joined');
-              btn.textContent = action === 'join' ? 'Joined' : 'Join Community';
-            }
-          } catch (err) {
-            console.error('Error:', err);
-          }
-        });
-      });
     });
 
-    function updateCommunitiesDisplay(communities) {
-      const grid = document.querySelector('.communities-grid');
-      grid.innerHTML = communities.map(community => `
-        <div class="community-card" onclick="window.location.href='/communities/${community._id}/posts'">
-          <div class="community-header">
-            <div class="community-icon">
-              <i class="${community.icon}"></i>
-            </div>
-            <h2 class="community-name">${community.name}</h2>
-          </div>
-          <p class="community-description">${community.description}</p>
-          <div class="community-stats">
-            <div class="stat">
-              <i class="fas fa-users"></i>
-              <span>${community.memberCount} members</span>
-            </div>
-            <div class="stat">
-              <i class="fas fa-file-alt"></i>
-              <span>${community.postCount} posts</span>
-            </div>
-          </div>
-          ${user ? `
-            <button class="join-btn ${community.isMember ? 'joined' : ''}" 
-                    data-community-id="${community._id}"
-                    onclick="event.stopPropagation()">
-              ${community.isMember ? 'Joined' : 'Join Community'}
-            </button>
-          ` : ''}
-        </div>
-      `).join('');
-
-      // Reattach event listeners
-      attachJoinButtonListeners();
-    }
-
-    function attachJoinButtonListeners() {
-      document.querySelectorAll('.join-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const communityId = btn.dataset.communityId;
-          const action = btn.classList.contains('joined') ? 'leave' : 'join';
-
-          try {
-            const res = await fetch(`/api/communities/${communityId}/${action}`, {
-              method: 'POST',
-              credentials: 'include'
-            });
-            const data = await res.json();
-
-            if (data.success) {
-              btn.classList.toggle('joined');
-              btn.textContent = action === 'join' ? 'Joined' : 'Join Community';
-            }
-          } catch (err) {
-            console.error('Error:', err);
-          }
-        });
-      });
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('createModal')) {
+        closeCreateModal();
+      }
     }
   </script>
 </body>
