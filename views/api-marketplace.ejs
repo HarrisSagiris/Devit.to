@@ -161,6 +161,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: background 0.2s;
+            text-decoration: none;
         }
 
         .post-api-btn:hover {
@@ -176,6 +177,7 @@
             height: 100%;
             background: rgba(0,0,0,0.7);
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .modal-content {
@@ -193,6 +195,7 @@
             right: 1rem;
             cursor: pointer;
             font-size: 1.5rem;
+            color: var(--text-muted);
         }
 
         .form-group {
@@ -220,6 +223,13 @@
         .form-group textarea {
             min-height: 150px;
             resize: vertical;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
         }
     </style>
 </head>
@@ -260,10 +270,11 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closePostModal()">&times;</span>
             <h2>Post Your API</h2>
-            <form id="postApiForm" action="/api/marketplace/post" method="POST">
+            <form id="postApiForm">
                 <div class="form-group">
                     <label for="apiName">API Name</label>
                     <input type="text" id="apiName" name="name" required>
+                    <div class="error-message" id="nameError"></div>
                 </div>
                 <div class="form-group">
                     <label for="apiCategory">Category</label>
@@ -273,18 +284,22 @@
                         <option value="data">Data & Analytics</option>
                         <option value="ai">AI & ML</option>
                     </select>
+                    <div class="error-message" id="categoryError"></div>
                 </div>
                 <div class="form-group">
                     <label for="apiDescription">Description</label>
                     <textarea id="apiDescription" name="description" required></textarea>
+                    <div class="error-message" id="descriptionError"></div>
                 </div>
                 <div class="form-group">
                     <label for="apiDocs">API Documentation URL</label>
-                    <input type="url" id="apiDocs" name="documentation" required>
+                    <input type="url" id="apiDocs" name="docs" required>
+                    <div class="error-message" id="docsError"></div>
                 </div>
                 <div class="form-group">
                     <label for="apiPrice">Price ($/month)</label>
-                    <input type="number" id="apiPrice" name="price" min="0" required>
+                    <input type="number" id="apiPrice" name="price" min="0" step="0.01" required>
+                    <div class="error-message" id="priceError"></div>
                 </div>
                 <button type="submit" class="post-api-btn">Post API</button>
             </form>
@@ -297,10 +312,18 @@
 
         function openPostModal() {
             document.getElementById('postModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
 
         function closePostModal() {
             document.getElementById('postModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            // Clear form and errors
+            document.getElementById('postApiForm').reset();
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
         }
 
         function getCategoryIcon(category) {
@@ -367,11 +390,17 @@
         document.getElementById('postApiForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('/api/marketplace/post', {
+                const response = await fetch('/api', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -379,19 +408,28 @@
                     body: JSON.stringify(data)
                 });
 
+                const result = await response.json();
+
                 if (response.ok) {
-                    const newApi = await response.json();
-                    apis.push(newApi);
+                    apis.unshift(result.api);
                     renderApis();
                     closePostModal();
                     e.target.reset();
                 } else {
-                    const error = await response.json();
-                    alert(error.message || 'Error posting API');
+                    if (result.error) {
+                        // Show error message
+                        const errorField = document.getElementById(`${result.field}Error`);
+                        if (errorField) {
+                            errorField.textContent = result.error;
+                            errorField.style.display = 'block';
+                        } else {
+                            alert(result.error);
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error posting API');
+                alert('An error occurred while posting the API. Please try again.');
             }
         });
 

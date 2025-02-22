@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error - Devit.to</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
             --bg: #0F172A;
+            --bg-card: #1E293B;
             --text: #F8FAFC;
             --text-muted: #94A3B8;
-            --primary: #4F46E5;
+            --border: #334155;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --gradient: linear-gradient(135deg, #4F46E5, #4338CA);
         }
 
         * {
@@ -33,42 +39,68 @@
         .error-container {
             text-align: center;
             max-width: 600px;
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
         }
 
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary);
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
 
         p {
             color: var(--text-muted);
             margin-bottom: 2rem;
             font-size: 1.1rem;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         .back-btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            background: var(--gradient);
             color: var(--text);
             text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: opacity 0.2s;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
         .back-btn:hover {
-            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+
+        .back-btn i {
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
     <div class="error-container">
+        <i class="fas fa-exclamation-circle error-icon"></i>
         <h1>Oops! Something went wrong</h1>
         <p><%= message %></p>
-        <a href="/" class="back-btn">Back to Home</a>
+        <a href="/" class="back-btn">
+            <i class="fas fa-home"></i>
+            Back to Home
+        </a>
     </div>
 </body>
 </html>
