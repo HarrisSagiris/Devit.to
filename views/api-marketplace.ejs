@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Marketplace - Devit.to</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #0F172A;
+            --bg-card: #1E293B;
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border: #334155;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --gradient: linear-gradient(135deg, #4F46E5, #4338CA);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .api-card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .api-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .api-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .api-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient);
+            font-size: 1.5rem;
+        }
+
+        .api-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .api-description {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .api-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .api-price {
+            font-weight: 600;
+        }
+
+        .api-stats {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+        }
+
+        .search-bar {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .post-api-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .post-api-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>API Marketplace</h1>
+            <p>Discover, integrate, and sell powerful APIs for your applications</p>
+        </header>
+
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search APIs...">
+            <select class="filter-select">
+                <option value="all">All Categories</option>
+                <option value="payment">Payment</option>
+                <option value="auth">Authentication</option>
+                <option value="data">Data & Analytics</option>
+                <option value="ai">AI & ML</option>
+            </select>
+            <button class="post-api-btn" onclick="openPostModal()">
+                <i class="fas fa-plus"></i> Post Your API
+            </button>
+        </div>
+
+        <div class="api-grid" id="apiGrid">
+            <!-- API cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Modal for posting new API -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePostModal()">&times;</span>
+            <h2>Post Your API</h2>
+            <form id="postApiForm" onsubmit="handlePostApi(event)">
+                <div class="form-group">
+                    <label for="apiName">API Name</label>
+                    <input type="text" id="apiName" required>
+                </div>
+                <div class="form-group">
+                    <label for="apiCategory">Category</label>
+                    <select id="apiCategory" required>
+                        <option value="payment">Payment</option>
+                        <option value="auth">Authentication</option>
+                        <option value="data">Data & Analytics</option>
+                        <option value="ai">AI & ML</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="apiDescription">Description</label>
+                    <textarea id="apiDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="apiDocs">API Documentation URL</label>
+                    <input type="url" id="apiDocs" required>
+                </div>
+                <div class="form-group">
+                    <label for="apiPrice">Price ($/month)</label>
+                    <input type="number" id="apiPrice" min="0" required>
+                </div>
+                <button type="submit" class="post-api-btn">Post API</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let apis = [];
+
+        function openPostModal() {
+            document.getElementById('postModal').style.display = 'block';
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').style.display = 'none';
+        }
+
+        function handlePostApi(event) {
+            event.preventDefault();
+            
+            const newApi = {
+                id: Date.now(),
+                name: document.getElementById('apiName').value,
+                category: document.getElementById('apiCategory').value,
+                description: document.getElementById('apiDescription').value,
+                documentation: document.getElementById('apiDocs').value,
+                price: document.getElementById('apiPrice').value,
+                rating: 0,
+                users: 0
+            };
+
+            apis.push(newApi);
+            renderApis();
+            closePostModal();
+            event.target.reset();
+        }
+
+        function renderApis() {
+            const grid = document.getElementById('apiGrid');
+            grid.innerHTML = apis.map(api => `
+                <div class="api-card" data-category="${api.category}">
+                    <div class="api-header">
+                        <div class="api-icon">
+                            <i class="fas ${getCategoryIcon(api.category)}"></i>
+                        </div>
+                        <h2 class="api-title">${api.name}</h2>
+                    </div>
+                    <p class="api-description">${api.description}</p>
+                    <div class="api-meta">
+                        <span class="api-price">$${api.price}/month</span>
+                        <div class="api-stats">
+                            <span><i class="fas fa-star"></i> ${api.rating}</span>
+                            <span><i class="fas fa-users"></i> ${api.users}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                payment: 'fa-credit-card',
+                auth: 'fa-lock',
+                data: 'fa-database',
+                ai: 'fa-robot'
+            };
+            return icons[category] || 'fa-code';
+        }
+
+        // Add search and filter functionality
+        const searchInput = document.querySelector('.search-input');
+        const filterSelect = document.querySelector('.filter-select');
+
+        function filterAPIs() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filterValue = filterSelect.value;
+
+            const filteredApis = apis.filter(api => {
+                const matchesSearch = api.name.toLowerCase().includes(searchTerm) || 
+                                    api.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = filterValue === 'all' || api.category === filterValue;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderFilteredApis(filteredApis);
+        }
+
+        function renderFilteredApis(filteredApis) {
+            const grid = document.getElementById('apiGrid');
+            grid.innerHTML = filteredApis.map(api => `
+                <div class="api-card" data-category="${api.category}">
+                    <div class="api-header">
+                        <div class="api-icon">
+                            <i class="fas ${getCategoryIcon(api.category)}"></i>
+                        </div>
+                        <h2 class="api-title">${api.name}</h2>
+                    </div>
+                    <p class="api-description">${api.description}</p>
+                    <div class="api-meta">
+                        <span class="api-price">$${api.price}/month</span>
+                        <div class="api-stats">
+                            <span><i class="fas fa-star"></i> ${api.rating}</span>
+                            <span><i class="fas fa-users"></i> ${api.users}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        searchInput.addEventListener('input', filterAPIs);
+        filterSelect.addEventListener('change', filterAPIs);
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('postModal')) {
+                closePostModal();
+            }
+        }
+    </script>
+</body>
+</html>

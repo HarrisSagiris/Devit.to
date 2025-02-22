@@ -810,6 +810,67 @@ app.get('/community/:id', async (req, res) => {
     });
   }
 });
+// Render API marketplace page
+app.get('/api-marketplace', (req, res) => {
+  try {
+    res.render('api-marketplace', {
+      user: req.session.user || null
+    });
+  } catch (error) {
+    res.status(500).render('error', {
+      message: error.message,
+      user: req.session.user || null 
+    });
+  }
+});
+
+// Handle new API submission
+app.post('/api', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const { name, category, description, docs, price } = req.body;
+
+    // Validate required fields
+    if (!name || !category || !description || !docs || !price) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Create new API listing
+    const api = new API({
+      name,
+      category,
+      description,
+      documentationUrl: docs,
+      price: Number(price),
+      publisher: req.session.user._id,
+      rating: 0,
+      users: 0
+    });
+
+    await api.save();
+
+    res.status(201).json({ success: true, api });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get list of APIs
+app.get('/api/list', async (req, res) => {
+  try {
+    const apis = await API.find()
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json(apis);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Handle post creation
 app.post('/api/posts', async (req, res) => {
