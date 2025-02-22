@@ -2834,6 +2834,32 @@
                             align-items: center;
                             gap: 4px;
                         }
+
+                        .follow-btn {
+                            padding: 6px 12px;
+                            border: 1px solid var(--border);
+                            border-radius: 6px;
+                            background: var(--bg);
+                            color: var(--text);
+                            font-size: 0.9em;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            margin-top: 8px;
+                            transition: all 0.2s;
+                        }
+
+                        .follow-btn:hover {
+                            background: var(--bg-secondary);
+                            border-color: var(--text-muted);
+                        }
+
+                        .follow-btn.following {
+                            background: var(--primary);
+                            color: white;
+                            border-color: var(--primary);
+                        }
                     </style>
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
@@ -2851,10 +2877,14 @@
                                         @<%= comment.username %>
                                         <div class="user-popup">
                                             <div class="user-popup-header">
-                                            
                                                 <div class="user-popup-info">
                                                     <div class="user-popup-name">@<%= comment.username %></div>
                                                     <div class="user-popup-joined">Member since <%= new Date(comment.authorId?.createdAt || Date.now()).toLocaleDateString() %></div>
+                                                    <% if (user && user.username !== comment.username) { %>
+                                                        <button class="follow-btn" data-username="<%= comment.username %>" onclick="toggleFollow(this)">
+                                                            <i class="fas fa-user-plus"></i> Follow
+                                                        </button>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                             <div class="user-popup-stats">
@@ -2922,56 +2952,91 @@
                                             }
                                         }
 
+                                        // Follow functionality
+                                        async function toggleFollow(button) {
+                                            const username = button.dataset.username;
+                                            try {
+                                                const response = await fetch(`/api/users/${username}/follow`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    }
+                                                });
+
+                                                if (response.ok) {
+                                                    const data = await response.json();
+                                                    if (data.following) {
+                                                        button.innerHTML = '<i class="fas fa-user-check"></i> Following';
+                                                        button.classList.add('following');
+                                                    } else {
+                                                        button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                                                        button.classList.remove('following');
+                                                    }
+                                                    showToast('success', data.message);
+                                                }
+                                            } catch (error) {
+                                                console.error('Error toggling follow:', error);
+                                                showToast('error', 'Failed to update follow status');
+                                            }
+                                        }
+
                                         // Fetch user stats when hovering
                                         document.querySelectorAll('.comment-username').forEach(el => {
-                                            el.addEventListener('mouseenter', async () => {
-                                                const username = el.dataset.username;
-                                                try {
-                                                    const response = await fetch(`/api/users/${username}/stats`);
-                                                    const data = await response.json();
-                                                    
-                                                    // Update stats
-                                                    document.getElementById(`posts-count-${username}`).textContent = data.posts.length;
-                                                    document.getElementById(`upvotes-count-${username}`).textContent = data.totalUpvotes;
-                                                    document.getElementById(`comments-count-${username}`).textContent = data.totalComments;
-                                                    document.getElementById(`engagement-${username}`).textContent = data.totalEngagement;
-                                                    
-                                                    // Update badges
-                                                    const badgesContainer = document.getElementById(`badges-${username}`);
-                                                    badgesContainer.innerHTML = '';
-                                                    
-                                                    if (data.posts.length > 20) {
-                                                        badgesContainer.innerHTML += `
-                                                            <div class="user-badge" style="background: #ff6b6b">
-                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                                                </svg>
-                                                                Elite Contributor
-                                                            </div>`;
+                                            let timeout;
+                                            el.addEventListener('mouseenter', () => {
+                                                timeout = setTimeout(async () => {
+                                                    const username = el.dataset.username;
+                                                    try {
+                                                        const response = await fetch(`/api/users/${username}/stats`);
+                                                        const data = await response.json();
+                                                        
+                                                        // Update stats
+                                                        document.getElementById(`posts-count-${username}`).textContent = data.posts;
+                                                        document.getElementById(`upvotes-count-${username}`).textContent = data.upvotesReceived;
+                                                        document.getElementById(`comments-count-${username}`).textContent = data.comments;
+                                                        document.getElementById(`engagement-${username}`).textContent = data.engagement;
+                                                        
+                                                        // Update badges
+                                                        const badgesContainer = document.getElementById(`badges-${username}`);
+                                                        badgesContainer.innerHTML = '';
+                                                        
+                                                        if (data.posts > 20) {
+                                                            badgesContainer.innerHTML += `
+                                                                <div class="user-badge" style="background: #ff6b6b">
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                                                                    </svg>
+                                                                    Elite Contributor
+                                                                </div>`;
+                                                        }
+                                                        
+                                                        if (data.comments > 100) {
+                                                            badgesContainer.innerHTML += `
+                                                                <div class="user-badge" style="background: #4f46e5">
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
+                                                                    </svg>
+                                                                    Chatty
+                                                                </div>`;
+                                                        }
+                                                        
+                                                        if (data.upvotesReceived > 500) {
+                                                            badgesContainer.innerHTML += `
+                                                                <div class="user-badge" style="background: #10b981">
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
+                                                                    </svg>
+                                                                    Well-Liked
+                                                                </div>`;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Error fetching user stats:', error);
                                                     }
-                                                    
-                                                    if (data.totalComments > 100) {
-                                                        badgesContainer.innerHTML += `
-                                                            <div class="user-badge" style="background: #4f46e5">
-                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
-                                                                </svg>
-                                                                Chatty
-                                                            </div>`;
-                                                    }
-                                                    
-                                                    if (data.totalUpvotes > 500) {
-                                                        badgesContainer.innerHTML += `
-                                                            <div class="user-badge" style="background: #10b981">
-                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
-                                                                </svg>
-                                                                Well-Liked
-                                                            </div>`;
-                                                    }
-                                                } catch (error) {
-                                                    console.error('Error fetching user stats:', error);
-                                                }
+                                                }, 300);
+                                            });
+                                            
+                                            el.addEventListener('mouseleave', () => {
+                                                clearTimeout(timeout);
                                             });
                                         });
 
