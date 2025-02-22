@@ -216,7 +216,7 @@
           </div>
           <div class="stat">
             <i class="fas fa-file-alt"></i>
-            <span><%= community.posts.length %> posts</span>
+            <span><%= community.posts ? community.posts.length : 0 %> posts</span>
           </div>
         </div>
       </div>
@@ -257,7 +257,9 @@
                     <h2><a href="/posts/<%= post._id %>"><%= post.title %></a></h2>
                     <p><%= post.content %></p>
                     <div class="post-meta">
-                      Posted by <a href="/user/<%= post.author.username %>"><%= post.author.username %></a>
+                      Posted by <a href="/user/<%= post.user ? post.user.username : 'unknown' %>">
+                        <%= post.user ? post.user.username : 'unknown' %>
+                      </a>
                       on <%= new Date(post.createdAt).toLocaleDateString() %>
                     </div>
                   </div>
@@ -273,15 +275,17 @@
       <div class="sidebar">
         <h3>Members</h3>
         <div class="member-list">
-          <% community.members.slice(0, 12).forEach(member => { %>
-            <div class="member-avatar">
-              <% if (member.avatar) { %>
-                <img src="<%= member.avatar %>" alt="<%= member.username %>">
-              <% } else { %>
-                <i class="fas fa-user"></i>
-              <% } %>
-            </div>
-          <% }) %>
+          <% if (community.members && community.members.length > 0) { %>
+            <% community.members.slice(0, 12).forEach(member => { %>
+              <div class="member-avatar">
+                <% if (member && member.avatar) { %>
+                  <img src="<%= member.avatar %>" alt="<%= member.username %>">
+                <% } else { %>
+                  <i class="fas fa-user"></i>
+                <% } %>
+              </div>
+            <% }) %>
+          <% } %>
         </div>
         <% if (user) { %>
           <button class="join-btn <%= community.members.includes(user._id) ? 'joined' : '' %>" 
