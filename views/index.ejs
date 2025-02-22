@@ -1697,20 +1697,56 @@
                         <% }); %>
                     </div>
                 </div>
-
-                <!-- Communities Button -->
+                <!-- My Communities Section -->
                 <div class="sidebar-section">
-                    <a href="/community" class="community-button">
-                        <i class="fas fa-users"></i>
-                        Communities
-                    </a>
+                    <h4 class="section-title">
+                        <i class="fas fa-star"></i>
+                        My Communities
+                    </h4>
+                    <div id="my-communities-list" class="categories-list">
+                        <% if (locals.user && locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
+                            <% locals.myCommunities.forEach(communityItem => { %>
+                                <a href="/community/<%= communityItem._id %>" 
+                                   class="community-item"
+                                   data-community-id="<%= communityItem._id %>">
+                                    <i class="<%= communityItem.icon || 'fas fa-users' %>"></i>
+                                    <div class="community-info">
+                                        <span class="community-name">r/<%= communityItem.name %></span>
+                                        <span class="community-members"><%= communityItem.members?.length || 1 %> member<%= (communityItem.members?.length || 1) !== 1 ? 's' : '' %></span>
+                                    </div>
+                                </a>
+                            <% }); %>
+                        <% } else if (locals.user) { %>
+                            <div class="empty-state">
+                                <p>You haven't joined any communities yet</p>
+                                <div class="empty-state-buttons">
+                                    <button onclick="openJoinCommunitiesModal()" class="join-community-btn">
+                                        <i class="fas fa-users"></i>
+                                        Join Communities
+                                    </button>
+                                    <button onclick="openCreateCommunityModal()" class="create-community-btn">
+                                        <i class="fas fa-plus"></i>
+                                        Create Community
+                                    </button>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <p>Sign in to join communities</p>
+                                <a href="/login" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Sign In
+                                </a>
+                            </div>
+                        <% } %>
+                    </div>
                 </div>
 
-                <!-- Categories Section -->
+                <!-- All Communities Section -->
                 <div class="sidebar-section">
                     <h4 class="section-title">
                         <i class="fas fa-users"></i>
-                        Categories
+                        All Communities
                     </h4>
                     <div class="categories-list">
                         <% 
@@ -1794,147 +1830,529 @@
                                 </a>
                             <% }
                         }); %>
+                        <a href="/communities" class="community-item">
+                            <i class="fas fa-users"></i>
+                            <div class="community-info">
+                                <span class="community-name">All Communities</span>
+                                <span class="community-members">View all</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Create Community Modal -->
+        <div id="createCommunityModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Create New Community</h2>
+                    <span class="close" onclick="closeCreateCommunityModal()">&times;</span>
+                </div>
+                <form id="createCommunityForm" onsubmit="handleCreateCommunity(event)">
+                    <div class="form-group">
+                        <label for="communityName">Community Name</label>
+                        <input type="text" id="communityName" name="name" required 
+                               pattern="^[a-zA-Z0-9-_]+$"
+                               placeholder="Enter community name" maxlength="50">
+                        <small class="form-text">Community names must be unique and can only contain letters, numbers, hyphens and underscores</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="communityDescription">Description</label>
+                        <textarea id="communityDescription" name="description" required 
+                                  placeholder="Describe your community" maxlength="500"></textarea>
+                        <small class="form-text">Describe what your community is about in 500 characters or less</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="communityIcon">Icon</label>
+                        <select id="communityIcon" name="icon">
+                            <option value="fas fa-users">👥 Users (Default)</option>
+                            <option value="fas fa-code">💻 Code</option>
+                            <option value="fas fa-book">📚 Book</option>
+                            <option value="fas fa-lightbulb">💡 Idea</option>
+                            <option value="fas fa-comments">💬 Discussion</option>
+                            <option value="fas fa-project-diagram">🔄 Project</option>
+                            <option value="fas fa-tools">🛠️ Tools</option>
+                            <option value="fas fa-graduation-cap">🎓 Learning</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-plus"></i> Create Community
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Join Communities Modal -->
+        <div id="joinCommunitiesModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Browse Communities</h2>
+                    <span class="close" onclick="closeJoinCommunitiesModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="search-communities">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="joinCommunitySearch" placeholder="Search communities..." 
+                               onkeyup="filterJoinCommunities()">
+                    </div>
+                    <div id="joinCommunitiesList" class="join-communities-list">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading communities...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        async function updateMyCommunities() {
+            try {
+                const response = await fetch('/api/communities');
+                const communities = await response.json();
+                
+                const communityList = document.getElementById('my-communities-list');
+                
+                if (communities && communities.length > 0) {
+                    communityList.innerHTML = communities.map(comm => `
+                        <a href="/communities/${comm._id}" 
+                           class="community-item"
+                           data-community-id="${comm._id}">
+                            <i class="${comm.icon || 'fas fa-users'}"></i>
+                            <div class="community-info">
+                                <span class="community-name">r/${comm.name}</span>
+                                <span class="community-members">${comm.members?.length || 0} member${(comm.members?.length || 0) !== 1 ? 's' : ''}</span>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    communityList.innerHTML = `
+                        <div class="empty-state">
+                            <p>No communities found</p>
+                            <button onclick="openCreateCommunityModal()" class="create-community-btn">
+                                <i class="fas fa-plus"></i>
+                                Create Community
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error updating communities:', error);
+            }
+        }
+
+        function openJoinCommunitiesModal() {
+            const modal = document.getElementById('joinCommunitiesModal');
+            modal.style.display = 'block';
+            loadJoinableCommunities();
+        }
+
+        function closeJoinCommunitiesModal() {
+            const modal = document.getElementById('joinCommunitiesModal');
+            modal.style.display = 'none';
+            document.getElementById('joinCommunitySearch').value = '';
+        }
+
+        async function loadJoinableCommunities() {
+            try {
+                const response = await fetch('/api/communities');
+                const communities = await response.json();
+                
+                const communitiesList = document.getElementById('joinCommunitiesList');
+                if (communities.length === 0) {
+                    communitiesList.innerHTML = `
+                        <div class="empty-communities">
+                            <i class="fas fa-users-slash"></i>
+                            <p>No communities available</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                communitiesList.innerHTML = communities.map(comm => `
+                    <div class="joinable-community-item">
+                        <div class="community-info">
+                            <i class="${comm.icon || 'fas fa-users'}"></i>
+                            <div class="community-details">
+                                <span class="community-name">r/${comm.name}</span>
+                                <span class="community-description">${comm.description}</span>
+                                <span class="community-members">${comm.members?.length || 0} members</span>
+                            </div>
+                        </div>
+                        <button onclick="joinCommunity('${comm._id}')" class="join-btn">
+                            <i class="fas fa-plus"></i>
+                            Join
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading communities:', error);
+                document.getElementById('joinCommunitiesList').innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Failed to load communities</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function joinCommunity(communityId) {
+            try {
+                const response = await fetch(`/api/communities/${communityId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    await updateMyCommunities();
+                    await loadJoinableCommunities();
+                } else {
+                    throw new Error('Failed to join community');
+                }
+            } catch (error) {
+                console.error('Error joining community:', error);
+                alert('Failed to join community. Please try again.');
+            }
+        }
+
+        function filterJoinCommunities() {
+            const searchInput = document.getElementById('joinCommunitySearch');
+            const filter = searchInput.value.toLowerCase();
+            const communities = document.querySelectorAll('.joinable-community-item');
+            
+            communities.forEach(community => {
+                const name = community.querySelector('.community-name').textContent.toLowerCase();
+                const description = community.querySelector('.community-description').textContent.toLowerCase();
+                community.style.display = 
+                    name.includes(filter) || description.includes(filter) ? '' : 'none';
+            });
+        }
+
+        async function handleCreateCommunity(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const communityData = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/communities', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(communityData)
+                });
+                
+                if (response.ok) {
+                    const newCommunity = await response.json();
+                    closeCreateCommunityModal();
+                    event.target.reset();
+                    await updateMyCommunities();
+                    window.location.href = `/communities/${newCommunity._id}`;
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to create community');
+                }
+            } catch (error) {
+                console.error('Error creating community:', error);
+                alert(error.message || 'Failed to create community. Please try again.');
+            }
+        }
+
+        window.onclick = function(event) {
+            const createModal = document.getElementById('createCommunityModal');
+            const joinModal = document.getElementById('joinCommunitiesModal');
+            if (event.target === createModal) {
+                closeCreateCommunityModal();
+            }
+            if (event.target === joinModal) {
+                closeJoinCommunitiesModal();
+            }
+        }
+        </script>
 
         <style>
-            .modal {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--bg-card);
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-transparent);
+            outline: none;
+        }
+
+        .form-text {
+            display: block;
+            margin-top: 6px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .private-group {
+            background: var(--bg-hover);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .private-label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .private-text {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .private-info {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .search-communities {
+            position: relative;
+            margin: 20px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        #joinCommunitySearch {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .join-communities-list {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 0 20px 20px;
+        }
+
+        .joinable-community-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .joinable-community-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .community-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .community-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .community-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .community-stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .private-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: var(--bg-badge);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .join-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .join-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .request-btn {
+            background: var(--bg-button);
+            color: var(--text-primary);
+        }
+
+        .request-btn:hover {
+            background: var(--bg-button-hover);
+        }
+
+        .loading-spinner,
+        .empty-communities,
+        .error-state,
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner i,
+        .empty-communities i,
+        .error-state i,
+        .no-results i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.6);
-                z-index: 1000;
-                backdrop-filter: blur(4px);
+                max-width: none;
+                border-radius: 0;
             }
 
-            .modal-content {
-                position: relative;
-                background: var(--bg-card);
-                margin: 5% auto;
-                padding: 2rem;
-                width: 90%;
-                max-width: 600px;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            .join-communities-list {
+                max-height: calc(100vh - 180px);
             }
+        }
+        </style>
 
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 2rem;
-                padding-bottom: 1rem;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .modal-header h2 {
-                margin: 0;
-                font-size: 1.5rem;
-                color: var(--text-primary);
-                font-weight: 700;
-            }
-
-            .close {
-                font-size: 24px;
-                cursor: pointer;
-                color: var(--text-secondary);
-                transition: all 0.2s;
-                width: 2.5rem;
-                height: 2.5rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-            }
-
-            .close:hover {
-                color: var(--text-primary);
-                background: var(--bg-hover);
-            }
-
-            .form-group {
-                margin-bottom: 1.5rem;
-            }
-
-            .form-group label {
-                display: block;
-                margin-bottom: 0.75rem;
-                color: var(--text-primary);
-                font-weight: 600;
-                font-size: 1.1rem;
-            }
-
-            .form-group input[type="text"],
-            .form-group textarea,
-            .form-group select {
-                width: 100%;
-                padding: 1rem;
-                border: 2px solid var(--border);
-                border-radius: 12px;
-                background: var(--bg-input);
-                color: var(--text-primary);
-                font-size: 1rem;
-                transition: all 0.3s ease;
-            }
-
-            .form-group input[type="text"]:focus,
-            .form-group textarea:focus,
-            .form-group select:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px var(--primary-transparent);
-                outline: none;
-            }
-
-            .form-text {
-                display: block;
-                margin-top: 0.5rem;
-                color: var(--text-secondary);
-                font-size: 0.875rem;
-            }
-
-            .submit-btn {
-                width: 100%;
-                padding: 1rem;
-                background: var(--primary);
-                color: white;
-                border: none;
-                border-radius: 12px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-            }
-
-            .submit-btn:hover {
-                background: var(--primary-dark);
-                transform: translateY(-2px);
-            }
-
-            .submit-btn:active {
-                transform: translateY(1px);
-            }
-
-            @media (max-width: 768px) {
-                .modal-content {
-                    margin: 0;
-                    width: 100%;
-                    height: 100%;
-                    max-width: none;
-                    border-radius: 0;
-                }
-            }
-
+        <style>
             .categories-sidebar {
                 position: fixed;
-                left: -300px;
+                left: -300px; /* Start hidden */
                 top: 60px;
                 bottom: 0;
                 width: 300px;
@@ -1952,6 +2370,7 @@
                 transform: translateX(300px);
             }
 
+            /* Toggle button for mobile */
             .sidebar-toggle {
                 display: none;
                 position: fixed;
@@ -1980,6 +2399,14 @@
                 .categories-sidebar.active {
                     transform: translateX(100%);
                 }
+
+                .categories-sidebar:hover {
+                    width: 100%;
+                }
+            }
+
+            .categories-sidebar:hover {
+                width: 320px;
             }
 
             .sidebar-header {
@@ -1996,7 +2423,7 @@
                 font-size: 1.5rem;
                 font-weight: 700;
                 margin-bottom: 1rem;
-                color: var(--text-primary);
+                color: var(--text);
                 display: flex;
                 align-items: center;
                 gap: 0.75rem;
@@ -2011,16 +2438,16 @@
                 width: 100%;
                 padding: 0.75rem 1rem 0.75rem 2.5rem;
                 border: 2px solid var(--border);
-                border-radius: 12px;
-                background: var(--bg-input);
-                color: var(--text-primary);
+                border-radius: 1rem;
+                background: var(--bg);
+                color: var(--text);
                 font-size: 0.95rem;
                 transition: all 0.2s ease;
             }
 
             .sidebar-search input:focus {
                 border-color: var(--primary);
-                box-shadow: 0 0 0 3px var(--primary-transparent);
+                box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
                 outline: none;
             }
 
@@ -2029,7 +2456,85 @@
                 left: 1rem;
                 top: 50%;
                 transform: translateY(-50%);
-                color: var(--text-secondary);
+                color: var(--text-muted);
+            }
+
+            .create-community-btn {
+                width: 100%;
+                padding: 0.875rem;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.75rem;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+            }
+
+            .create-community-btn:hover {
+                background: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.3);
+            }
+
+            .create-community-btn:active {
+                transform: translateY(1px);
+            }
+
+            .sidebar-section {
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                color: var(--text);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .trending-posts {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .trending-post-item {
+                padding: 1rem;
+                background: var(--bg);
+                border-radius: 1rem;
+                transition: all 0.2s ease;
+                text-decoration: none;
+                border: 1px solid var(--border);
+            }
+
+            .trending-post-item:hover {
+                background: var(--bg-hover);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .trending-post-title {
+                color: var(--text);
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
+            }
+
+            .trending-post-stats {
+                display: flex;
+                gap: 1rem;
+                color: var(--text-muted);
+                font-size: 0.9rem;
             }
 
             .community-item {
@@ -2037,7 +2542,7 @@
                 align-items: center;
                 gap: 1rem;
                 padding: 1rem;
-                border-radius: 12px;
+                border-radius: 1rem;
                 text-decoration: none;
                 transition: all 0.2s ease;
                 margin-bottom: 0.5rem;
@@ -2058,8 +2563,8 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: var(--primary-transparent);
-                border-radius: 8px;
+                background: rgba(var(--primary-rgb), 0.1);
+                border-radius: 0.75rem;
             }
 
             .community-info {
@@ -2067,17 +2572,185 @@
             }
 
             .community-name {
-                color: var(--text-primary);
+                color: var(--text);
                 font-weight: 500;
                 display: block;
                 margin-bottom: 0.25rem;
             }
 
             .community-members {
-                color: var(--text-secondary);
+                color: var(--text-muted);
                 font-size: 0.875rem;
             }
 
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 1000;
+                backdrop-filter: blur(5px);
+                animation: fadeIn 0.3s ease;
+            }
+
+            .modal-content {
+                background: var(--bg-card);
+                margin: 5% auto;
+                padding: 2rem;
+                width: 90%;
+                max-width: 600px;
+                border-radius: 1.5rem;
+                position: relative;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                animation: slideIn 0.4s ease;
+            }
+
+            @media (max-width: 768px) {
+                .modal-content {
+                    margin: 2% auto;
+                    padding: 1.5rem;
+                    width: 95%;
+                }
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid var(--border);
+            }
+
+            .modal-header h2 {
+                font-size: 1.75rem;
+                font-weight: 700;
+                color: var(--text);
+            }
+
+            .close {
+                font-size: 2rem;
+                cursor: pointer;
+                color: var(--text-muted);
+                transition: all 0.2s;
+                width: 2.5rem;
+                height: 2.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+            }
+
+            .close:hover {
+                color: var(--text);
+                background: var(--bg-hover);
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.75rem;
+                color: var(--text);
+                font-weight: 600;
+                font-size: 1.1rem;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                width: 100%;
+                padding: 1rem;
+                border: 2px solid var(--border);
+                border-radius: 1rem;
+                background: var(--bg);
+                color: var(--text);
+                transition: all 0.3s ease;
+                font-size: 1rem;
+            }
+
+            .form-group input:focus,
+            .form-group textarea:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.2);
+            }
+
+            .form-group textarea {
+                min-height: 120px;
+                resize: vertical;
+                line-height: 1.6;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 1rem;
+                background: var(--primary);
+                color: white;
+                border: none;
+                border-radius: 1rem;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .submit-btn:hover {
+                background: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.3);
+            }
+
+            .submit-btn:active {
+                transform: translateY(1px);
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            @keyframes slideIn {
+                from { 
+                    transform: translateY(-40px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            /* Scrollbar Styling */
+            .categories-sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .categories-sidebar::-webkit-scrollbar-track {
+                background: var(--bg);
+            }
+
+            .categories-sidebar::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 4px;
+            }
+
+            .categories-sidebar::-webkit-scrollbar-thumb:hover {
+                background: var(--text-muted);
+            }
+
+            /* Overlay for mobile */
             .sidebar-overlay {
                 display: none;
                 position: fixed;
@@ -2098,7 +2771,7 @@
 
             @media (max-width: 768px) {
                 .categories-sidebar {
-                    padding-bottom: 80px;
+                    padding-bottom: 80px; /* Space for bottom nav on mobile */
                 }
             }
         </style>
