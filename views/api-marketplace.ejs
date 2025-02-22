@@ -285,7 +285,8 @@
     </div>
 
     <script>
-        let apis = [];
+        // Initialize apis array with data from server
+        let apis = <%- JSON.stringify(apis) %>;
 
         function openPostModal() {
             document.getElementById('postModal').style.display = 'block';
@@ -396,6 +397,9 @@
                 closePostModal();
             }
         }
+
+        // Initial render
+        renderApis();
     </script>
 </body>
 </html>
