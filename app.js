@@ -133,6 +133,31 @@ passport.use(new TwitterStrategy({
     }
   }
 ));
+// Follow/unfollow user route
+app.post('/user/:username/follow', async (req, res) => {
+  try {
+    const userToFollow = await User.findOne({ username: req.params.username });
+    const currentUser = await User.findById(req.session.user._id);
+    
+    const isFollowing = currentUser.following.includes(userToFollow._id);
+    
+    if (isFollowing) {
+      await User.findByIdAndUpdate(currentUser._id, { $pull: { following: userToFollow._id }});
+      await User.findByIdAndUpdate(userToFollow._id, { $pull: { followers: currentUser._id }});
+    } else {
+      await User.findByIdAndUpdate(currentUser._id, { $push: { following: userToFollow._id }});
+      await User.findByIdAndUpdate(userToFollow._id, { $push: { followers: currentUser._id }});
+    }
+
+    res.json({ 
+      success: true, 
+      following: !isFollowing,
+      message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating follow status' });
+  }
+});
 
 // API endpoint for creating communities
 app.post('/api/communities', async (req, res) => {
