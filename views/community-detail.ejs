@@ -199,21 +199,27 @@
       <div class="main-content">
         <h2>Recent Activity</h2>
         <div class="activity-feed">
-          <% activity.forEach(item => { %>
+          <% if (typeof activity !== 'undefined' && activity.length > 0) { %>
+            <% activity.forEach(item => { %>
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="<%= item.type === 'post' ? 'fas fa-file-alt' : 'fas fa-user-plus' %>"></i>
+                </div>
+                <div class="activity-content">
+                  <% if (item.type === 'post') { %>
+                    <p><a href="/user/<%= item.author.username %>"><%= item.author.username %></a> posted "<%= item.title %>"</p>
+                  <% } else { %>
+                    <p><a href="/user/<%= item.username %>"><%= item.username %></a> joined the community</p>
+                  <% } %>
+                  <span class="activity-time"><%= new Date(item.createdAt || item.joinedAt).toLocaleDateString() %></span>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
             <div class="activity-item">
-              <div class="activity-icon">
-                <i class="<%= item.type === 'post' ? 'fas fa-file-alt' : 'fas fa-user-plus' %>"></i>
-              </div>
-              <div class="activity-content">
-                <% if (item.type === 'post') { %>
-                  <p><a href="/user/<%= item.author.username %>"><%= item.author.username %></a> posted "<%= item.title %>"</p>
-                <% } else { %>
-                  <p><a href="/user/<%= item.username %>"><%= item.username %></a> joined the community</p>
-                <% } %>
-                <span class="activity-time"><%= new Date(item.createdAt || item.joinedAt).toLocaleDateString() %></span>
-              </div>
+              <p>No recent activity</p>
             </div>
-          <% }) %>
+          <% } %>
         </div>
       </div>
 
@@ -267,4 +273,3 @@
   </script>
 </body>
 </html>
-
