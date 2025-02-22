@@ -133,6 +133,7 @@ passport.use(new TwitterStrategy({
     }
   }
 ));
+
 // Follow/unfollow user route
 app.post('/user/:username/follow', async (req, res) => {
   try {
@@ -528,6 +529,7 @@ app.get('/api/github/repos', async (req, res) => {
     res.status(500).json({ error: 'Error fetching GitHub repositories' });
   }
 });
+
 // Follow user API endpoint
 app.post('/api/follow', async (req, res) => {
   try {
@@ -627,6 +629,7 @@ app.get('/api/communities', async (req, res) => {
   const communities = await Community.find().populate('members', 'username');
   res.json(communities);
 });
+
 // Join/Leave community
 app.post('/api/communities/:id/:action', async (req, res) => {
   try {
@@ -715,6 +718,7 @@ app.put('/api/communities/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // Get community posts
 app.get('/api/communities/:id/posts', async (req, res) => {
   try {
@@ -743,6 +747,7 @@ app.get('/api/communities/:id/posts', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // Route to communities page
 app.get('/community', async (req, res) => {
   try {
@@ -758,6 +763,7 @@ app.get('/community', async (req, res) => {
     res.status(500).json({ error: error.message }); 
   }
 });
+
 // Get single community by ID
 app.get('/community/:id', async (req, res) => {
   try {
@@ -779,10 +785,22 @@ app.get('/community/:id', async (req, res) => {
       .limit(10)
       .lean();
 
+    // Check if user is member/moderator
+    let userRole = null;
+    if (req.session.user) {
+      const userId = req.session.user._id;
+      if (community.moderators.some(mod => mod._id.toString() === userId)) {
+        userRole = 'moderator';
+      } else if (community.members.some(member => member._id.toString() === userId)) {
+        userRole = 'member';
+      }
+    }
+
     res.render('community-detail', {
       community,
       posts,
-      user: req.session.user || null
+      user: req.session.user || null,
+      userRole
     });
 
   } catch (error) {
@@ -792,6 +810,7 @@ app.get('/community/:id', async (req, res) => {
     });
   }
 });
+
 // Handle post creation
 app.post('/api/posts', async (req, res) => {
   try {
@@ -812,6 +831,11 @@ app.post('/api/posts', async (req, res) => {
       return res.status(404).json({ error: 'Community not found' });
     }
 
+    // Check if user is member of community
+    if (!community.members.includes(req.session.user._id)) {
+      return res.status(403).json({ error: 'You must be a member to post in this community' });
+    }
+
     // Check if user is banned from community
     if (community.bannedUsers && community.bannedUsers.includes(req.session.user._id)) {
       return res.status(403).json({ error: 'You are banned from posting in this community' });
@@ -822,7 +846,8 @@ app.post('/api/posts', async (req, res) => {
       title,
       content,
       author: req.session.user._id,
-      community: communityId
+      community: communityId,
+      username: req.session.user.username
     });
 
     await post.save();
@@ -837,6 +862,7 @@ app.post('/api/posts', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // Handle post voting
 app.post('/api/posts/:id/vote', async (req, res) => {
   try {
