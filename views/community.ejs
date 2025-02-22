@@ -9,11 +9,12 @@
     :root {
       --primary: #8858ED;
       --primary-dark: #6E3AD6;
-      --bg-light: #f7f7f7;
-      --text-dark: #333;
-      --text-light: #666;
-      --border: #eaeaea;
-      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --bg-dark: #1a1a1a;
+      --bg-card: #2d2d2d;
+      --text-light: #ffffff;
+      --text-muted: #999;
+      --border: #404040;
+      --shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     * {
@@ -25,8 +26,8 @@
     body {
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
-      color: var(--text-dark);
-      background: var(--bg-light);
+      color: var(--text-light);
+      background: var(--bg-dark);
     }
 
     .container {
@@ -74,6 +75,8 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 1rem;
+      background: var(--bg-card);
+      color: var(--text-light);
     }
 
     .filter-select {
@@ -81,6 +84,8 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 1rem;
+      background: var(--bg-card);
+      color: var(--text-light);
     }
 
     .communities-grid {
@@ -90,16 +95,17 @@
     }
 
     .community-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 12px;
       padding: 1.5rem;
       box-shadow: var(--shadow);
       transition: all 0.3s ease;
+      cursor: pointer;
     }
 
     .community-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
 
     .community-header {
@@ -124,11 +130,11 @@
     .community-name {
       font-size: 1.25rem;
       font-weight: 600;
-      color: var(--text-dark);
+      color: var(--text-light);
     }
 
     .community-description {
-      color: var(--text-light);
+      color: var(--text-muted);
       margin-bottom: 1rem;
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -139,7 +145,7 @@
     .community-stats {
       display: flex;
       gap: 1rem;
-      color: var(--text-light);
+      color: var(--text-muted);
       font-size: 0.9rem;
     }
 
@@ -193,7 +199,7 @@
 
     <div class="communities-grid">
       <% communities.forEach(community => { %>
-        <div class="community-card">
+        <div class="community-card" onclick="window.location.href='/communities/<%= community._id %>/posts'">
           <div class="community-header">
             <div class="community-icon">
               <i class="<%= community.icon %>"></i>
@@ -213,7 +219,8 @@
           </div>
           <% if (user) { %>
             <button class="join-btn <%= community.members.includes(user._id) ? 'joined' : '' %>" 
-                    data-community-id="<%= community._id %>">
+                    data-community-id="<%= community._id %>"
+                    onclick="event.stopPropagation()">
               <%= community.members.includes(user._id) ? 'Joined' : 'Join Community' %>
             </button>
           <% } %>
@@ -235,7 +242,6 @@
         fetch(`/api/communities/search?query=${searchTerm}&sort=${filter}`)
           .then(res => res.json())
           .then(data => {
-            // Update communities display
             updateCommunitiesDisplay(data.communities);
           })
           .catch(err => console.error('Search error:', err));
@@ -246,13 +252,15 @@
 
       // Join/Leave functionality
       document.querySelectorAll('.join-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
           const communityId = btn.dataset.communityId;
           const action = btn.classList.contains('joined') ? 'leave' : 'join';
 
           try {
             const res = await fetch(`/api/communities/${communityId}/${action}`, {
-              method: 'POST'
+              method: 'POST',
+              credentials: 'include'
             });
             const data = await res.json();
 
@@ -270,7 +278,7 @@
     function updateCommunitiesDisplay(communities) {
       const grid = document.querySelector('.communities-grid');
       grid.innerHTML = communities.map(community => `
-        <div class="community-card">
+        <div class="community-card" onclick="window.location.href='/communities/${community._id}/posts'">
           <div class="community-header">
             <div class="community-icon">
               <i class="${community.icon}"></i>
@@ -289,12 +297,42 @@
             </div>
           </div>
           ${user ? `
-            <button class="join-btn" data-community-id="${community._id}">
-              Join Community
+            <button class="join-btn ${community.isMember ? 'joined' : ''}" 
+                    data-community-id="${community._id}"
+                    onclick="event.stopPropagation()">
+              ${community.isMember ? 'Joined' : 'Join Community'}
             </button>
           ` : ''}
         </div>
       `).join('');
+
+      // Reattach event listeners
+      attachJoinButtonListeners();
+    }
+
+    function attachJoinButtonListeners() {
+      document.querySelectorAll('.join-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const communityId = btn.dataset.communityId;
+          const action = btn.classList.contains('joined') ? 'leave' : 'join';
+
+          try {
+            const res = await fetch(`/api/communities/${communityId}/${action}`, {
+              method: 'POST',
+              credentials: 'include'
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              btn.classList.toggle('joined');
+              btn.textContent = action === 'join' ? 'Joined' : 'Join Community';
+            }
+          } catch (err) {
+            console.error('Error:', err);
+          }
+        });
+      });
     }
   </script>
 </body>
