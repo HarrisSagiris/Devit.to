@@ -2851,11 +2851,7 @@
                                         @<%= comment.username %>
                                         <div class="user-popup">
                                             <div class="user-popup-header">
-                                                <div class="user-popup-avatar">
-                                                    <img src="https://github.com/<%= comment.username %>.png" 
-                                                         onerror="this.src='/images/default-avatar.png'" 
-                                                         alt="Profile">
-                                                </div>
+                                            
                                                 <div class="user-popup-info">
                                                     <div class="user-popup-name">@<%= comment.username %></div>
                                                     <div class="user-popup-joined">Member since <%= new Date(comment.authorId?.createdAt || Date.now()).toLocaleDateString() %></div>
