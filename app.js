@@ -837,6 +837,160 @@ app.post('/api/posts', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Handle post voting
+app.post('/api/posts/:id/vote', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const { type } = req.body;
+    const userId = req.session.user._id;
+
+    // Handle upvote
+    if (type === 'up') {
+      if (post.votes.includes(userId)) {
+        // Remove upvote if already voted
+        post.votes = post.votes.filter(id => id.toString() !== userId.toString());
+      } else {
+        // Add upvote and remove downvote if exists
+        post.votes.push(userId);
+        post.downvotes = post.downvotes.filter(id => id.toString() !== userId.toString());
+      }
+    }
+
+    // Handle downvote 
+    if (type === 'down') {
+      if (post.downvotes.includes(userId)) {
+        // Remove downvote if already downvoted
+        post.downvotes = post.downvotes.filter(id => id.toString() !== userId.toString());
+      } else {
+        // Add downvote and remove upvote if exists
+        post.downvotes.push(userId);
+        post.votes = post.votes.filter(id => id.toString() !== userId.toString());
+      }
+    }
+
+    await post.save();
+
+    res.json({
+      success: true,
+      votes: post.votes.length - post.downvotes.length,
+      userVote: post.votes.includes(userId) ? 'up' : post.downvotes.includes(userId) ? 'down' : null
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Handle post comments
+app.post('/api/posts/:id/comments', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    const { content } = req.body;
+    if (!content) {
+      return res.status(400).json({ error: 'Comment content is required' });
+    }
+
+    const comment = {
+      content,
+      user: req.session.user,
+      createdAt: new Date()
+    };
+
+    post.comments.unshift(comment);
+    await post.save();
+
+    res.json({
+      success: true,
+      comment
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Handle post deletion
+app.delete('/api/posts/:id', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Check if user is post author
+    if (post.author.toString() !== req.session.user._id.toString()) {
+      return res.status(403).json({ error: 'Not authorized to delete this post' });
+    }
+
+    // Remove post from community
+    const community = await Community.findById(post.community);
+    if (community) {
+      community.posts = community.posts.filter(p => p.toString() !== post._id.toString());
+      await community.save();
+    }
+
+    await post.remove();
+    res.json({ success: true });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Handle community join/leave
+app.post('/api/communities/:id/:action', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const { id, action } = req.params;
+    const userId = req.session.user._id;
+
+    const community = await Community.findById(id);
+    if (!community) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    if (action === 'join') {
+      if (!community.members.includes(userId)) {
+        community.members.push(userId);
+      }
+    } else if (action === 'leave') {
+      community.members = community.members.filter(member => 
+        member.toString() !== userId.toString()
+      );
+    } else {
+      return res.status(400).json({ error: 'Invalid action' });
+    }
+
+    await community.save();
+    res.json({ success: true });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Handle community moderation
 app.post('/api/communities/:id/moderate', async (req, res) => {

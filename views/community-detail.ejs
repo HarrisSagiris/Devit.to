@@ -19,6 +19,8 @@
       --text-muted: #999;
       --border: #404040;
       --shadow: 0 2px 8px rgba(0,0,0,0.3);
+      --upvote: #4CAF50;
+      --downvote: #f44336;
     }
 
     * {
@@ -48,6 +50,7 @@
       display: flex;
       align-items: center;
       gap: 2rem;
+      box-shadow: var(--shadow);
     }
 
     .community-icon {
@@ -60,6 +63,7 @@
       justify-content: center;
       font-size: 2.5rem;
       color: white;
+      box-shadow: var(--shadow);
     }
 
     .community-info h1 {
@@ -71,6 +75,7 @@
     .community-description {
       color: var(--text-muted);
       margin-bottom: 1rem;
+      font-size: 1.1rem;
     }
 
     .community-stats {
@@ -83,6 +88,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-size: 1.1rem;
     }
 
     .content-grid {
@@ -95,6 +101,7 @@
       background: var(--bg-card);
       border-radius: 12px;
       padding: 1.5rem;
+      box-shadow: var(--shadow);
     }
 
     .sidebar {
@@ -102,6 +109,7 @@
       border-radius: 12px;
       padding: 1.5rem;
       height: fit-content;
+      box-shadow: var(--shadow);
     }
 
     .member-list {
@@ -121,6 +129,14 @@
       justify-content: center;
       color: white;
       font-size: 1.5rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .member-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .join-btn {
@@ -133,27 +149,172 @@
       font-weight: 600;
       cursor: pointer;
       margin-top: 1rem;
+      transition: all 0.2s;
     }
 
     .join-btn:hover {
       background: var(--primary-dark);
+      transform: translateY(-2px);
     }
 
-    /* Post styles from index.ejs */
+    .join-btn.joined {
+      background: var(--bg-dark);
+      border: 2px solid var(--primary);
+    }
+
     .feed {
       margin-top: 2rem;
     }
 
     .post {
-      background: var(--bg-card);
+      background: var(--bg-dark);
       border-radius: 12px;
-      margin-bottom: 1rem;
-      padding: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .post:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
     }
 
     .post-content-wrapper {
       display: flex;
+      gap: 1.5rem;
+    }
+
+    .post-votes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 40px;
+    }
+
+    .vote-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1.2rem;
+    }
+
+    .vote-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .vote-btn.upvote.active {
+      color: var(--upvote);
+    }
+
+    .vote-btn.downvote.active {
+      color: var(--downvote);
+    }
+
+    .vote-count {
+      font-weight: 600;
+      color: var(--text-light);
+    }
+
+    .post-main {
+      flex: 1;
+    }
+
+    .post-main h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .post-main h2 a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .post-main h2 a:hover {
+      color: var(--primary);
+    }
+
+    .post-content {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
       gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .post-meta a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .post-meta a:hover {
+      text-decoration: underline;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .action-btn:hover {
+      color: var(--primary);
+    }
+
+    .comments-section {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .comment {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: var(--bg-dark);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .comment-form {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .comment-input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      resize: vertical;
     }
 
     .new-post-btn {
@@ -167,11 +328,28 @@
       border-radius: 8px;
       cursor: pointer;
       margin-bottom: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .new-post-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
     }
 
     .post-modal {
       display: none;
       position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -180,7 +358,7 @@
       border-radius: 12px;
       width: 90%;
       max-width: 600px;
-      z-index: 1000;
+      box-shadow: var(--shadow);
     }
 
     .post-form {
@@ -190,13 +368,48 @@
     }
 
     .post-form input,
-    .post-form select,
     .post-form textarea {
       padding: 0.75rem;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: var(--bg-dark);
       color: var(--text-light);
+      font-size: 1rem;
+    }
+
+    .post-form textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: var(--bg-dark);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
     }
   </style>
 </head>
@@ -229,19 +442,21 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            New Post
+            Create Post
           </button>
           
           <div class="post-modal" id="post-modal">
-            <form class="post-form" id="new-post-form">
-              <input type="text" name="title" placeholder="Post title" required>
-              <input type="hidden" name="communityId" value="<%= community._id %>">
-              <textarea name="content" placeholder="Describe your post..." required></textarea>
-              <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button type="button" class="btn" id="cancel-post" style="background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s;">Cancel</button>
-                <button type="submit" class="btn">Post</button>
-              </div>
-            </form>
+            <div class="modal-content">
+              <form class="post-form" id="new-post-form">
+                <input type="text" name="title" placeholder="Post title" required>
+                <input type="hidden" name="communityId" value="<%= community._id %>">
+                <textarea name="content" placeholder="What's on your mind?" required></textarea>
+                <div class="form-buttons">
+                  <button type="button" class="btn btn-secondary" id="cancel-post">Cancel</button>
+                  <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+              </form>
+            </div>
           </div>
         <% } %>
 
@@ -251,23 +466,77 @@
               <article class="post" id="post-<%= post._id %>">
                 <div class="post-content-wrapper">
                   <div class="post-votes">
-                    <!-- Post votes content -->
+                    <button class="vote-btn upvote <%= post.votes && post.votes.includes(user?._id) ? 'active' : '' %>" 
+                            onclick="handleVote('<%= post._id %>', 'up')" 
+                            <%= !user ? 'disabled' : '' %>>
+                      <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <span class="vote-count"><%= post.votes ? post.votes.length : 0 %></span>
+                    <button class="vote-btn downvote <%= post.downvotes && post.downvotes.includes(user?._id) ? 'active' : '' %>"
+                            onclick="handleVote('<%= post._id %>', 'down')"
+                            <%= !user ? 'disabled' : '' %>>
+                      <i class="fas fa-arrow-down"></i>
+                    </button>
                   </div>
                   <div class="post-main">
                     <h2><a href="/posts/<%= post._id %>"><%= post.title %></a></h2>
-                    <p><%= post.content %></p>
+                    <p class="post-content"><%= post.content %></p>
                     <div class="post-meta">
-                      Posted by <a href="/user/<%= post.user ? post.user.username : 'unknown' %>">
-                        <%= post.user ? post.user.username : 'unknown' %>
-                      </a>
-                      on <%= new Date(post.createdAt).toLocaleDateString() %>
+                      Posted by 
+                      <% if (post.user) { %>
+                        <a href="/user/<%= post.user.username %>"><%= post.user.username %></a>
+                      <% } else { %>
+                        <span>deleted user</span>
+                      <% } %>
+                      <span title="<%= new Date(post.createdAt).toLocaleString() %>">
+                        <%= new Date(post.createdAt).toLocaleDateString() %>
+                      </span>
+                    </div>
+                    <div class="post-actions">
+                      <button class="action-btn" onclick="toggleComments('<%= post._id %>')">
+                        <i class="far fa-comment"></i>
+                        <span><%= post.comments ? post.comments.length : 0 %> Comments</span>
+                      </button>
+                      <button class="action-btn">
+                        <i class="far fa-share-square"></i>
+                        <span>Share</span>
+                      </button>
+                      <% if (user && post.user && post.user._id === user._id) { %>
+                        <button class="action-btn" onclick="deletePost('<%= post._id %>')">
+                          <i class="far fa-trash-alt"></i>
+                          <span>Delete</span>
+                        </button>
+                      <% } %>
+                    </div>
+                    <div class="comments-section" id="comments-<%= post._id %>" style="display: none;">
+                      <% if (user) { %>
+                        <form class="comment-form" onsubmit="handleComment(event, '<%= post._id %>')">
+                          <textarea class="comment-input" placeholder="Add a comment..." required></textarea>
+                          <button type="submit" class="btn btn-primary">Comment</button>
+                        </form>
+                      <% } %>
+                      <div class="comments-list" id="comments-list-<%= post._id %>">
+                        <% if (post.comments && post.comments.length > 0) { %>
+                          <% post.comments.forEach(comment => { %>
+                            <div class="comment">
+                              <div class="post-meta">
+                                <a href="/user/<%= comment.user.username %>"><%= comment.user.username %></a>
+                                <span><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                              </div>
+                              <p><%= comment.content %></p>
+                            </div>
+                          <% }) %>
+                        <% } %>
+                      </div>
                     </div>
                   </div>
                 </div>
               </article>
             <% }) %>
           <% } else { %>
-            <p>No posts in this community yet. Be the first to post!</p>
+            <div class="post">
+              <p>No posts in this community yet. Be the first to post!</p>
+            </div>
           <% } %>
         </div>
       </div>
@@ -322,6 +591,92 @@
       }
     }
 
+    async function handleVote(postId, type) {
+      try {
+        const response = await fetch(`/api/posts/${postId}/vote`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ type })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          const voteCount = document.querySelector(`#post-${postId} .vote-count`);
+          voteCount.textContent = data.votes;
+          
+          const upvoteBtn = document.querySelector(`#post-${postId} .upvote`);
+          const downvoteBtn = document.querySelector(`#post-${postId} .downvote`);
+          
+          upvoteBtn.classList.toggle('active', data.userVote === 'up');
+          downvoteBtn.classList.toggle('active', data.userVote === 'down');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to vote');
+      }
+    }
+
+    async function handleComment(event, postId) {
+      event.preventDefault();
+      const form = event.target;
+      const content = form.querySelector('textarea').value;
+
+      try {
+        const response = await fetch(`/api/posts/${postId}/comments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          const commentsList = document.querySelector(`#comments-list-${postId}`);
+          const newComment = document.createElement('div');
+          newComment.className = 'comment';
+          newComment.innerHTML = `
+            <div class="post-meta">
+              <a href="/user/${data.comment.user.username}">${data.comment.user.username}</a>
+              <span>Just now</span>
+            </div>
+            <p>${data.comment.content}</p>
+          `;
+          commentsList.prepend(newComment);
+          form.reset();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to post comment');
+      }
+    }
+
+    function toggleComments(postId) {
+      const commentsSection = document.querySelector(`#comments-${postId}`);
+      commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function deletePost(postId) {
+      if (!confirm('Are you sure you want to delete this post?')) return;
+
+      try {
+        const response = await fetch(`/api/posts/${postId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          const post = document.querySelector(`#post-${postId}`);
+          post.remove();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to delete post');
+      }
+    }
+
     // Post modal functionality
     const newPostBtn = document.getElementById('new-post-btn');
     const postModal = document.getElementById('post-modal');
@@ -366,6 +721,14 @@
         }
       });
     }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === postModal) {
+        postModal.style.display = 'none';
+        newPostForm.reset();
+      }
+    });
   </script>
 </body>
 </html>
