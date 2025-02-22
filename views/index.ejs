@@ -2039,7 +2039,149 @@
             }
         }
         </script>
+        <script>
+            // Tech stacks data and rendering
+            const techStacks = [
+                { name: 'MERN Stack', trend: '+12%', users: '234K', color: '#61DAFB' },
+                { name: 'LAMP Stack', trend: '+5%', users: '189K', color: '#777BB3' }, 
+                { name: 'JAMstack', trend: '+25%', users: '156K', color: '#F0047F' },
+                { name: 'Python/Django', trend: '+8%', users: '145K', color: '#092E20' },
+                { name: 'Ruby on Rails', trend: '+2%', users: '134K', color: '#CC0000' }
+            ];
 
+            const sidebar = document.createElement('div');
+            sidebar.className = 'tech-sidebar';
+            document.body.appendChild(sidebar);
+
+            function renderTechStacks() {
+                sidebar.innerHTML = `
+                    <div class="sidebar-header">
+                        <h3>Trending Tech Stacks</h3>
+                        <span class="live-indicator">LIVE</span>
+                    </div>
+                    ${techStacks.map((stack, index) => `
+                        <div class="stack-card">
+                            <div class="stack-rank">${index + 1}</div>
+                            <div class="stack-info">
+                                <div class="stack-name">${stack.name}</div>
+                                <div class="stack-stats">
+                                    <span class="trend" style="color: ${stack.trend.includes('+') ? '#00C853' : '#FF3D00'}">
+                                        ${stack.trend}
+                                    </span>
+                                    <span class="users">${stack.users} devs</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+            }
+
+            renderTechStacks();
+
+            // Update every 30 seconds
+            setInterval(() => {
+                // Simulate live updates
+                techStacks.forEach(stack => {
+                    const change = Math.floor(Math.random() * 5) - 2;
+                    const currentTrend = parseInt(stack.trend);
+                    stack.trend = `${change >= 0 ? '+' : ''}${currentTrend + change}%`;
+                });
+                renderTechStacks();
+            }, 30000);
+        </script>
+        <style>
+            .tech-sidebar {
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                width: 300px;
+                background: rgba(30, 41, 59, 0.8);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                z-index: 100;
+            }
+
+            .sidebar-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar-header h3 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--text);
+                margin: 0;
+            }
+
+            .live-indicator {
+                background: #00C853;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                animation: pulse 2s infinite;
+            }
+
+            .stack-card {
+                display: flex;
+                align-items: center;
+                padding: 12px;
+                margin: 8px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .stack-card:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateX(-4px);
+            }
+
+            .stack-rank {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: var(--text-muted);
+                width: 30px;
+            }
+
+            .stack-info {
+                flex: 1;
+            }
+
+            .stack-name {
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 4px;
+            }
+
+            .stack-stats {
+                display: flex;
+                gap: 12px;
+                font-size: 0.85rem;
+            }
+
+            .trend {
+                font-weight: 600;
+            }
+
+            .users {
+                color: var(--text-muted);
+            }
+
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
+        </style>
         <style>
         .modal {
             display: none;
