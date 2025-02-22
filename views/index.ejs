@@ -2506,18 +2506,20 @@
                     </div>
                     <div class="post-main">
                         <div class="post-header">
-                            <div class="post-meta">
-                                Posted in <%= post.category %> by 
-                                <span class="user-info">
-                                    @<%= post.username %>
-                                    <% if (user && user.username !== post.username) { %>
-                                        <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
-                                                data-username="<%= post.username %>">
-                                            <%= user.following?.includes(post.username) ? 'Following' : 'Follow' %>
-                                        </button>
-                                    <% } %>
-                                </span>
-                                • <%= new Date(post.createdAt).toLocaleDateString() %>
+                            <div class="post-meta" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    Posted in <%= post.category %> by 
+                                    <span class="user-info">
+                                        @<%= post.username %>
+                                    </span>
+                                    • <%= new Date(post.createdAt).toLocaleDateString() %>
+                                </div>
+                                <% if (user && user.username !== post.username) { %>
+                                    <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
+                                            data-username="<%= post.username %>">
+                                        <%= user.following?.includes(post.username) ? 'Following' : 'Follow' %>
+                                    </button>
+                                <% } %>
                             </div>
                             <h3 class="post-title"><%= post.title %></h3>
                             <div class="post-content">
