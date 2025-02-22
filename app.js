@@ -813,14 +813,9 @@ app.get('/community/:id', async (req, res) => {
 // Render API marketplace page
 app.get('/api-marketplace', async (req, res) => {
   try {
-    // Get list of APIs to display
-    const apis = await API.find()
-      .sort({ createdAt: -1 })
-      .lean();
-
     res.render('api-marketplace', {
       user: req.session.user || null,
-      apis: apis
+      apis: [] // Make sure this is defined and contains your API data
     });
   } catch (error) {
     res.status(500).render('error', {
