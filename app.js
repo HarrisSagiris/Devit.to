@@ -758,6 +758,40 @@ app.get('/community', async (req, res) => {
     res.status(500).json({ error: error.message }); 
   }
 });
+// Get single community by ID
+app.get('/community/:id', async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.id)
+      .populate('members', 'username')
+      .populate('moderators', 'username')
+      .lean();
+
+    if (!community) {
+      return res.status(404).render('error', { 
+        message: 'Community not found',
+        user: req.session.user || null
+      });
+    }
+
+    const posts = await Post.find({ community: req.params.id })
+      .populate('user', 'username')
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    res.render('community-detail', {
+      community,
+      posts,
+      user: req.session.user || null
+    });
+
+  } catch (error) {
+    res.status(500).render('error', {
+      message: error.message,
+      user: req.session.user || null
+    });
+  }
+});
 
 // Handle community moderation
 app.post('/api/communities/:id/moderate', async (req, res) => {
