@@ -2835,6 +2835,7 @@
                             gap: 4px;
                         }
                     </style>
+
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
                             <input type="text" name="content" placeholder="Add a comment..." required>
@@ -2847,7 +2848,7 @@
                         <% post.comments.forEach(comment => { %>
                             <div class="comment" id="comment-<%= comment._id %>">
                                 <div class="comment-header">
-                                    <span class="comment-username" onmouseover="loadUserData(this, '<%= comment.authorId %>')" onmouseout="hideUserPopup(this)">
+                                    <span class="comment-username">
                                         @<%= comment.username %>
                                         <div class="user-popup">
                                             <div class="user-popup-header">
@@ -2856,28 +2857,53 @@
                                                 </div>
                                                 <div class="user-popup-info">
                                                     <div class="user-popup-name">@<%= comment.username %></div>
-                                                    <div class="user-popup-joined">Loading...</div>
+                                                    <div class="user-popup-joined">Member since <%= new Date(comment.authorId?.createdAt || Date.now()).toLocaleDateString() %></div>
                                                 </div>
                                             </div>
                                             <div class="user-popup-stats">
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value">...</span>
+                                                    <span class="stat-value"><%= comment.authorId?.points || 0 %></span>
                                                     <span class="stat-label">Points</span>
                                                 </div>
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value">...</span>
+                                                    <span class="stat-value"><%= comment.authorId?.totalComments || 0 %></span>
                                                     <span class="stat-label">Comments</span>
                                                 </div>
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value">...</span>
+                                                    <span class="stat-value"><%= comment.authorId?.totalLikes || 0 %></span>
                                                     <span class="stat-label">Likes Received</span>
                                                 </div>
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value">...</span>
+                                                    <span class="stat-value"><%= comment.authorId?.posts?.length || 0 %></span>
                                                     <span class="stat-label">Posts</span>
                                                 </div>
                                             </div>
-                                            <div class="user-popup-badges"></div>
+                                            <div class="user-popup-badges">
+                                                <% if (comment.authorId?.points >= 1000) { %>
+                                                    <div class="user-badge" style="background: #ff6b6b">
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                                                        </svg>
+                                                        Top Contributor
+                                                    </div>
+                                                <% } %>
+                                                <% if (comment.authorId?.totalComments >= 100) { %>
+                                                    <div class="user-badge" style="background: #4f46e5">
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
+                                                        </svg>
+                                                        Chatty
+                                                    </div>
+                                                <% } %>
+                                                <% if (comment.authorId?.totalLikes >= 500) { %>
+                                                    <div class="user-badge" style="background: #10b981">
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
+                                                        </svg>
+                                                        Well-Liked
+                                                    </div>
+                                                <% } %>
+                                            </div>
                                         </div>
                                     </span>
                                 </div>
@@ -2893,62 +2919,6 @@
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
                                     <script>
-                                        async function loadUserData(element, userId) {
-                                            try {
-                                                const response = await fetch(`/api/users/${userId}`);
-                                                const userData = await response.json();
-                                                
-                                                const popup = element.querySelector('.user-popup');
-                                                const joined = popup.querySelector('.user-popup-joined');
-                                                const stats = popup.querySelectorAll('.stat-value');
-                                                const badges = popup.querySelector('.user-popup-badges');
-                                                
-                                                joined.textContent = `Member since ${new Date(userData.createdAt).toLocaleDateString()}`;
-                                                stats[0].textContent = userData.points || 0;
-                                                stats[1].textContent = userData.totalComments || 0;
-                                                stats[2].textContent = userData.totalLikes || 0;
-                                                stats[3].textContent = userData.posts?.length || 0;
-                                                
-                                                badges.innerHTML = '';
-                                                
-                                                if (userData.points >= 1000) {
-                                                    badges.innerHTML += `
-                                                        <div class="user-badge" style="background: #ff6b6b">
-                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                                            </svg>
-                                                            Top Contributor
-                                                        </div>`;
-                                                }
-                                                
-                                                if (userData.totalComments >= 100) {
-                                                    badges.innerHTML += `
-                                                        <div class="user-badge" style="background: #4f46e5">
-                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
-                                                            </svg>
-                                                            Chatty
-                                                        </div>`;
-                                                }
-                                                
-                                                if (userData.totalLikes >= 500) {
-                                                    badges.innerHTML += `
-                                                        <div class="user-badge" style="background: #10b981">
-                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
-                                                            </svg>
-                                                            Well-Liked
-                                                        </div>`;
-                                                }
-                                            } catch (error) {
-                                                console.error('Error loading user data:', error);
-                                            }
-                                        }
-
-                                        function hideUserPopup(element) {
-                                            // Optional: Add hide logic if needed
-                                        }
-
                                         async function likeComment(button, commentId, postId) {
                                             try {
                                                 const response = await fetch(`/api/posts/${postId}/comments/${commentId}/like`, {
