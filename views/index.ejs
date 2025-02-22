@@ -1707,7 +1707,8 @@
                         <% if (locals.user && locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
                             <% locals.myCommunities.forEach(community => { %>
                                 <a href="/community/<%= community._id %>" 
-                                   class="community-item">
+                                   class="community-item"
+                                   data-community-id="<%= community._id %>">
                                     <i class="<%= community.icon || 'fas fa-users' %>"></i>
                                     <div class="community-info">
                                         <span class="community-name">r/<%= community.name %></span>
@@ -1876,6 +1877,73 @@
                 </form>
             </div>
         </div>
+
+        <script>
+        async function updateMyCommunities() {
+            try {
+                const response = await fetch('/api/my-communities');
+                const communities = await response.json();
+                
+                const communityList = document.getElementById('my-communities-list');
+                
+                if (communities && communities.length > 0) {
+                    communityList.innerHTML = communities.map(community => `
+                        <a href="/community/${community._id}" 
+                           class="community-item"
+                           data-community-id="${community._id}">
+                            <i class="${community.icon || 'fas fa-users'}"></i>
+                            <div class="community-info">
+                                <span class="community-name">r/${community.name}</span>
+                                <span class="community-members">${community.members?.length || 1} member${(community.members?.length || 1) !== 1 ? 's' : ''}</span>
+                            </div>
+                        </a>
+                    `).join('');
+                } else {
+                    communityList.innerHTML = `
+                        <div class="empty-state">
+                            <p>You haven't joined any communities yet</p>
+                            <button onclick="openCreateCommunityModal()" class="create-community-btn">
+                                <i class="fas fa-plus"></i>
+                                Create Your First Community
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error updating communities:', error);
+            }
+        }
+
+        // Update the handleCreateCommunity function to refresh the communities list
+        async function handleCreateCommunity(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const communityData = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/communities', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(communityData)
+                });
+                
+                if (response.ok) {
+                    const newCommunity = await response.json();
+                    closeCreateCommunityModal();
+                    await updateMyCommunities(); // Refresh the communities list
+                    window.location.href = `/community/${newCommunity._id}`; // Redirect to the new community
+                } else {
+                    throw new Error('Failed to create community');
+                }
+            } catch (error) {
+                console.error('Error creating community:', error);
+                alert('Failed to create community. Please try again.');
+            }
+        }
+        </script>
 
         <style>
             .categories-sidebar {
