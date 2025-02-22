@@ -743,6 +743,22 @@ app.get('/api/communities/:id/posts', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Route to communities page
+app.get('/communities', async (req, res) => {
+  try {
+    const communities = await Community.find()
+      .select('name description icon members posts banner')
+      .lean();
+
+    res.render('community', {
+      communities,
+      user: req.session.user || null
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message }); 
+  }
+});
+
 // Handle community moderation
 app.post('/api/communities/:id/moderate', async (req, res) => {
   try {
