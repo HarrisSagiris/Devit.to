@@ -2040,18 +2040,37 @@
         }
         </script>
         <script>
-            // Tech news data and rendering
-            const techNews = [
-                { title: 'TypeScript 5.3 Released with New Features', time: '2h ago', source: 'Dev News', reactions: '1.2K' },
-                { title: 'Next.js App Router Adoption Surges', time: '4h ago', source: 'Web Weekly', reactions: '856' },
-                { title: 'AI Code Assistants Transform Development', time: '6h ago', source: 'Tech Insider', reactions: '2.1K' },
-                { title: 'Rust Gains Traction in System Programming', time: '12h ago', source: 'Programming Today', reactions: '945' },
-                { title: 'New Web Performance APIs Announced', time: '1d ago', source: 'Browser News', reactions: '678' }
-            ];
+            // Tech news data and rendering with real news API
+            let techNews = [];
+
+            async function fetchTechNews() {
+                try {
+                    const response = await fetch('https://newsapi.org/v2/top-headlines?category=technology&apiKey=YOUR_API_KEY');
+                    const data = await response.json();
+                    
+                    techNews = data.articles.slice(0,5).map(article => ({
+                        title: article.title,
+                        time: new Date(article.publishedAt).toRelative(),
+                        source: article.source.name,
+                        reactions: Math.floor(Math.random() * 2000) + 500 + 'K'
+                    }));
+                } catch (error) {
+                    console.error('Error fetching news:', error);
+                    // Fallback data if API fails
+                    techNews = [
+                        { title: 'Failed to load news', time: 'now', source: 'System', reactions: '0' }
+                    ];
+                }
+            }
 
             function renderTechNews() {
-                const newsSection = document.createElement('section');
+                const newsSection = document.createElement('section'); 
                 newsSection.className = 'news-section';
+                newsSection.style.position = 'fixed';
+                newsSection.style.right = '20px';
+                newsSection.style.top = '100px';
+                newsSection.style.width = '350px';
+                
                 newsSection.innerHTML = `
                     <div class="news-container">
                         <div class="news-header">
@@ -2074,10 +2093,8 @@
                         </div>
                     </div>
                 `;
-                
-                // Insert after the main content
-                const mainContent = document.querySelector('main') || document.body;
-                mainContent.appendChild(newsSection);
+
+                document.body.appendChild(newsSection);
             }
 
             renderTechNews();
