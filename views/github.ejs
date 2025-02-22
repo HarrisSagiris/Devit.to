@@ -8,21 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #1DA1F2;
-            --primary-hover: #1a91da;
-            --bg: #000000;
-            --bg-card: #16181c;
-            --text: #ffffff;
-            --text-muted: #71767b;
-            --border: #2f3336;
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #0F172A;
+            --bg-card: #1E293B;
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border: #334155;
             --shadow: 0 4px 12px rgba(0,0,0,0.3);
-            --gradient: linear-gradient(135deg, #1DA1F2, #1a91da);
-            --upvote: #00BA7C;
-            --downvote: #F4212E;
-            --source-github: #6e5494;
-            --source-reddit: #ff4500;
-            --source-devto: #0a0a0a;
-            --source-hackernews: #ff6600;
+            --gradient: linear-gradient(135deg, #4F46E5, #4338CA);
+            --upvote: #22C55E;
+            --downvote: #EF4444;
+            --bookmark: #EAB308;
         }
 
         * {
@@ -34,7 +31,7 @@
         body {
             background-color: var(--bg);
             min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', sans-serif;
             color: var(--text);
             line-height: 1.6;
         }
@@ -46,478 +43,292 @@
         }
 
         .header {
-            text-align: center;
-            padding: 2rem 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
             background: var(--bg-card);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .header h1 {
-            font-size: 3rem;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--text);
-            margin-bottom: 0.5rem;
             background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .header p {
-            color: var(--text-muted);
-            font-size: 1.2rem;
+        .search-bar {
+            position: relative;
+            width: 300px;
         }
 
-        .news-filters {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 1rem;
-            background: var(--bg-card);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-
-        .filter-btn {
-            background: var(--bg-card);
-            border: 2px solid var(--border);
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--bg);
             color: var(--text);
-            padding: 0.75rem 1.5rem;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.875rem;
         }
 
-        .filter-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(29, 161, 242, 0.4);
+        .search-bar i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
         }
 
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
         .news-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.3s;
-            position: relative;
+            border-radius: 1rem;
             overflow: hidden;
-            box-shadow: var(--shadow);
+            transition: transform 0.2s;
         }
 
         .news-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            transform: translateY(-4px);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
         }
 
         .news-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
+            padding: 1.5rem;
         }
 
-        .news-source {
-            color: var(--text-muted);
-            font-size: 0.95rem;
+        .news-meta {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
-        .source-tag {
-            padding: 0.35rem 1rem;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .source-tag.github {
-            background: var(--source-github);
-            color: white;
-        }
-
-        .source-tag.reddit {
-            background: var(--source-reddit);
-            color: white;
-        }
-
-        .source-tag.devto {
-            background: var(--source-devto);
-            color: white;
-        }
-
-        .source-tag.hackernews {
-            background: var(--source-hackernews);
-            color: white;
+        .source-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
         }
 
         .news-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1.4;
-        }
-
-        .news-description {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .read-more {
-            color: var(--primary);
-            text-decoration: none;
             font-size: 1rem;
             font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-            padding: 0.5rem 1rem;
-            border-radius: 12px;
-            background: rgba(29, 161, 242, 0.1);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .read-more:hover {
-            color: var(--primary-hover);
-            gap: 0.75rem;
-            background: rgba(29, 161, 242, 0.2);
-        }
-
-        .vote-buttons {
+        .news-actions {
             display: flex;
-            gap: 2rem;
-            margin-top: 1.5rem;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1rem;
             border-top: 1px solid var(--border);
-            padding-top: 1.5rem;
         }
 
-        .vote-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        .action-btn {
             background: transparent;
             border: none;
+            color: var(--text-muted);
             cursor: pointer;
-            color: var(--text-muted);
-            font-size: 1rem;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            transition: all 0.3s;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
         }
 
-        .vote-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+        .action-btn:hover {
+            background: rgba(255,255,255,0.1);
         }
 
-        .vote-btn.active.upvote {
+        .action-btn.upvoted {
             color: var(--upvote);
-            background: rgba(0, 186, 124, 0.1);
         }
 
-        .loading {
-            text-align: center;
-            padding: 4rem;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            background: var(--bg-card);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-
-        .loading i {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
+        .action-btn.bookmarked {
+            color: var(--bookmark);
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
+            .search-bar {
+                display: none;
             }
             
-            .header {
-                padding: 1.5rem 0;
-            }
-
-            .header h1 {
-                font-size: 2.2rem;
-            }
-
             .news-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .filter-btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Tech News Hub</h1>
-            <p>Your daily dose of developer news, tech updates, and trending stories</p>
-        </div>
-
-        <div class="news-filters">
-            <button class="filter-btn active">All Sources</button>
-            <button class="filter-btn">Hacker News</button>
-            <button class="filter-btn">GitHub Trending</button>
-            <button class="filter-btn">Dev.to</button>
-            <button class="filter-btn">Reddit Tech</button>
-        </div>
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">DevNews</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search developer news...">
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="action-btn">
+                    <i class="fas fa-filter"></i>
+                    Filter
+                </button>
+            </div>
+        </header>
 
         <div id="news-container" class="news-grid">
-            <div class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <span>Fetching the latest tech news...</span>
-            </div>
+            <!-- News cards will be dynamically inserted here -->
         </div>
     </div>
 
     <script>
-        const fetchAllNews = async () => {
+        let newsData = [];
+        let userVotes = new Map();
+        let userBookmarks = new Set();
+
+        async function fetchNews() {
             try {
-                // Fetch from multiple sources in parallel
-                const [hackerNews, githubTrending, devtoNews, redditTech] = await Promise.all([
-                    fetchHackerNews(),
-                    fetchGithubTrending(),
-                    fetchDevtoNews(),
-                    fetchRedditTech()
-                ]);
-
-                const allNews = [...hackerNews, ...githubTrending, ...devtoNews, ...redditTech]
-                    .sort((a, b) => b.time - a.time);
-
-                displayNews(allNews);
+                const response = await fetch('/api/news');
+                newsData = await response.json();
+                renderNews();
             } catch (error) {
-                console.error('Error fetching news:', error);
+                console.error('Failed to fetch news:', error);
                 showError();
             }
-        };
+        }
 
-        const fetchHackerNews = async () => {
-            const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
-            const storyIds = await response.json();
-            const top30Ids = storyIds.slice(0, 30); // Increased from 15 to 30 stories
-            
-            const stories = await Promise.all(
-                top30Ids.map(id => 
-                    fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-                    .then(response => response.json())
-                    .then(story => ({
-                        ...story,
-                        source: 'hackernews'
-                    }))
-                )
-            );
-            return stories;
-        };
-
-        const fetchGithubTrending = async () => {
-            // Simulated GitHub trending fetch with more results
-            const mockTrending = Array(20).fill(null).map((_, i) => ({
-                id: `gh-${i}`,
-                title: `Trending GitHub Project ${i + 1}`,
-                url: 'https://github.com',
-                by: 'github_user',
-                score: Math.floor(Math.random() * 1000),
-                time: Date.now() / 1000 - Math.random() * 86400,
-                source: 'github'
-            }));
-            return mockTrending;
-        };
-
-        const fetchDevtoNews = async () => {
-            // Simulated Dev.to news fetch with more results
-            const mockDevto = Array(20).fill(null).map((_, i) => ({
-                id: `dev-${i}`,
-                title: `Dev.to Article ${i + 1}`,
-                url: 'https://dev.to',
-                by: 'dev_user',
-                score: Math.floor(Math.random() * 500),
-                time: Date.now() / 1000 - Math.random() * 86400,
-                source: 'devto'
-            }));
-            return mockDevto;
-        };
-
-        const fetchRedditTech = async () => {
-            // Simulated Reddit tech news fetch with more results
-            const mockReddit = Array(20).fill(null).map((_, i) => ({
-                id: `reddit-${i}`,
-                title: `Reddit Tech Post ${i + 1}`,
-                url: 'https://reddit.com',
-                by: 'reddit_user',
-                score: Math.floor(Math.random() * 2000),
-                time: Date.now() / 1000 - Math.random() * 86400,
-                source: 'reddit'
-            }));
-            return mockReddit;
-        };
-
-        const displayNews = (news) => {
-            const newsContainer = document.getElementById('news-container');
-            newsContainer.innerHTML = '';
-
-            news.forEach(story => {
-                const timeAgo = getTimeAgo(story.time * 1000);
-                const sourceTag = getSourceTag(story.source);
-                
-                const card = `
-                    <div class="news-card">
-                        <div class="news-content">
-                            <div class="news-source">
-                                ${sourceTag}
-                                <span>• ${timeAgo}</span>
-                            </div>
-                            <h2 class="news-title">${story.title}</h2>
-                            <p class="news-description">Posted by ${story.by} • ${story.score} points</p>
-                            <a href="${story.url || `https://news.ycombinator.com/item?id=${story.id}`}" target="_blank" class="read-more">
-                                Read full article <i class="fas fa-arrow-right"></i>
-                            </a>
-                            <div class="vote-buttons">
-                                <button class="vote-btn upvote" onclick="handleVote(this)">
-                                    <i class="far fa-heart"></i>
-                                    <span class="vote-count">0</span>
-                                </button>
-                                <button class="vote-btn" onclick="shareStory('${story.url || `https://news.ycombinator.com/item?id=${story.id}`}')">
-                                    <i class="far fa-share-square"></i>
-                                    Share
-                                </button>
-                            </div>
+        function renderNews() {
+            const container = document.getElementById('news-container');
+            container.innerHTML = newsData.map(article => `
+                <article class="news-card">
+                    <img src="${article.image}" alt="${article.title}" class="news-image">
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <img src="${article.sourceIcon}" class="source-icon" alt="${article.source}">
+                            <span>${article.source}</span>
+                            <span>•</span>
+                            <span>${formatDate(article.date)}</span>
+                        </div>
+                        <h2 class="news-title">${article.title}</h2>
+                        <div class="news-actions">
+                            <button class="action-btn ${userVotes.get(article.id) ? 'upvoted' : ''}" 
+                                    onclick="handleVote('${article.id}')">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>${article.votes || 0}</span>
+                            </button>
+                            <button class="action-btn ${userBookmarks.has(article.id) ? 'bookmarked' : ''}"
+                                    onclick="handleBookmark('${article.id}')">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                            <button class="action-btn" onclick="handleShare('${article.id}')">
+                                <i class="fas fa-share"></i>
+                            </button>
                         </div>
                     </div>
-                `;
-                newsContainer.innerHTML += card;
-            });
-        };
+                </article>
+            `).join('');
+        }
 
-        const getSourceTag = (source) => {
-            const sources = {
-                hackernews: '<span class="source-tag hackernews">Hacker News</span>',
-                github: '<span class="source-tag github">GitHub</span>',
-                devto: '<span class="source-tag devto">DEV</span>',
-                reddit: '<span class="source-tag reddit">Reddit</span>'
-            };
-            return sources[source] || sources.hackernews;
-        };
-
-        function getTimeAgo(timestamp) {
-            const seconds = Math.floor((new Date() - timestamp) / 1000);
-            const intervals = {
-                year: 31536000,
-                month: 2592000,
-                week: 604800,
-                day: 86400,
-                hour: 3600,
-                minute: 60
-            };
-            
-            for (let [unit, secondsInUnit] of Object.entries(intervals)) {
-                const interval = Math.floor(seconds / secondsInUnit);
-                if (interval >= 1) {
-                    return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+        async function handleVote(articleId) {
+            try {
+                const response = await fetch(`/api/vote/${articleId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    userVotes.set(articleId, !userVotes.get(articleId));
+                    const article = newsData.find(a => a.id === articleId);
+                    article.votes = (article.votes || 0) + (userVotes.get(articleId) ? 1 : -1);
+                    renderNews();
                 }
+            } catch (error) {
+                console.error('Failed to vote:', error);
             }
-            return 'just now';
         }
 
-        function handleVote(button) {
-            const countSpan = button.querySelector('.vote-count');
-            let count = parseInt(countSpan.textContent);
-            
-            if (button.classList.contains('active')) {
-                count--;
-                button.classList.remove('active');
-            } else {
-                count++;
-                button.classList.add('active');
+        async function handleBookmark(articleId) {
+            try {
+                const response = await fetch(`/api/bookmark/${articleId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    if (userBookmarks.has(articleId)) {
+                        userBookmarks.delete(articleId);
+                    } else {
+                        userBookmarks.add(articleId);
+                    }
+                    renderNews();
+                }
+            } catch (error) {
+                console.error('Failed to bookmark:', error);
             }
-            
-            countSpan.textContent = count;
-            
-            // Add animation effect
-            button.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                button.style.transform = 'scale(1)';
-            }, 200);
         }
 
-        function shareStory(url) {
+        function handleShare(articleId) {
+            const article = newsData.find(a => a.id === articleId);
             if (navigator.share) {
                 navigator.share({
-                    title: 'Check out this tech news',
-                    url: url
+                    title: article.title,
+                    url: article.url
                 });
             } else {
-                navigator.clipboard.writeText(url)
-                    .then(() => {
-                        const button = event.target.closest('.vote-btn');
-                        const originalText = button.innerHTML;
-                        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                        setTimeout(() => {
-                            button.innerHTML = originalText;
-                        }, 2000);
-                    })
-                    .catch(() => alert('Failed to copy link'));
+                navigator.clipboard.writeText(article.url);
+                alert('Link copied to clipboard!');
             }
+        }
+
+        function formatDate(date) {
+            return new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+                .format(-Math.round((Date.now() - new Date(date)) / 86400000), 'day');
         }
 
         function showError() {
             document.getElementById('news-container').innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>Unable to load news. Please try again later.</span>
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: var(--downvote);"></i>
+                    <p style="margin-top: 1rem;">Failed to load news. Please try again later.</p>
                 </div>
             `;
         }
 
-        // Initialize news filters with smooth transitions
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // TODO: Implement actual filtering
-                // Add loading animation while filtering
-                document.getElementById('news-container').style.opacity = '0.5';
-                setTimeout(() => {
-                    document.getElementById('news-container').style.opacity = '1';
-                }, 300);
-            });
-        });
+        // Initialize
+        fetchNews();
 
-        // Initialize with loading animation
-        document.getElementById('news-container').style.opacity = '0.5';
-        fetchAllNews().then(() => {
-            document.getElementById('news-container').style.opacity = '1';
-        });
+        // Refresh news every 5 minutes
+        setInterval(fetchNews, 300000);
     </script>
 </body>
 </html>
