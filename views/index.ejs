@@ -1719,10 +1719,16 @@
                         <% } else if (locals.user) { %>
                             <div class="empty-state">
                                 <p>You haven't joined any communities yet</p>
-                                <button onclick="openCreateCommunityModal()" class="create-community-btn">
-                                    <i class="fas fa-plus"></i>
-                                    Create Your First Community
-                                </button>
+                                <div class="empty-state-buttons">
+                                    <button onclick="openJoinCommunitiesModal()" class="join-community-btn">
+                                        <i class="fas fa-users"></i>
+                                        Join Communities
+                                    </button>
+                                    <button onclick="openCreateCommunityModal()" class="create-community-btn">
+                                        <i class="fas fa-plus"></i>
+                                        Create Community
+                                    </button>
+                                </div>
                             </div>
                         <% } else { %>
                             <div class="empty-state">
@@ -1878,6 +1884,25 @@
             </div>
         </div>
 
+        <!-- Join Communities Modal -->
+        <div id="joinCommunitiesModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Join Communities</h2>
+                    <span class="close" onclick="closeJoinCommunitiesModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="search-communities">
+                        <input type="text" id="joinCommunitySearch" placeholder="Search communities..." 
+                               onkeyup="filterJoinCommunities()">
+                    </div>
+                    <div id="joinCommunitiesList" class="join-communities-list">
+                        <!-- Communities will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
         async function updateMyCommunities() {
             try {
@@ -1902,16 +1927,88 @@
                     communityList.innerHTML = `
                         <div class="empty-state">
                             <p>You haven't joined any communities yet</p>
-                            <button onclick="openCreateCommunityModal()" class="create-community-btn">
-                                <i class="fas fa-plus"></i>
-                                Create Your First Community
-                            </button>
+                            <div class="empty-state-buttons">
+                                <button onclick="openJoinCommunitiesModal()" class="join-community-btn">
+                                    <i class="fas fa-users"></i>
+                                    Join Communities
+                                </button>
+                                <button onclick="openCreateCommunityModal()" class="create-community-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Create Community
+                                </button>
+                            </div>
                         </div>
                     `;
                 }
             } catch (error) {
                 console.error('Error updating communities:', error);
             }
+        }
+
+        function openJoinCommunitiesModal() {
+            const modal = document.getElementById('joinCommunitiesModal');
+            modal.style.display = 'block';
+            loadJoinableCommunities();
+        }
+
+        function closeJoinCommunitiesModal() {
+            const modal = document.getElementById('joinCommunitiesModal');
+            modal.style.display = 'none';
+        }
+
+        async function loadJoinableCommunities() {
+            try {
+                const response = await fetch('/api/communities/available');
+                const communities = await response.json();
+                
+                const communitiesList = document.getElementById('joinCommunitiesList');
+                communitiesList.innerHTML = communities.map(comm => `
+                    <div class="joinable-community-item">
+                        <div class="community-info">
+                            <i class="${comm.icon || 'fas fa-users'}"></i>
+                            <span class="community-name">r/${comm.name}</span>
+                            <span class="community-members">${comm.members?.length || 0} members</span>
+                        </div>
+                        <button onclick="joinCommunity('${comm._id}')" class="join-btn">
+                            <i class="fas fa-plus"></i> Join
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading joinable communities:', error);
+            }
+        }
+
+        async function joinCommunity(communityId) {
+            try {
+                const response = await fetch(`/api/communities/${communityId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    await updateMyCommunities();
+                    await loadJoinableCommunities();
+                } else {
+                    throw new Error('Failed to join community');
+                }
+            } catch (error) {
+                console.error('Error joining community:', error);
+                alert('Failed to join community. Please try again.');
+            }
+        }
+
+        function filterJoinCommunities() {
+            const searchInput = document.getElementById('joinCommunitySearch');
+            const filter = searchInput.value.toLowerCase();
+            const communities = document.querySelectorAll('.joinable-community-item');
+            
+            communities.forEach(community => {
+                const name = community.querySelector('.community-name').textContent.toLowerCase();
+                community.style.display = name.includes(filter) ? '' : 'none';
+            });
         }
 
         // Update the handleCreateCommunity function to refresh the communities list
