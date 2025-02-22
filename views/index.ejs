@@ -2040,122 +2040,152 @@
         }
         </script>
         <script>
-            // Tech stacks data and rendering
-            const techStacks = [
-                { name: 'MERN Stack', trend: '+12%', users: '234K', color: '#61DAFB' },
-                { name: 'LAMP Stack', trend: '+5%', users: '189K', color: '#777BB3' }, 
-                { name: 'JAMstack', trend: '+25%', users: '156K', color: '#F0047F' },
-                { name: 'Python/Django', trend: '+8%', users: '145K', color: '#092E20' },
-                { name: 'Ruby on Rails', trend: '+2%', users: '134K', color: '#CC0000' }
+            // Tech news data and rendering
+            const techNews = [
+                { title: 'TypeScript 5.3 Released with New Features', time: '2h ago', source: 'Dev News', reactions: '1.2K' },
+                { title: 'Next.js App Router Adoption Surges', time: '4h ago', source: 'Web Weekly', reactions: '856' },
+                { title: 'AI Code Assistants Transform Development', time: '6h ago', source: 'Tech Insider', reactions: '2.1K' },
+                { title: 'Rust Gains Traction in System Programming', time: '12h ago', source: 'Programming Today', reactions: '945' },
+                { title: 'New Web Performance APIs Announced', time: '1d ago', source: 'Browser News', reactions: '678' }
             ];
 
-            const sidebar = document.createElement('div');
-            sidebar.className = 'tech-sidebar';
-            document.body.appendChild(sidebar);
-
-            function renderTechStacks() {
-                sidebar.innerHTML = `
-                    <div class="sidebar-header">
-                        <h3>Trending Tech Stacks</h3>
-                        <span class="live-indicator">LIVE</span>
-                    </div>
-                    ${techStacks.map((stack, index) => `
-                        <div class="stack-card">
-                            <div class="stack-rank">${index + 1}</div>
-                            <div class="stack-info">
-                                <div class="stack-name">${stack.name}</div>
-                                <div class="stack-stats">
-                                    <span class="trend" style="color: ${stack.trend.includes('+') ? '#00C853' : '#FF3D00'}">
-                                        ${stack.trend}
-                                    </span>
-                                    <span class="users">${stack.users} devs</span>
+            function renderTechNews() {
+                const newsSection = document.createElement('section');
+                newsSection.className = 'news-section';
+                newsSection.innerHTML = `
+                    <div class="news-container">
+                        <div class="news-header">
+                            <h3><i class="fas fa-newspaper"></i> Hot in Tech</h3>
+                            <span class="pulse-indicator">LIVE</span>
+                        </div>
+                        <div class="news-feed">
+                            ${techNews.map(news => `
+                                <div class="news-item">
+                                    <div class="news-content">
+                                        <h4>${news.title}</h4>
+                                        <div class="news-meta">
+                                            <span><i class="fas fa-clock"></i> ${news.time}</span>
+                                            <span><i class="fas fa-source"></i> ${news.source}</span>
+                                            <span><i class="fas fa-heart"></i> ${news.reactions}</span>
+                                        </div>
+                                    </div>
                                 </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                // Insert after the main content
+                const mainContent = document.querySelector('main') || document.body;
+                mainContent.appendChild(newsSection);
+            }
+
+            renderTechNews();
+
+            // Live updates every minute
+            setInterval(() => {
+                const reactions = ['1.5K', '2.3K', '980', '3.1K', '750'];
+                techNews.forEach(news => {
+                    news.reactions = reactions[Math.floor(Math.random() * reactions.length)];
+                });
+                document.querySelector('.news-feed').innerHTML = techNews.map(news => `
+                    <div class="news-item">
+                        <div class="news-content">
+                            <h4>${news.title}</h4>
+                            <div class="news-meta">
+                                <span><i class="fas fa-clock"></i> ${news.time}</span>
+                                <span><i class="fas fa-source"></i> ${news.source}</span>
+                                <span><i class="fas fa-heart"></i> ${news.reactions}</span>
                             </div>
                         </div>
-                    `).join('')}
-                `;
-            }
-
-            renderTechStacks();
-
-            // Update every 30 seconds
-            setInterval(() => {
-                // Simulate live updates
-                techStacks.forEach(stack => {
-                    const change = Math.floor(Math.random() * 5) - 2;
-                    const currentTrend = parseInt(stack.trend);
-                    stack.trend = `${change >= 0 ? '+' : ''}${currentTrend + change}%`;
-                });
-                renderTechStacks();
-            }, 30000);
+                    </div>
+                `).join('');
+            }, 60000);
         </script>
         <style>
-            .tech-sidebar {
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                width: 250px;
-                background: rgba(30, 41, 59, 0.3);
-                border-radius: 8px;
-                padding: 15px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+            .news-section {
+                margin: 2rem auto;
+                max-width: 800px;
+                padding: 0 1rem;
             }
 
-            .sidebar-header {
+            .news-container {
+                background: rgba(30, 41, 59, 0.4);
+                backdrop-filter: blur(10px);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1.5rem;
+            }
+
+            .news-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 15px;
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                padding-bottom: 8px;
             }
 
-            .sidebar-header h3 {
-                font-size: 1rem;
+            .news-header h3 {
+                font-size: 1.2rem;
                 color: var(--text);
                 margin: 0;
-            }
-
-            .live-indicator {
-                background: #00C853;
-                color: white;
-                padding: 3px 6px;
-                border-radius: 8px;
-                font-size: 0.7rem;
-            }
-
-            .stack-card {
                 display: flex;
                 align-items: center;
-                padding: 8px;
-                margin: 5px 0;
-                border-radius: 6px;
-                background: rgba(255, 255, 255, 0.05);
+                gap: 0.5rem;
             }
 
-            .stack-rank {
-                font-size: 1rem;
-                color: var(--text-muted);
-                width: 25px;
-            }
-
-            .stack-info {
-                flex: 1;
-            }
-
-            .stack-name {
-                color: var(--text);
-                margin-bottom: 2px;
-            }
-
-            .stack-stats {
-                display: flex;
-                gap: 10px;
+            .pulse-indicator {
+                background: linear-gradient(45deg, #FF3366, #FF6B6B);
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
                 font-size: 0.8rem;
+                font-weight: 600;
+                animation: pulse 2s infinite;
             }
 
-            .users {
+            .news-feed {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .news-item {
+                padding: 1rem;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.05);
+                transition: transform 0.2s, background 0.2s;
+            }
+
+            .news-item:hover {
+                transform: translateX(8px);
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .news-content h4 {
+                margin: 0 0 0.5rem 0;
+                color: var(--text);
+                font-size: 1.1rem;
+            }
+
+            .news-meta {
+                display: flex;
+                gap: 1rem;
                 color: var(--text-muted);
+                font-size: 0.9rem;
+            }
+
+            .news-meta span {
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
             }
         </style>
         <style>
