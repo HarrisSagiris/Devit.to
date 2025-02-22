@@ -1700,49 +1700,6 @@
                 </div>
                 <!-- My Communities Section -->
                 <div class="sidebar-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-star"></i>
-                        My Communities
-                    </h4>
-                    <div id="my-communities-list" class="categories-list">
-                        <% if (locals.user) { %>
-                            <% if (locals.user.communities && locals.user.communities.length > 0) { %>
-                                <% locals.user.communities.forEach(communityItem => { %>
-                                    <a href="/community/<%= communityItem._id %>" 
-                                       class="community-item"
-                                       data-community-id="<%= communityItem._id %>">
-                                        <i class="<%= communityItem.icon || 'fas fa-users' %>"></i>
-                                        <div class="community-info">
-                                            <span class="community-name">r/<%= communityItem.name %></span>
-                                            <span class="community-members"><%= communityItem.members?.length || 1 %> member<%= (communityItem.members?.length || 1) !== 1 ? 's' : '' %></span>
-                                        </div>
-                                    </a>
-                                <% }); %>
-                            <% } else { %>
-                                <div class="empty-state">
-                                    <p>You haven't joined any communities yet</p>
-                                    <div class="empty-state-buttons">
-                                        <button onclick="openJoinCommunitiesModal()" class="join-community-btn">
-                                            <i class="fas fa-users"></i>
-                                            Join Communities
-                                        </button>
-                                        <button onclick="openCreateCommunityModal()" class="create-community-btn">
-                                            <i class="fas fa-plus"></i>
-                                            Create Community
-                                        </button>
-                                    </div>
-                                </div>
-                            <% } %>
-                        <% } else { %>
-                            <div class="empty-state">
-                                <p>Sign in to join communities</p>
-                                <a href="/login" class="btn btn-primary">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                    Sign In
-                                </a>
-                            </div>
-                        <% } %>
-                    </div>
                 </div>
 
                 <!-- All Communities Section -->
