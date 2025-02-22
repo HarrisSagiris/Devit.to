@@ -874,7 +874,7 @@ app.post('/api', async (req, res) => {
     }
 
     // Create new API listing
-    const api = new API({
+    const newApi = new API({
       name,
       category,
       description,
@@ -885,9 +885,9 @@ app.post('/api', async (req, res) => {
       users: 0
     });
 
-    await api.save();
+    await newApi.save();
 
-    res.status(201).json({ success: true, api });
+    res.status(201).json({ success: true, api: newApi });
 
   } catch (error) {
     res.status(500).json({ 
