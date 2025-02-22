@@ -1705,14 +1705,14 @@
                     </h4>
                     <div id="my-communities-list" class="categories-list">
                         <% if (locals.user && locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
-                            <% locals.myCommunities.forEach(community => { %>
-                                <a href="/community/<%= community._id %>" 
+                            <% locals.myCommunities.forEach(communityItem => { %>
+                                <a href="/community/<%= communityItem._id %>" 
                                    class="community-item"
-                                   data-community-id="<%= community._id %>">
-                                    <i class="<%= community.icon || 'fas fa-users' %>"></i>
+                                   data-community-id="<%= communityItem._id %>">
+                                    <i class="<%= communityItem.icon || 'fas fa-users' %>"></i>
                                     <div class="community-info">
-                                        <span class="community-name">r/<%= community.name %></span>
-                                        <span class="community-members"><%= community.members?.length || 1 %> member<%= (community.members?.length || 1) !== 1 ? 's' : '' %></span>
+                                        <span class="community-name">r/<%= communityItem.name %></span>
+                                        <span class="community-members"><%= communityItem.members?.length || 1 %> member<%= (communityItem.members?.length || 1) !== 1 ? 's' : '' %></span>
                                     </div>
                                 </a>
                             <% }); %>
@@ -1887,14 +1887,14 @@
                 const communityList = document.getElementById('my-communities-list');
                 
                 if (communities && communities.length > 0) {
-                    communityList.innerHTML = communities.map(community => `
-                        <a href="/community/${community._id}" 
+                    communityList.innerHTML = communities.map(comm => `
+                        <a href="/community/${comm._id}" 
                            class="community-item"
-                           data-community-id="${community._id}">
-                            <i class="${community.icon || 'fas fa-users'}"></i>
+                           data-community-id="${comm._id}">
+                            <i class="${comm.icon || 'fas fa-users'}"></i>
                             <div class="community-info">
-                                <span class="community-name">r/${community.name}</span>
-                                <span class="community-members">${community.members?.length || 1} member${(community.members?.length || 1) !== 1 ? 's' : ''}</span>
+                                <span class="community-name">r/${comm.name}</span>
+                                <span class="community-members">${comm.members?.length || 1} member${(comm.members?.length || 1) !== 1 ? 's' : ''}</span>
                             </div>
                         </a>
                     `).join('');
