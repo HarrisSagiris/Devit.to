@@ -2510,13 +2510,42 @@
                                 <div>
                                     Posted in <%= post.category %> by 
                                     <span class="user-info">
-                                        @<%= post.username %>
+                                        <span class="comment-username" data-username="<%= post.username %>">
+                                            @<%= post.username %>
+                                            <div class="user-hover-card">
+                                                <div class="user-stats">
+                                                    <div class="stat">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                        <span id="posts-count-<%= post.username %>">-</span> posts
+                                                    </div>
+                                                    <div class="stat">
+                                                        <i class="fas fa-comment"></i>
+                                                        <span id="comments-count-<%= post.username %>">-</span> comments
+                                                    </div>
+                                                    <div class="stat">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                        <span id="upvotes-count-<%= post.username %>">-</span> upvotes
+                                                    </div>
+                                                    <div class="stat">
+                                                        <i class="fas fa-chart-line"></i>
+                                                        <span id="engagement-<%= post.username %>">-</span> engagement
+                                                    </div>
+                                                </div>
+                                                <div id="badges-<%= post.username %>" class="user-badges"></div>
+                                                <div class="followers-info">
+                                                    <i class="fas fa-users"></i>
+                                                    <span id="followers-count-<%= post.username %>" class="followers-count">-</span> followers
+                                                </div>
+                                            </div>
+                                        </span>
                                     </span>
                                     • <%= new Date(post.createdAt).toLocaleDateString() %>
                                 </div>
                                 <% if (user && user.username !== post.username) { %>
                                     <button class="follow-btn <%= user.following?.includes(post.username) ? 'following' : '' %>" 
+                                            onclick="toggleFollow(this)"
                                             data-username="<%= post.username %>">
+                                        <i class="<%= user.following?.includes(post.username) ? 'fas fa-user-check' : 'fas fa-user-plus' %>"></i>
                                         <%= user.following?.includes(post.username) ? 'Following' : 'Follow' %>
                                     </button>
                                 <% } %>
