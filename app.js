@@ -813,9 +813,13 @@ app.get('/community/:id', async (req, res) => {
 // Render API marketplace page
 app.get('/api-marketplace', async (req, res) => {
   try {
+    const apis = await API.find()
+      .sort({ createdAt: -1 })
+      .lean();
+
     res.render('api-marketplace', {
       user: req.session.user || null,
-      apis: [] // Make sure this is defined and contains your API data
+      apis: apis
     });
   } catch (error) {
     res.status(500).render('error', {
@@ -829,14 +833,44 @@ app.get('/api-marketplace', async (req, res) => {
 app.post('/api', async (req, res) => {
   try {
     if (!req.session.user) {
-      return res.status(403).json({ error: 'Login required' });
+      return res.status(403).json({ 
+        error: 'Login required',
+        field: 'auth'
+      });
     }
 
     const { name, category, description, docs, price } = req.body;
 
     // Validate required fields
-    if (!name || !category || !description || !docs || !price) {
-      return res.status(400).json({ error: 'All fields are required' });
+    if (!name) {
+      return res.status(400).json({ 
+        error: 'API name is required',
+        field: 'name'
+      });
+    }
+    if (!category) {
+      return res.status(400).json({
+        error: 'Category is required',
+        field: 'category'  
+      });
+    }
+    if (!description) {
+      return res.status(400).json({
+        error: 'Description is required',
+        field: 'description'
+      });
+    }
+    if (!docs) {
+      return res.status(400).json({
+        error: 'Documentation URL is required',
+        field: 'docs'
+      });
+    }
+    if (!price) {
+      return res.status(400).json({
+        error: 'Price is required',
+        field: 'price'
+      });
     }
 
     // Create new API listing
@@ -856,14 +890,32 @@ app.post('/api', async (req, res) => {
     res.status(201).json({ success: true, api });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: error.message,
+      field: 'server'
+    });
   }
 });
 
-// Get list of APIs
+// Get list of APIs with search/filter
 app.get('/api/list', async (req, res) => {
   try {
-    const apis = await API.find()
+    const { search, category } = req.query;
+    
+    let query = {};
+    
+    if (search) {
+      query.$or = [
+        { name: new RegExp(search, 'i') },
+        { description: new RegExp(search, 'i') }
+      ];
+    }
+    
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+
+    const apis = await API.find(query)
       .sort({ createdAt: -1 })
       .lean();
 
