@@ -2722,6 +2722,54 @@
                     </div>
                 </div>
                 <div class="comments-section">
+                    <style>
+                        .user-popup {
+                            display: none;
+                            position: absolute;
+                            background: var(--bg);
+                            border: 1px solid var(--border);
+                            border-radius: 8px;
+                            padding: 12px;
+                            min-width: 200px;
+                            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                            z-index: 1000;
+                            transform: translateY(-100%);
+                            margin-top: -10px;
+                        }
+
+                        .comment-username {
+                            position: relative;
+                            cursor: pointer;
+                        }
+
+                        .comment-username:hover .user-popup {
+                            display: block;
+                        }
+
+                        .user-popup-header {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            margin-bottom: 8px;
+                            padding-bottom: 8px;
+                            border-bottom: 1px solid var(--border);
+                        }
+
+                        .user-popup-stats {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+                            font-size: 0.9em;
+                        }
+
+                        .user-popup-stat {
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+                            color: var(--text-muted);
+                        }
+                    </style>
+
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
                             <input type="text" name="content" placeholder="Add a comment..." required>
@@ -2736,6 +2784,31 @@
                                 <div class="comment-header">
                                     <span class="comment-username">
                                         @<%= comment.username %>
+                                        <div class="user-popup">
+                                            <div class="user-popup-header">
+                                                <strong>@<%= comment.username %></strong>
+                                            </div>
+                                            <div class="user-popup-stats">
+                                                <div class="user-popup-stat">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" fill="currentColor"/>
+                                                    </svg>
+                                                    <%= comment.authorId?.points || 0 %> points
+                                                </div>
+                                                <div class="user-popup-stat">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" stroke="currentColor" fill="currentColor"/>
+                                                    </svg>
+                                                    <%= comment.authorId?.totalComments || 0 %> comments
+                                                </div>
+                                                <div class="user-popup-stat">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z" stroke="currentColor" fill="currentColor"/>
+                                                    </svg>
+                                                    <%= comment.authorId?.totalLikes || 0 %> likes received
+                                                </div>
+                                            </div>
+                                        </div>
                                         <span class="user-rank" style="display: inline-flex; align-items: center; margin-left: 8px;">
                                             <% 
                                             let points = 0;
