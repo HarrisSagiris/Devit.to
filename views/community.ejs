@@ -66,16 +66,16 @@
                             <h3 class="community-name">r/<%= community.name %></h3>
                             <p class="community-description"><%= community.description %></p>
                             <div class="community-stats">
-                                <span><i class="fas fa-users"></i> <%= community.members.length %> members</span>
+                                <span><i class="fas fa-users"></i> <%= community.members?.length || 0 %> members</span>
                                 <span><i class="fas fa-file-alt"></i> <%= community.posts?.length || 0 %> posts</span>
                             </div>
                             <div class="community-actions">
                                 <% if (locals.user) { %>
-                                    <button class="join-btn <%= community.members.includes(user._id) ? 'joined' : '' %>"
+                                    <button class="join-btn <%= community.members?.includes(user._id) ? 'joined' : '' %>"
                                             onclick="toggleJoinCommunity(this)"
                                             data-community-id="<%= community._id %>">
-                                        <i class="fas <%= community.members.includes(user._id) ? 'fa-check' : 'fa-plus' %>"></i>
-                                        <%= community.members.includes(user._id) ? 'Joined' : 'Join' %>
+                                        <i class="fas <%= community.members?.includes(user._id) ? 'fa-check' : 'fa-plus' %>"></i>
+                                        <%= community.members?.includes(user._id) ? 'Joined' : 'Join' %>
                                     </button>
                                     
                                     <button class="notification-btn <%= community.notificationSubscribers?.includes(user._id) ? 'active' : '' %>"
@@ -84,7 +84,7 @@
                                         <i class="fas fa-bell"></i>
                                     </button>
 
-                                    <% if (community.moderators.includes(user._id)) { %>
+                                    <% if (community.moderators?.includes(user._id)) { %>
                                         <button class="mod-btn" onclick="openModPanel('<%= community._id %>')">
                                             <i class="fas fa-shield-alt"></i>
                                             Mod Panel
