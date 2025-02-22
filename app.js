@@ -180,7 +180,7 @@ app.post('/api/communities', async (req, res) => {
     }
 
     // Create new community
-    const community = new Community({
+    const newCommunity = new Community({
       name: name.toLowerCase(),
       description,
       icon: icon || 'fas fa-users',
@@ -188,18 +188,18 @@ app.post('/api/communities', async (req, res) => {
       members: [req.session.user._id]
     });
 
-    await community.save();
+    await newCommunity.save();
 
     // Add community to user's communities
     await User.findByIdAndUpdate(
       req.session.user._id,
-      { $push: { communities: community._id }}
+      { $push: { communities: newCommunity._id }}
     );
 
     res.json({ 
       success: true, 
       message: 'Community created successfully',
-      community
+      community: newCommunity
     });
 
   } catch (error) {
@@ -576,6 +576,7 @@ app.post('/api/follow', async (req, res) => {
     res.status(500).json({ error: 'Error updating follow status' });
   }
 });
+
 // Community Schema
 const communitySchema = new mongoose.Schema({
   name: {
@@ -607,19 +608,18 @@ const communitySchema = new mongoose.Schema({
   }
 });
 
-const Community = mongoose.model('Community', communitySchema);
 // Create community
 app.post('/api/communities', async (req, res) => {
   if (!req.session.user) return res.status(403).json({ error: 'Login required' });
-  const community = new Community({
+  const newCommunity = new Community({
     name: req.body.name.toLowerCase(),
     description: req.body.description, 
     icon: req.body.icon,
     moderators: [req.session.user._id],
     members: [req.session.user._id]
   });
-  await community.save();
-  res.json({ success: true, community });
+  await newCommunity.save();
+  res.json({ success: true, community: newCommunity });
 });
 
 // Get communities
