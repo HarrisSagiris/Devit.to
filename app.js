@@ -27,6 +27,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 const User = require('./models/User');
 const Post = require('./models/post.js');
 const Community = require('./models/community.js');
+const API = require('./models/API.js'); 
 
 if (!User || !Post || !Community) {
   console.error('Error loading models');
