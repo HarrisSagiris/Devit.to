@@ -792,6 +792,51 @@ app.get('/community/:id', async (req, res) => {
     });
   }
 });
+// Handle post creation
+app.post('/api/posts', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const { title, content, communityId } = req.body;
+
+    // Validate required fields
+    if (!title || !content || !communityId) {
+      return res.status(400).json({ error: 'Title, content and community are required' });
+    }
+
+    // Check if community exists
+    const community = await Community.findById(communityId);
+    if (!community) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    // Check if user is banned from community
+    if (community.bannedUsers && community.bannedUsers.includes(req.session.user._id)) {
+      return res.status(403).json({ error: 'You are banned from posting in this community' });
+    }
+
+    // Create new post
+    const post = new Post({
+      title,
+      content,
+      author: req.session.user._id,
+      community: communityId
+    });
+
+    await post.save();
+
+    // Add post reference to community
+    community.posts.push(post._id);
+    await community.save();
+
+    res.status(201).json({ success: true, post });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Handle community moderation
 app.post('/api/communities/:id/moderate', async (req, res) => {
