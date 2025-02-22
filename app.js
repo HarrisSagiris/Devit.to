@@ -528,6 +528,54 @@ app.get('/api/github/repos', async (req, res) => {
     res.status(500).json({ error: 'Error fetching GitHub repositories' });
   }
 });
+// Follow user API endpoint
+app.post('/api/follow', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const { username } = req.body;
+    
+    const userToFollow = await User.findOne({ username });
+    if (!userToFollow) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const currentUser = await User.findById(req.session.user._id);
+    
+    // Check if already following
+    const isFollowing = currentUser.following.includes(userToFollow._id);
+    
+    if (isFollowing) {
+      // Unfollow
+      await User.findByIdAndUpdate(currentUser._id, { 
+        $pull: { following: userToFollow._id }
+      });
+      await User.findByIdAndUpdate(userToFollow._id, { 
+        $pull: { followers: currentUser._id }
+      });
+    } else {
+      // Follow
+      await User.findByIdAndUpdate(currentUser._id, {
+        $push: { following: userToFollow._id }
+      });
+      await User.findByIdAndUpdate(userToFollow._id, {
+        $push: { followers: currentUser._id }
+      });
+    }
+
+    res.json({
+      success: true,
+      following: !isFollowing,
+      message: isFollowing ? 'Unfollowed successfully' : 'Followed successfully'
+    });
+
+  } catch (error) {
+    console.error('Follow API error:', error);
+    res.status(500).json({ error: 'Error updating follow status' });
+  }
+});
 
 // Add user stats endpoint
 app.get('/api/user/stats', async (req, res) => {
