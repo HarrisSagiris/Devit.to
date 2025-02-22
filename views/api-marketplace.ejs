@@ -238,9 +238,15 @@
                 <option value="data">Data & Analytics</option>
                 <option value="ai">AI & ML</option>
             </select>
-            <button class="post-api-btn" onclick="openPostModal()">
-                <i class="fas fa-plus"></i> Post Your API
-            </button>
+            <% if (user) { %>
+                <button class="post-api-btn" onclick="openPostModal()">
+                    <i class="fas fa-plus"></i> Post Your API
+                </button>
+            <% } else { %>
+                <a href="/login" class="post-api-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login to Post
+                </a>
+            <% } %>
         </div>
 
         <div class="api-grid" id="apiGrid">
@@ -253,14 +259,14 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closePostModal()">&times;</span>
             <h2>Post Your API</h2>
-            <form id="postApiForm" onsubmit="handlePostApi(event)">
+            <form id="postApiForm" action="/api/marketplace/post" method="POST">
                 <div class="form-group">
                     <label for="apiName">API Name</label>
-                    <input type="text" id="apiName" required>
+                    <input type="text" id="apiName" name="name" required>
                 </div>
                 <div class="form-group">
                     <label for="apiCategory">Category</label>
-                    <select id="apiCategory" required>
+                    <select id="apiCategory" name="category" required>
                         <option value="payment">Payment</option>
                         <option value="auth">Authentication</option>
                         <option value="data">Data & Analytics</option>
@@ -269,15 +275,15 @@
                 </div>
                 <div class="form-group">
                     <label for="apiDescription">Description</label>
-                    <textarea id="apiDescription" required></textarea>
+                    <textarea id="apiDescription" name="description" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="apiDocs">API Documentation URL</label>
-                    <input type="url" id="apiDocs" required>
+                    <input type="url" id="apiDocs" name="documentation" required>
                 </div>
                 <div class="form-group">
                     <label for="apiPrice">Price ($/month)</label>
-                    <input type="number" id="apiPrice" min="0" required>
+                    <input type="number" id="apiPrice" name="price" min="0" required>
                 </div>
                 <button type="submit" class="post-api-btn">Post API</button>
             </form>
@@ -286,7 +292,7 @@
 
     <script>
         // Initialize apis array with data from server
-        let apis = <%- JSON.stringify(apis) %>;
+        const apis = JSON.parse('<%- JSON.stringify(apis || []) %>');
 
         function openPostModal() {
             document.getElementById('postModal').style.display = 'block';
@@ -296,29 +302,19 @@
             document.getElementById('postModal').style.display = 'none';
         }
 
-        function handlePostApi(event) {
-            event.preventDefault();
-            
-            const newApi = {
-                id: Date.now(),
-                name: document.getElementById('apiName').value,
-                category: document.getElementById('apiCategory').value,
-                description: document.getElementById('apiDescription').value,
-                documentation: document.getElementById('apiDocs').value,
-                price: document.getElementById('apiPrice').value,
-                rating: 0,
-                users: 0
+        function getCategoryIcon(category) {
+            const icons = {
+                payment: 'fa-credit-card',
+                auth: 'fa-lock',
+                data: 'fa-database',
+                ai: 'fa-robot'
             };
-
-            apis.push(newApi);
-            renderApis();
-            closePostModal();
-            event.target.reset();
+            return icons[category] || 'fa-code';
         }
 
-        function renderApis() {
+        function renderApis(apisToRender = apis) {
             const grid = document.getElementById('apiGrid');
-            grid.innerHTML = apis.map(api => `
+            grid.innerHTML = apisToRender.map(api => `
                 <div class="api-card" data-category="${api.category}">
                     <div class="api-header">
                         <div class="api-icon">
@@ -330,22 +326,12 @@
                     <div class="api-meta">
                         <span class="api-price">$${api.price}/month</span>
                         <div class="api-stats">
-                            <span><i class="fas fa-star"></i> ${api.rating}</span>
-                            <span><i class="fas fa-users"></i> ${api.users}</span>
+                            <span><i class="fas fa-star"></i> ${api.rating || 0}</span>
+                            <span><i class="fas fa-users"></i> ${api.users || 0}</span>
                         </div>
                     </div>
                 </div>
             `).join('');
-        }
-
-        function getCategoryIcon(category) {
-            const icons = {
-                payment: 'fa-credit-card',
-                auth: 'fa-lock',
-                data: 'fa-database',
-                ai: 'fa-robot'
-            };
-            return icons[category] || 'fa-code';
         }
 
         // Add search and filter functionality
@@ -363,29 +349,7 @@
                 return matchesSearch && matchesCategory;
             });
 
-            renderFilteredApis(filteredApis);
-        }
-
-        function renderFilteredApis(filteredApis) {
-            const grid = document.getElementById('apiGrid');
-            grid.innerHTML = filteredApis.map(api => `
-                <div class="api-card" data-category="${api.category}">
-                    <div class="api-header">
-                        <div class="api-icon">
-                            <i class="fas ${getCategoryIcon(api.category)}"></i>
-                        </div>
-                        <h2 class="api-title">${api.name}</h2>
-                    </div>
-                    <p class="api-description">${api.description}</p>
-                    <div class="api-meta">
-                        <span class="api-price">$${api.price}/month</span>
-                        <div class="api-stats">
-                            <span><i class="fas fa-star"></i> ${api.rating}</span>
-                            <span><i class="fas fa-users"></i> ${api.users}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            renderApis(filteredApis);
         }
 
         searchInput.addEventListener('input', filterAPIs);
@@ -397,6 +361,38 @@
                 closePostModal();
             }
         }
+
+        // Handle form submission
+        document.getElementById('postApiForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/marketplace/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const newApi = await response.json();
+                    apis.push(newApi);
+                    renderApis();
+                    closePostModal();
+                    e.target.reset();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Error posting API');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error posting API');
+            }
+        });
 
         // Initial render
         renderApis();
