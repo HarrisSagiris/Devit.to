@@ -398,15 +398,20 @@
         
         try {
             const formData = new FormData(form);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
             const response = await fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(Object.fromEntries(formData))
+                body: JSON.stringify(data)
             });
             
-            const data = await response.json();
+            const responseData = await response.json();
             
             if (response.ok) {
                 // Redirect to dashboard or stored return URL
@@ -414,7 +419,7 @@
                 localStorage.removeItem('authReturnTo');
                 window.location.href = returnTo;
             } else {
-                throw new Error(data.message || 'Login failed');
+                throw new Error(responseData.message || 'Login failed');
             }
         } catch (error) {
             showError(error.message || 'Login failed. Please try again.');
