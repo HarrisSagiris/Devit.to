@@ -3047,25 +3047,21 @@
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json'
-                                                    }
+                                                    },
+                                                    credentials: 'include'
                                                 });
 
-                                                if (response.ok) {
-                                                    const data = await response.json();
-                                                    const likeCount = button.querySelector('.like-count');
-                                                    likeCount.textContent = data.likes;
-                                                    
-                                                    if (data.liked) {
-                                                        button.classList.add('liked');
-                                                    } else {
-                                                        button.classList.remove('liked');
-                                                    }
-                                                } else {
-                                                    showToast('error', 'Failed to like comment');
-                                                }
+                                                if (!response.ok) throw new Error('Failed to like comment');
+
+                                                const data = await response.json();
+                                                const likeCount = button.querySelector('.like-count');
+                                                likeCount.textContent = data.likes;
+                                                
+                                                button.classList.toggle('liked', data.liked);
+                                                showToast('success', data.liked ? 'Comment liked!' : 'Comment unliked');
                                             } catch (error) {
                                                 console.error('Error liking comment:', error);
-                                                showToast('error', 'Error liking comment');
+                                                showToast('error', 'Failed to like comment');
                                             }
                                         }
 
@@ -3078,27 +3074,28 @@
                                                     headers: {
                                                         'Content-Type': 'application/json'
                                                     },
+                                                    credentials: 'include',
                                                     body: JSON.stringify({ username })
                                                 });
 
-                                                if (response.ok) {
-                                                    const data = await response.json();
-                                                    if (data.following) {
-                                                        button.innerHTML = '<i class="fas fa-user-check"></i> Following';
-                                                        button.classList.add('following');
-                                                    } else {
-                                                        button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-                                                        button.classList.remove('following');
-                                                    }
-                                                    
-                                                    // Update followers count
-                                                    const followersCount = document.getElementById(`followers-count-${username}`);
-                                                    if (followersCount) {
-                                                        followersCount.textContent = data.followersCount;
-                                                    }
-                                                    
-                                                    showToast('success', data.message);
-                                                }
+                                                if (!response.ok) throw new Error('Failed to update follow status');
+
+                                                const data = await response.json();
+                                                
+                                                // Update all instances of this user's follow button
+                                                document.querySelectorAll(`.follow-btn[data-username="${username}"]`).forEach(btn => {
+                                                    btn.innerHTML = data.following ? 
+                                                        '<i class="fas fa-user-check"></i> Following' :
+                                                        '<i class="fas fa-user-plus"></i> Follow';
+                                                    btn.classList.toggle('following', data.following);
+                                                });
+                                                
+                                                // Update all instances of this user's followers count
+                                                document.querySelectorAll(`#followers-count-${username}`).forEach(count => {
+                                                    count.textContent = data.followersCount;
+                                                });
+                                                
+                                                showToast('success', data.message);
                                             } catch (error) {
                                                 console.error('Error toggling follow:', error);
                                                 showToast('error', 'Failed to update follow status');
@@ -3108,61 +3105,83 @@
                                         // Fetch user stats when hovering
                                         document.querySelectorAll('.comment-username').forEach(el => {
                                             let timeout;
+                                            let popup;
+                                            
                                             el.addEventListener('mouseenter', () => {
+                                                clearTimeout(timeout);
                                                 timeout = setTimeout(async () => {
                                                     const username = el.dataset.username;
+                                                    popup = el.querySelector('.user-popup');
+                                                    
+                                                    if (!popup) return;
+                                                    
                                                     try {
                                                         const response = await fetch(`/api/users/${username}/stats`);
+                                                        if (!response.ok) throw new Error('Failed to fetch user stats');
+                                                        
                                                         const data = await response.json();
                                                         
                                                         // Update stats
-                                                        document.getElementById(`posts-count-${username}`).textContent = data.posts;
-                                                        document.getElementById(`upvotes-count-${username}`).textContent = data.upvotesReceived;
-                                                        document.getElementById(`comments-count-${username}`).textContent = data.comments;
-                                                        document.getElementById(`engagement-${username}`).textContent = data.engagement;
-                                                        document.getElementById(`followers-count-${username}`).textContent = data.followers;
+                                                        document.querySelectorAll(`#posts-count-${username}`).forEach(el => 
+                                                            el.textContent = data.posts);
+                                                        document.querySelectorAll(`#upvotes-count-${username}`).forEach(el => 
+                                                            el.textContent = data.upvotesReceived);
+                                                        document.querySelectorAll(`#comments-count-${username}`).forEach(el => 
+                                                            el.textContent = data.comments);
+                                                        document.querySelectorAll(`#engagement-${username}`).forEach(el => 
+                                                            el.textContent = data.engagement);
+                                                        document.querySelectorAll(`#followers-count-${username}`).forEach(el => 
+                                                            el.textContent = data.followers);
                                                         
                                                         // Update badges
-                                                        const badgesContainer = document.getElementById(`badges-${username}`);
-                                                        badgesContainer.innerHTML = '';
+                                                        document.querySelectorAll(`#badges-${username}`).forEach(container => {
+                                                            container.innerHTML = '';
+                                                            
+                                                            const badges = [
+                                                                {
+                                                                    condition: data.posts > 20,
+                                                                    color: '#ff6b6b',
+                                                                    icon: '<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>',
+                                                                    text: 'Elite Contributor'
+                                                                },
+                                                                {
+                                                                    condition: data.comments > 100,
+                                                                    color: '#4f46e5',
+                                                                    icon: '<path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>',
+                                                                    text: 'Chatty'
+                                                                },
+                                                                {
+                                                                    condition: data.upvotesReceived > 500,
+                                                                    color: '#10b981',
+                                                                    icon: '<path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>',
+                                                                    text: 'Well-Liked'
+                                                                }
+                                                            ];
+
+                                                            badges.forEach(badge => {
+                                                                if (badge.condition) {
+                                                                    container.innerHTML += `
+                                                                        <div class="user-badge" style="background: ${badge.color}">
+                                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                                ${badge.icon}
+                                                                            </svg>
+                                                                            ${badge.text}
+                                                                        </div>`;
+                                                                }
+                                                            });
+                                                        });
                                                         
-                                                        if (data.posts > 20) {
-                                                            badgesContainer.innerHTML += `
-                                                                <div class="user-badge" style="background: #ff6b6b">
-                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                                                    </svg>
-                                                                    Elite Contributor
-                                                                </div>`;
-                                                        }
-                                                        
-                                                        if (data.comments > 100) {
-                                                            badgesContainer.innerHTML += `
-                                                                <div class="user-badge" style="background: #4f46e5">
-                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
-                                                                    </svg>
-                                                                    Chatty
-                                                                </div>`;
-                                                        }
-                                                        
-                                                        if (data.upvotesReceived > 500) {
-                                                            badgesContainer.innerHTML += `
-                                                                <div class="user-badge" style="background: #10b981">
-                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                                        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
-                                                                    </svg>
-                                                                    Well-Liked
-                                                                </div>`;
-                                                        }
+                                                        popup.style.display = 'block';
                                                     } catch (error) {
                                                         console.error('Error fetching user stats:', error);
+                                                        showToast('error', 'Failed to load user info');
                                                     }
                                                 }, 300);
                                             });
                                             
                                             el.addEventListener('mouseleave', () => {
                                                 clearTimeout(timeout);
+                                                if (popup) popup.style.display = 'none';
                                             });
                                         });
 
@@ -3171,7 +3190,19 @@
                                             toast.className = `toast ${type}`;
                                             toast.textContent = message;
                                             document.body.appendChild(toast);
-                                            setTimeout(() => toast.remove(), 3000);
+                                            
+                                            // Animate in
+                                            requestAnimationFrame(() => {
+                                                toast.style.opacity = '1';
+                                                toast.style.transform = 'translateY(0)';
+                                            });
+                                            
+                                            // Remove after animation
+                                            setTimeout(() => {
+                                                toast.style.opacity = '0';
+                                                toast.style.transform = 'translateY(-20px)';
+                                                setTimeout(() => toast.remove(), 300);
+                                            }, 3000);
                                         }
                                     </script>
                                     <% if (user) { %>
