@@ -2835,7 +2835,6 @@
                             gap: 4px;
                         }
                     </style>
-
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
                             <input type="text" name="content" placeholder="Add a comment..." required>
@@ -2848,12 +2847,14 @@
                         <% post.comments.forEach(comment => { %>
                             <div class="comment" id="comment-<%= comment._id %>">
                                 <div class="comment-header">
-                                    <span class="comment-username">
+                                    <span class="comment-username" data-username="<%= comment.username %>">
                                         @<%= comment.username %>
                                         <div class="user-popup">
                                             <div class="user-popup-header">
                                                 <div class="user-popup-avatar">
-                                                    <%= comment.username.charAt(0).toUpperCase() %>
+                                                    <img src="https://github.com/<%= comment.username %>.png" 
+                                                         onerror="this.src='/images/default-avatar.png'" 
+                                                         alt="Profile">
                                                 </div>
                                                 <div class="user-popup-info">
                                                     <div class="user-popup-name">@<%= comment.username %></div>
@@ -2862,47 +2863,24 @@
                                             </div>
                                             <div class="user-popup-stats">
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value"><%= comment.authorId?.points || 0 %></span>
-                                                    <span class="stat-label">Points</span>
+                                                    <span class="stat-value" id="posts-count-<%= comment.username %>">...</span>
+                                                    <span class="stat-label">Posts</span>
                                                 </div>
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value"><%= comment.authorId?.totalComments || 0 %></span>
+                                                    <span class="stat-value" id="upvotes-count-<%= comment.username %>">...</span>
+                                                    <span class="stat-label">Upvotes</span>
+                                                </div>
+                                                <div class="user-popup-stat">
+                                                    <span class="stat-value" id="comments-count-<%= comment.username %>">...</span>
                                                     <span class="stat-label">Comments</span>
                                                 </div>
                                                 <div class="user-popup-stat">
-                                                    <span class="stat-value"><%= comment.authorId?.totalLikes || 0 %></span>
-                                                    <span class="stat-label">Likes Received</span>
-                                                </div>
-                                                <div class="user-popup-stat">
-                                                    <span class="stat-value"><%= comment.authorId?.posts?.length || 0 %></span>
-                                                    <span class="stat-label">Posts</span>
+                                                    <span class="stat-value" id="engagement-<%= comment.username %>">...</span>
+                                                    <span class="stat-label">Engagement</span>
                                                 </div>
                                             </div>
-                                            <div class="user-popup-badges">
-                                                <% if (comment.authorId?.points >= 1000) { %>
-                                                    <div class="user-badge" style="background: #ff6b6b">
-                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                                        </svg>
-                                                        Top Contributor
-                                                    </div>
-                                                <% } %>
-                                                <% if (comment.authorId?.totalComments >= 100) { %>
-                                                    <div class="user-badge" style="background: #4f46e5">
-                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
-                                                        </svg>
-                                                        Chatty
-                                                    </div>
-                                                <% } %>
-                                                <% if (comment.authorId?.totalLikes >= 500) { %>
-                                                    <div class="user-badge" style="background: #10b981">
-                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
-                                                        </svg>
-                                                        Well-Liked
-                                                    </div>
-                                                <% } %>
+                                            <div class="user-popup-badges" id="badges-<%= comment.username %>">
+                                                <!-- Badges will be populated dynamically -->
                                             </div>
                                         </div>
                                     </span>
@@ -2919,6 +2897,7 @@
                                         ♥ <span class="like-count"><%= comment.likes || 0 %></span>
                                     </button>
                                     <script>
+                                        // Like comment functionality
                                         async function likeComment(button, commentId, postId) {
                                             try {
                                                 const response = await fetch(`/api/posts/${postId}/comments/${commentId}/like`, {
@@ -2939,21 +2918,73 @@
                                                         button.classList.remove('liked');
                                                     }
                                                 } else {
-                                                    const data = await response.json();
-                                                    const toast = document.createElement('div');
-                                                    toast.className = 'toast error';
-                                                    toast.textContent = data.error || 'Failed to like comment';
-                                                    document.body.appendChild(toast);
-                                                    setTimeout(() => toast.remove(), 3000);
+                                                    showToast('error', 'Failed to like comment');
                                                 }
                                             } catch (error) {
                                                 console.error('Error liking comment:', error);
-                                                const toast = document.createElement('div');
-                                                toast.className = 'toast error';
-                                                toast.textContent = 'Error liking comment';
-                                                document.body.appendChild(toast);
-                                                setTimeout(() => toast.remove(), 3000);
+                                                showToast('error', 'Error liking comment');
                                             }
+                                        }
+
+                                        // Fetch user stats when hovering
+                                        document.querySelectorAll('.comment-username').forEach(el => {
+                                            el.addEventListener('mouseenter', async () => {
+                                                const username = el.dataset.username;
+                                                try {
+                                                    const response = await fetch(`/api/users/${username}/stats`);
+                                                    const data = await response.json();
+                                                    
+                                                    // Update stats
+                                                    document.getElementById(`posts-count-${username}`).textContent = data.posts.length;
+                                                    document.getElementById(`upvotes-count-${username}`).textContent = data.totalUpvotes;
+                                                    document.getElementById(`comments-count-${username}`).textContent = data.totalComments;
+                                                    document.getElementById(`engagement-${username}`).textContent = data.totalEngagement;
+                                                    
+                                                    // Update badges
+                                                    const badgesContainer = document.getElementById(`badges-${username}`);
+                                                    badgesContainer.innerHTML = '';
+                                                    
+                                                    if (data.posts.length > 20) {
+                                                        badgesContainer.innerHTML += `
+                                                            <div class="user-badge" style="background: #ff6b6b">
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                                                                </svg>
+                                                                Elite Contributor
+                                                            </div>`;
+                                                    }
+                                                    
+                                                    if (data.totalComments > 100) {
+                                                        badgesContainer.innerHTML += `
+                                                            <div class="user-badge" style="background: #4f46e5">
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
+                                                                </svg>
+                                                                Chatty
+                                                            </div>`;
+                                                    }
+                                                    
+                                                    if (data.totalUpvotes > 500) {
+                                                        badgesContainer.innerHTML += `
+                                                            <div class="user-badge" style="background: #10b981">
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
+                                                                </svg>
+                                                                Well-Liked
+                                                            </div>`;
+                                                    }
+                                                } catch (error) {
+                                                    console.error('Error fetching user stats:', error);
+                                                }
+                                            });
+                                        });
+
+                                        function showToast(type, message) {
+                                            const toast = document.createElement('div');
+                                            toast.className = `toast ${type}`;
+                                            toast.textContent = message;
+                                            document.body.appendChild(toast);
+                                            setTimeout(() => toast.remove(), 3000);
                                         }
                                     </script>
                                     <% if (user) { %>
