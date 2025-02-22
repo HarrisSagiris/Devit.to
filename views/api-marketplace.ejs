@@ -60,68 +60,118 @@
 
         .api-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 2rem;
         }
 
         .api-card {
             background: var(--bg-card);
             border-radius: 1rem;
-            padding: 1.5rem;
-            transition: transform 0.2s;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
             box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
         }
 
         .api-card:hover {
             transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 16px rgba(79, 70, 229, 0.2);
         }
 
         .api-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.25rem;
         }
 
         .api-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: var(--gradient);
-            font-size: 1.5rem;
+            font-size: 1.75rem;
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
         }
 
         .api-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         .api-description {
             color: var(--text-muted);
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
         }
 
         .api-meta {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
             padding-top: 1rem;
             border-top: 1px solid var(--border);
         }
 
         .api-price {
-            font-weight: 600;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         .api-stats {
             display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .api-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .api-stats i {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .api-info {
+            display: flex;
+            align-items: center;
             gap: 1rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
         }
 
+        .api-info span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .api-info i {
+            font-size: 1rem;
+        }
+
+        .api-badge {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Rest of the styles remain unchanged */
         .search-bar {
             margin-bottom: 2rem;
             display: flex;
@@ -336,6 +386,15 @@
             return icons[category] || 'fa-code';
         }
 
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
         function renderApis(apisToRender = apis) {
             const grid = document.getElementById('apiGrid');
             grid.innerHTML = apisToRender.map(api => `
@@ -344,14 +403,26 @@
                         <div class="api-icon">
                             <i class="fas ${getCategoryIcon(api.category)}"></i>
                         </div>
-                        <h2 class="api-title">${api.name}</h2>
+                        <div>
+                            <h2 class="api-title">${api.name}</h2>
+                            <div class="api-info">
+                                <span><i class="fas fa-calendar"></i> ${formatDate(api.createdAt)}</span>
+                                <span class="api-badge">${api.category}</span>
+                            </div>
+                        </div>
                     </div>
                     <p class="api-description">${api.description}</p>
                     <div class="api-meta">
-                        <span class="api-price">$${api.price}/month</span>
-                        <div class="api-stats">
-                            <span><i class="fas fa-star"></i> ${api.rating || 0}</span>
-                            <span><i class="fas fa-users"></i> ${api.users || 0}</span>
+                        <div class="api-info">
+                            <span><i class="fas fa-link"></i> <a href="${api.documentationUrl}" target="_blank" style="color: var(--primary);">Documentation</a></span>
+                            <span><i class="fas fa-user"></i> ${api.publisher ? api.publisher.username : 'Unknown'}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="api-price">$${api.price}/month</span>
+                            <div class="api-stats">
+                                <span><i class="fas fa-star"></i> ${api.rating || 0}</span>
+                                <span><i class="fas fa-users"></i> ${api.users || 0}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
