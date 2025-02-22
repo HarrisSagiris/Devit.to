@@ -2739,7 +2739,7 @@
                             bottom: 100%;
                             margin-bottom: 8px;
                             animation: fadeIn 0.2s ease-in-out;
-                            pointer-events: auto; /* Changed to auto to allow interaction with popup */
+                            pointer-events: auto;
                         }
 
                         @keyframes fadeIn {
@@ -2753,17 +2753,15 @@
                             cursor: pointer;
                         }
 
-                        /* Show popup on hover of either username or popup itself */
                         .comment-username:hover .user-popup,
                         .user-popup:hover {
                             display: block;
                         }
 
-                        /* Add padding to create a hover buffer zone */
                         .user-popup::before {
                             content: '';
                             position: absolute;
-                            top: -20px; /* Create invisible bridge to prevent gap */
+                            top: -20px;
                             left: 0;
                             right: 0;
                             height: 20px;
@@ -2875,6 +2873,12 @@
                             color: white;
                             border-color: var(--primary);
                         }
+
+                        .followers-count {
+                            font-size: 0.9em;
+                            color: var(--text-muted);
+                            margin-top: 4px;
+                        }
                     </style>
                     <% if (user) { %>
                         <form class="comment-form" data-id="<%= post._id %>">
@@ -2895,9 +2899,15 @@
                                                 <div class="user-popup-info">
                                                     <div class="user-popup-name">@<%= comment.username %></div>
                                                     <div class="user-popup-joined">Member since <%= new Date(comment.authorId?.createdAt || Date.now()).toLocaleDateString() %></div>
+                                                    <div class="followers-count">
+                                                        <span id="followers-count-<%= comment.username %>">...</span> followers
+                                                    </div>
                                                     <% if (user && user.username !== comment.username) { %>
-                                                        <button class="follow-btn" data-username="<%= comment.username %>" onclick="toggleFollow(this)">
-                                                            <i class="fas fa-user-plus"></i> Follow
+                                                        <button class="follow-btn <%= user.following?.includes(comment.authorId) ? 'following' : '' %>" 
+                                                                data-username="<%= comment.username %>" 
+                                                                onclick="toggleFollow(this)">
+                                                            <i class="fas <%= user.following?.includes(comment.authorId) ? 'fa-user-check' : 'fa-user-plus' %>"></i>
+                                                            <%= user.following?.includes(comment.authorId) ? 'Following' : 'Follow' %>
                                                         </button>
                                                     <% } %>
                                                 </div>
@@ -2971,11 +2981,12 @@
                                         async function toggleFollow(button) {
                                             const username = button.dataset.username;
                                             try {
-                                                const response = await fetch(`/user/${username}/follow`, {
+                                                const response = await fetch('/api/follow', {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json'
-                                                    }
+                                                    },
+                                                    body: JSON.stringify({ username })
                                                 });
 
                                                 if (response.ok) {
@@ -2987,6 +2998,13 @@
                                                         button.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
                                                         button.classList.remove('following');
                                                     }
+                                                    
+                                                    // Update followers count
+                                                    const followersCount = document.getElementById(`followers-count-${username}`);
+                                                    if (followersCount) {
+                                                        followersCount.textContent = data.followersCount;
+                                                    }
+                                                    
                                                     showToast('success', data.message);
                                                 }
                                             } catch (error) {
@@ -3010,6 +3028,7 @@
                                                         document.getElementById(`upvotes-count-${username}`).textContent = data.upvotesReceived;
                                                         document.getElementById(`comments-count-${username}`).textContent = data.comments;
                                                         document.getElementById(`engagement-${username}`).textContent = data.engagement;
+                                                        document.getElementById(`followers-count-${username}`).textContent = data.followers;
                                                         
                                                         // Update badges
                                                         const badgesContainer = document.getElementById(`badges-${username}`);
