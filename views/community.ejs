@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Community | Devit.to</title>
+    <meta name="description" content="Join and participate in developer communities on Devit.to">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/icons/icon.jpg">
+    <link rel="apple-touch-icon" href="/icons/icon.jpg">
+    
+    <!-- iOS splash screens -->
+    <link rel="apple-touch-startup-image" href="/splash/iphone5.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/iphone6.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/iphoneplus.png" media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/splash/iphonex.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/splash/iphonexr.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/iphonexsmax.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="/splash/ipad.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/ipadpro1.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/ipadpro2.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="/splash/ipadpro3.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="community-page">
+        <div class="community-header">
+            <div class="community-banner">
+                <img src="<%= community.banner || '/images/default-banner.jpg' %>" alt="Community banner">
+            </div>
+            <div class="community-info">
+                <div class="community-avatar">
+                    <i class="<%= community.icon || 'fas fa-users' %>"></i>
+                </div>
+                <div class="community-details">
+                    <h1><%= community.name %></h1>
+                    <p class="community-description"><%= community.description %></p>
+                    <div class="community-stats">
+                        <span><i class="fas fa-users"></i> <%= community.members.length %> members</span>
+                        <span><i class="fas fa-calendar"></i> Created <%= new Date(community.createdAt).toLocaleDateString() %></span>
+                    </div>
+                    <% if (locals.user) { %>
+                        <button class="join-community-btn <%= community.members.includes(user._id) ? 'joined' : '' %>"
+                                data-community-id="<%= community._id %>"
+                                onclick="toggleJoinCommunity(this)">
+                            <i class="fas <%= community.members.includes(user._id) ? 'fa-check' : 'fa-plus' %>"></i>
+                            <%= community.members.includes(user._id) ? 'Joined' : 'Join' %>
+                        </button>
+                        <% if (community.moderators.includes(user._id)) { %>
+                            <button class="moderate-btn" onclick="moderateCommunity('<%= community._id %>')">
+                                <i class="fas fa-shield-alt"></i>
+                                Moderate
+                            </button>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="community-content">
+            <div class="posts-container">
+                <% if (posts && posts.length > 0) { %>
+                    <% posts.forEach(post => { %>
+                        <%- include('partials/post', { post: post, user: locals.user }) %>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-posts">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No posts yet in this community</p>
+                        <% if (locals.user) { %>
+                            <button onclick="createPost('<%= community._id %>')" class="create-post-btn">
+                                <i class="fas fa-plus"></i>
+                                Create First Post
+                            </button>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="community-sidebar">
+                <div class="sidebar-card">
+                    <h3>About Community</h3>
+                    <p><%= community.description %></p>
+                    <div class="community-rules">
+                        <h4>Community Rules</h4>
+                        <ul>
+                            <li>Be respectful and constructive</li>
+                            <li>No spam or self-promotion</li>
+                            <li>Stay on topic</li>
+                        </ul>
+                    </div>
+                    <% if (locals.user && community.moderators.includes(user._id)) { %>
+                        <button onclick="editCommunity('<%= community._id %>')" class="edit-community-btn">
+                            <i class="fas fa-edit"></i>
+                            Edit Community
+                        </button>
+                    <% } %>
+                </div>
+
+                <div class="sidebar-card activity-feed">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list">
+                        <% if (community.recentActivity && community.recentActivity.length > 0) { %>
+                            <% community.recentActivity.forEach(activity => { %>
+                                <div class="activity-item">
+                                    <i class="<%= activity.type === 'post' ? 'fas fa-file-alt' : 
+                                               activity.type === 'comment' ? 'fas fa-comment' :
+                                               'fas fa-user-plus' %>"></i>
+                                    <div class="activity-content">
+                                        <p><strong><%= activity.username %></strong> <%= activity.action %></p>
+                                        <small><%= new Date(activity.timestamp).toLocaleString() %></small>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="no-activity">No recent activity</p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <% if (locals.user && community.members.includes(user._id)) { %>
+                <div class="sidebar-card notifications">
+                    <h3>Notifications</h3>
+                    <div class="notification-settings">
+                        <label>
+                            <input type="checkbox" id="notifyNewPosts" onchange="updateNotificationSettings('<%= community._id %>', 'posts', this.checked)">
+                            Notify me about new posts
+                        </label>
+                        <label>
+                            <input type="checkbox" id="notifyComments" onchange="updateNotificationSettings('<%= community._id %>', 'comments', this.checked)">
+                            Notify me about comments
+                        </label>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+    async function toggleJoinCommunity(btn) {
+        const communityId = btn.dataset.communityId;
+        const action = btn.classList.contains('joined') ? 'leave' : 'join';
+        
+        try {
+            const response = await fetch(`/api/communities/${communityId}/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                btn.classList.toggle('joined');
+                const icon = btn.querySelector('i');
+                icon.classList.toggle('fa-check');
+                icon.classList.toggle('fa-plus');
+                btn.textContent = action === 'join' ? 'Joined' : 'Join';
+                location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function updateNotificationSettings(communityId, type, enabled) {
+        try {
+            const response = await fetch(`/api/communities/${communityId}/notifications`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    type,
+                    enabled
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update notification settings');
+            }
+
+            const data = await response.json();
+            if (data.success) {
+                // Show success message
+                alert('Notification settings updated successfully');
+            }
+        } catch (error) {
+            console.error('Error updating notification settings:', error);
+            alert('Failed to update notification settings');
+        }
+    }
+
+    function createPost(communityId) {
+        window.location.href = `/create-post?community=${communityId}`;
+    }
+
+    function editCommunity(communityId) {
+        window.location.href = `/communities/${communityId}/edit`;
+    }
+
+    function moderateCommunity(communityId) {
+        window.location.href = `/communities/${communityId}/moderate`;
+    }
+    </script>
+</body>
+</html>

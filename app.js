@@ -576,6 +576,538 @@ app.post('/api/follow', async (req, res) => {
     res.status(500).json({ error: 'Error updating follow status' });
   }
 });
+// Community Schema
+const communitySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  description: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  icon: {
+    type: String,
+    default: 'fas fa-users'
+  },
+  moderators: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  members: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Community = mongoose.model('Community', communitySchema);
+// Create community
+app.post('/api/communities', async (req, res) => {
+  if (!req.session.user) return res.status(403).json({ error: 'Login required' });
+  const community = new Community({
+    name: req.body.name.toLowerCase(),
+    description: req.body.description, 
+    icon: req.body.icon,
+    moderators: [req.session.user._id],
+    members: [req.session.user._id]
+  });
+  await community.save();
+  res.json({ success: true, community });
+});
+
+// Get communities
+app.get('/api/communities', async (req, res) => {
+  const communities = await Community.find().populate('members', 'username');
+  res.json(communities);
+});
+// Join/Leave community
+app.post('/api/communities/:id/:action', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).json({ error: 'Login required' });
+    
+    const { id, action } = req.params;
+    const userId = req.session.user._id;
+    
+    const community = await Community.findById(id);
+    if (!community) return res.status(404).json({ error: 'Community not found' });
+
+    if (action === 'join') {
+      if (community.members.includes(userId)) {
+        return res.status(400).json({ error: 'Already a member' });
+      }
+      community.members.push(userId);
+    } else if (action === 'leave') {
+      if (!community.members.includes(userId)) {
+        return res.status(400).json({ error: 'Not a member' });
+      }
+      if (community.moderators.includes(userId)) {
+        return res.status(400).json({ error: 'Moderators cannot leave' });
+      }
+      community.members = community.members.filter(id => id.toString() !== userId.toString());
+    }
+
+    await community.save();
+    res.json({ success: true, community });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get community posts
+app.get('/api/communities/:id/posts', async (req, res) => {
+  try {
+    const posts = await Post.find({ community: req.params.id })
+      .populate('user', 'username')
+      .sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single community details
+app.get('/api/communities/:id', async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.id)
+      .populate('members', 'username')
+      .populate('moderators', 'username');
+    if (!community) return res.status(404).json({ error: 'Community not found' });
+    res.json(community);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update community settings (moderators only)
+app.put('/api/communities/:id', async (req, res) => {
+  try {
+    if (!req.session.user) return res.status(403).json({ error: 'Login required' });
+    
+    const community = await Community.findById(req.params.id);
+    if (!community) return res.status(404).json({ error: 'Community not found' });
+    
+    if (!community.moderators.includes(req.session.user._id)) {
+      return res.status(403).json({ error: 'Moderator access required' });
+    }
+
+    const allowedUpdates = ['description', 'icon'];
+    const updates = Object.keys(req.body);
+    const isValidUpdate = updates.every(update => allowedUpdates.includes(update));
+
+    if (!isValidUpdate) {
+      return res.status(400).json({ error: 'Invalid updates' });
+    }
+
+    updates.forEach(update => {
+      community[update] = req.body[update];
+    });
+
+    await community.save();
+    res.json({ success: true, community });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Get community posts
+app.get('/api/communities/:id/posts', async (req, res) => {
+  try {
+    const communityId = req.params.id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find({ community: communityId })
+      .populate('user', 'username')
+      .populate('community', 'name')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Post.countDocuments({ community: communityId });
+
+    res.json({
+      posts,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalPosts: total
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Handle community moderation
+app.post('/api/communities/:id/moderate', async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.id);
+    if (!community) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    if (!community.moderators.includes(req.session.user._id)) {
+      return res.status(403).json({ error: 'Moderator access required' });
+    }
+
+    const { action, userId } = req.body;
+
+    switch (action) {
+      case 'addModerator':
+        if (!community.moderators.includes(userId)) {
+          community.moderators.push(userId);
+        }
+        break;
+      case 'removeModerator':
+        community.moderators = community.moderators.filter(mod => 
+          mod.toString() !== userId.toString()
+        );
+        break;
+      case 'banUser':
+        if (!community.bannedUsers.includes(userId)) {
+          community.bannedUsers.push(userId);
+        }
+        break;
+      case 'unbanUser':
+        community.bannedUsers = community.bannedUsers.filter(user => 
+          user.toString() !== userId.toString()
+        );
+        break;
+      default:
+        return res.status(400).json({ error: 'Invalid moderation action' });
+    }
+
+    await community.save();
+    res.json({ success: true, community });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Handle community search and filtering
+app.get('/api/communities/search', async (req, res) => {
+  try {
+    const {
+      query,
+      sort = 'newest',
+      filter,
+      page = 1,
+      limit = 20
+    } = req.query;
+
+    // Build search criteria
+    const searchCriteria = {};
+    if (query) {
+      searchCriteria.$or = [
+        { name: { $regex: query, $options: 'i' }},
+        { description: { $regex: query, $options: 'i' }}
+      ];
+    }
+
+    if (filter === 'public') {
+      searchCriteria.isPrivate = false;
+    }
+
+    // Handle private communities access
+    if (filter === 'private') {
+      if (!req.session.user) {
+        return res.status(403).json({ error: 'Login required to view private communities' });
+      }
+      searchCriteria.isPrivate = true;
+      searchCriteria.$or = [
+        { moderators: req.session.user._id },
+        { members: req.session.user._id }
+      ];
+    }
+
+    // Handle banned users
+    if (req.session.user) {
+      searchCriteria.bannedUsers = { $ne: req.session.user._id };
+    }
+
+    // Build sort criteria
+    const sortCriteria = {};
+    switch (sort) {
+      case 'newest':
+        sortCriteria.createdAt = -1;
+        break;
+      case 'oldest':
+        sortCriteria.createdAt = 1;
+        break;
+      case 'popular':
+        sortCriteria.memberCount = -1;
+        break;
+      case 'active':
+        sortCriteria.postCount = -1;
+        break;
+      default:
+        sortCriteria.createdAt = -1;
+    }
+
+    const skip = (page - 1) * limit;
+
+    // Get communities with member count and post statistics
+    const communities = await Community.aggregate([
+      { $match: searchCriteria },
+      {
+        $lookup: {
+          from: 'posts',
+          localField: '_id',
+          foreignField: 'community',
+          as: 'posts'
+        }
+      },
+      {
+        $addFields: {
+          memberCount: { $size: '$members' },
+          postCount: { $size: '$posts' },
+          lastActivity: {
+            $max: [
+              '$lastPostAt',
+              '$updatedAt'
+            ]
+          }
+        }
+      },
+      { $sort: sortCriteria },
+      { $skip: skip },
+      { $limit: parseInt(limit) },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          icon: 1,
+          banner: 1,
+          isPrivate: 1,
+          memberCount: 1,
+          postCount: 1,
+          lastActivity: 1,
+          createdAt: 1
+        }
+      }
+    ]);
+
+    // Get total count for pagination
+    const totalCount = await Community.countDocuments(searchCriteria);
+
+    res.json({
+      communities,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: totalCount,
+        pages: Math.ceil(totalCount / limit)
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single community with stats
+app.get('/api/communities/:id', async (req, res) => {
+  try {
+    const community = await Community.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(req.params.id) }},
+      {
+        $lookup: {
+          from: 'posts',
+          localField: '_id',
+          foreignField: 'community',
+          as: 'posts'
+        }
+      },
+      {
+        $addFields: {
+          memberCount: { $size: '$members' },
+          postCount: { $size: '$posts' },
+          lastActivity: {
+            $max: [
+              '$lastPostAt',
+              '$updatedAt'
+            ]
+          }
+        }
+      }
+    ]).then(results => results[0]);
+
+    if (!community) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    // Check private community access
+    if (community.isPrivate) {
+      if (!req.session.user) {
+        return res.status(403).json({ error: 'Login required to view private community' });
+      }
+      
+      const isMember = community.members.some(id => 
+        id.toString() === req.session.user._id.toString()
+      );
+      const isModerator = community.moderators.some(id => 
+        id.toString() === req.session.user._id.toString()
+      );
+
+      if (!isMember && !isModerator) {
+        return res.status(403).json({ error: 'You must be a member to view this private community' });
+      }
+    }
+
+    // Check if user is banned
+    if (req.session.user && community.bannedUsers.includes(req.session.user._id)) {
+      return res.status(403).json({ error: 'You have been banned from this community' });
+    }
+
+    res.json(community);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Get community activity feed
+app.get('/api/communities/:id/activity', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const communityId = req.params.id;
+
+    // Get recent posts, comments, and member joins
+    const activity = await Community.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(communityId) }},
+      {
+        $lookup: {
+          from: 'posts',
+          let: { communityId: '$_id' },
+          pipeline: [
+            { $match: { $expr: { $eq: ['$community', '$$communityId'] }}},
+            { $sort: { createdAt: -1 }},
+            { $limit: 10 },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'author'
+              }
+            },
+            { $unwind: '$author' },
+            {
+              $project: {
+                type: { $literal: 'post' },
+                title: 1,
+                author: { username: 1, avatar: 1 },
+                createdAt: 1
+              }
+            }
+          ],
+          as: 'posts'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'members',
+          foreignField: '_id', 
+          pipeline: [
+            { $sort: { joinedAt: -1 }},
+            { $limit: 5 },
+            {
+              $project: {
+                type: { $literal: 'join' },
+                username: 1,
+                avatar: 1,
+                joinedAt: 1
+              }
+            }
+          ],
+          as: 'recentMembers'
+        }
+      },
+      {
+        $project: {
+          activity: {
+            $concatArrays: ['$posts', '$recentMembers']
+          }
+        }
+      },
+      {
+        $unwind: '$activity'  
+      },
+      {
+        $sort: {
+          'activity.createdAt': -1,
+          'activity.joinedAt': -1
+        }
+      },
+      {
+        $limit: 20
+      }
+    ]);
+
+    res.json(activity);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Subscribe to community notifications
+app.post('/api/communities/:id/notifications/subscribe', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const userId = req.session.user._id;
+    const communityId = req.params.id;
+
+    await Community.findByIdAndUpdate(
+      communityId,
+      { $addToSet: { notificationSubscribers: userId }},
+      { new: true }
+    );
+
+    res.json({ message: 'Successfully subscribed to notifications' });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message }); 
+  }
+});
+
+// Unsubscribe from community notifications
+app.post('/api/communities/:id/notifications/unsubscribe', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(403).json({ error: 'Login required' });
+    }
+
+    const userId = req.session.user._id;
+    const communityId = req.params.id;
+
+    await Community.findByIdAndUpdate(
+      communityId,
+      { $pull: { notificationSubscribers: userId }},
+      { new: true }
+    );
+
+    res.json({ message: 'Successfully unsubscribed from notifications' });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Add user stats endpoint
 app.get('/api/user/stats', async (req, res) => {
