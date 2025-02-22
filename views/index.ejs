@@ -2734,13 +2734,13 @@
                             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
                             z-index: 1000;
                             left: 0;
-                            bottom: 100%; /* Changed from top to bottom */
-                            margin-bottom: 8px; /* Changed from margin-top */
+                            bottom: 100%;
+                            margin-bottom: 8px;
                             animation: fadeIn 0.2s ease-in-out;
                         }
 
                         @keyframes fadeIn {
-                            from { opacity: 0; transform: translateY(10px); } /* Changed direction */
+                            from { opacity: 0; transform: translateY(10px); }
                             to { opacity: 1; transform: translateY(0); }
                         }
 
@@ -2750,7 +2750,8 @@
                             cursor: pointer;
                         }
 
-                        .comment-username:hover .user-popup {
+                        /* Remove hover trigger */
+                        .comment-username.active .user-popup {
                             display: block;
                         }
 
