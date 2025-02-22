@@ -744,7 +744,7 @@ app.get('/api/communities/:id/posts', async (req, res) => {
   }
 });
 // Route to communities page
-app.get('/communities', async (req, res) => {
+app.get('/community', async (req, res) => {
   try {
     const communities = await Community.find()
       .select('name description icon members posts banner')
