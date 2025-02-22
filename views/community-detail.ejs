@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= community.name %> | Devit.to</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #8858ED;
+      --primary-dark: #6E3AD6;
+      --bg-dark: #1a1a1a;
+      --bg-card: #2d2d2d;
+      --text-light: #ffffff;
+      --text-muted: #999;
+      --border: #404040;
+      --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-light);
+      background: var(--bg-dark);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .community-header {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .community-icon {
+      width: 100px;
+      height: 100px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .community-info h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-light);
+    }
+
+    .community-description {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .community-stats {
+      display: flex;
+      gap: 2rem;
+      color: var(--text-muted);
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+
+    .main-content {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .sidebar {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      height: fit-content;
+    }
+
+    .activity-item {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-content a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .activity-time {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .member-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .member-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .join-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .join-btn:hover {
+      background: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="community-header">
+      <div class="community-icon">
+        <i class="<%= community.icon %>"></i>
+      </div>
+      <div class="community-info">
+        <h1><%= community.name %></h1>
+        <p class="community-description"><%= community.description %></p>
+        <div class="community-stats">
+          <div class="stat">
+            <i class="fas fa-users"></i>
+            <span><%= community.members.length %> members</span>
+          </div>
+          <div class="stat">
+            <i class="fas fa-file-alt"></i>
+            <span><%= community.posts.length %> posts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="main-content">
+        <h2>Recent Activity</h2>
+        <div class="activity-feed">
+          <% activity.forEach(item => { %>
+            <div class="activity-item">
+              <div class="activity-icon">
+                <i class="<%= item.type === 'post' ? 'fas fa-file-alt' : 'fas fa-user-plus' %>"></i>
+              </div>
+              <div class="activity-content">
+                <% if (item.type === 'post') { %>
+                  <p><a href="/user/<%= item.author.username %>"><%= item.author.username %></a> posted "<%= item.title %>"</p>
+                <% } else { %>
+                  <p><a href="/user/<%= item.username %>"><%= item.username %></a> joined the community</p>
+                <% } %>
+                <span class="activity-time"><%= new Date(item.createdAt || item.joinedAt).toLocaleDateString() %></span>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <h3>Members</h3>
+        <div class="member-list">
+          <% community.members.slice(0, 12).forEach(member => { %>
+            <div class="member-avatar">
+              <% if (member.avatar) { %>
+                <img src="<%= member.avatar %>" alt="<%= member.username %>">
+              <% } else { %>
+                <i class="fas fa-user"></i>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+        <% if (user) { %>
+          <button class="join-btn <%= community.members.includes(user._id) ? 'joined' : '' %>" 
+                  onclick="handleJoinClick(this)" 
+                  data-community-id="<%= community._id %>">
+            <%= community.members.includes(user._id) ? 'Leave Community' : 'Join Community' %>
+          </button>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function handleJoinClick(button) {
+      const communityId = button.dataset.communityId;
+      const action = button.classList.contains('joined') ? 'leave' : 'join';
+
+      try {
+        const response = await fetch(`/api/communities/${communityId}/${action}`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          button.classList.toggle('joined');
+          button.textContent = action === 'join' ? 'Leave Community' : 'Join Community';
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to ' + action + ' community');
+      }
+    }
+  </script>
+</body>
+</html>
+
