@@ -2971,7 +2971,7 @@
                                         async function toggleFollow(button) {
                                             const username = button.dataset.username;
                                             try {
-                                                const response = await fetch(`/api/users/${username}/follow`, {
+                                                const response = await fetch(`/user/${username}/follow`, {
                                                     method: 'POST',
                                                     headers: {
                                                         'Content-Type': 'application/json'
