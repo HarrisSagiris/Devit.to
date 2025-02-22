@@ -1462,6 +1462,10 @@
                                 <i class="fas fa-chart-line"></i>
                                 Reputation
                             </a>
+                            <a href="/community" class="dropdown-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text); text-decoration: none; transition: background 0.2s;">
+                                <i class="fas fa-users"></i>
+                                Communities
+                            </a>
                             <a href="fordevelopers.html" class="dropdown-item" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; color: var(--text); text-decoration: none; transition: background 0.2s;">
                                 <i class="fas fa-info-circle"></i>
                                 About us
@@ -1705,32 +1709,34 @@
                         My Communities
                     </h4>
                     <div id="my-communities-list" class="categories-list">
-                        <% if (locals.user && locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
-                            <% locals.myCommunities.forEach(communityItem => { %>
-                                <a href="/community/<%= communityItem._id %>" 
-                                   class="community-item"
-                                   data-community-id="<%= communityItem._id %>">
-                                    <i class="<%= communityItem.icon || 'fas fa-users' %>"></i>
-                                    <div class="community-info">
-                                        <span class="community-name">r/<%= communityItem.name %></span>
-                                        <span class="community-members"><%= communityItem.members?.length || 1 %> member<%= (communityItem.members?.length || 1) !== 1 ? 's' : '' %></span>
+                        <% if (locals.user) { %>
+                            <% if (locals.user.communities && locals.user.communities.length > 0) { %>
+                                <% locals.user.communities.forEach(communityItem => { %>
+                                    <a href="/community/<%= communityItem._id %>" 
+                                       class="community-item"
+                                       data-community-id="<%= communityItem._id %>">
+                                        <i class="<%= communityItem.icon || 'fas fa-users' %>"></i>
+                                        <div class="community-info">
+                                            <span class="community-name">r/<%= communityItem.name %></span>
+                                            <span class="community-members"><%= communityItem.members?.length || 1 %> member<%= (communityItem.members?.length || 1) !== 1 ? 's' : '' %></span>
+                                        </div>
+                                    </a>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <p>You haven't joined any communities yet</p>
+                                    <div class="empty-state-buttons">
+                                        <button onclick="openJoinCommunitiesModal()" class="join-community-btn">
+                                            <i class="fas fa-users"></i>
+                                            Join Communities
+                                        </button>
+                                        <button onclick="openCreateCommunityModal()" class="create-community-btn">
+                                            <i class="fas fa-plus"></i>
+                                            Create Community
+                                        </button>
                                     </div>
-                                </a>
-                            <% }); %>
-                        <% } else if (locals.user) { %>
-                            <div class="empty-state">
-                                <p>You haven't joined any communities yet</p>
-                                <div class="empty-state-buttons">
-                                    <button onclick="openJoinCommunitiesModal()" class="join-community-btn">
-                                        <i class="fas fa-users"></i>
-                                        Join Communities
-                                    </button>
-                                    <button onclick="openCreateCommunityModal()" class="create-community-btn">
-                                        <i class="fas fa-plus"></i>
-                                        Create Community
-                                    </button>
                                 </div>
-                            </div>
+                            <% } %>
                         <% } else { %>
                             <div class="empty-state">
                                 <p>Sign in to join communities</p>
