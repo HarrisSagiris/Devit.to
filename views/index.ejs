@@ -1683,14 +1683,14 @@
                     </h4>
                     <div class="trending-posts">
                         <% const trendingPosts = locals.posts
-                            ?.sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+                            ?.sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0))
                             ?.slice(0, 3) || [];
                         
                         trendingPosts.forEach(post => { %>
                             <a href="/post/<%= post._id %>" class="trending-post-item">
                                 <div class="trending-post-title"><%= post.title %></div>
                                 <div class="trending-post-stats">
-                                    <span><i class="fas fa-arrow-up"></i> <%= post.upvotes || 0 %></span>
+                                    <span><i class="fas fa-arrow-up"></i> <%= post.upvotes?.length || 0 %></span>
                                     <span><i class="fas fa-comment"></i> <%= post.comments?.length || 0 %></span>
                                 </div>
                             </a>
@@ -1707,9 +1707,8 @@
                     <div id="my-communities-list" class="categories-list">
                         <% if (locals.myCommunities && Array.isArray(locals.myCommunities)) { %>
                             <% locals.myCommunities.forEach(community => { %>
-                                <a href="/community/<%= community.name %>" 
-                                   class="community-item" 
-                                   data-value="<%= community.name %>">
+                                <a href="/community/<%= community._id %>" 
+                                   class="community-item">
                                     <i class="<%= community.icon || 'fas fa-users' %>"></i>
                                     <div class="community-info">
                                         <span class="community-name">r/<%= community.name %></span>
@@ -1728,19 +1727,87 @@
                         All Communities
                     </h4>
                     <div class="categories-list">
-                        <% if (locals.communities && Array.isArray(locals.communities)) { %>
-                            <% locals.communities.forEach(community => { %>
-                                <a href="/community/<%= community.name %>"
-                                   class="community-item"
-                                   data-value="<%= community.name %>">
-                                    <i class="<%= community.icon || 'fas fa-users' %>"></i>
+                        <% 
+                        const categories = {
+                            'all': 0,
+                            'General': 0,
+                            'Javascript/Typescript': 0,
+                            'C++': 0,
+                            'Devit.to': 0,
+                            'Python': 0,
+                            'PHP': 0,
+                            'Tech': 0,
+                            'AI': 0,
+                            'Java': 0,
+                            'Ruby': 0,
+                            'Go': 0,
+                            'Rust': 0,
+                            'Swift': 0,
+                            'Kotlin': 0,
+                            'React': 0,
+                            'Vue': 0,
+                            'Angular': 0,
+                            'Node.js': 0,
+                            'DevOps': 0,
+                            'Cloud Computing': 0,
+                            'Cybersecurity': 0,
+                            'Blockchain': 0,
+                            'Machine Learning': 0,
+                            'Data Science': 0
+                        };
+
+                        if (typeof locals.posts !== 'undefined' && Array.isArray(locals.posts)) {
+                            categories.all = locals.posts.length;
+                            locals.posts.forEach(post => {
+                                if (categories.hasOwnProperty(post.category)) {
+                                    categories[post.category]++;
+                                }
+                            });
+                        }
+
+                        const sortedCategories = Object.entries(categories)
+                            .sort((a, b) => b[1] - a[1]);
+
+                        const iconMap = {
+                            'General': 'fas fa-globe',
+                            'Javascript/Typescript': 'fab fa-js',
+                            'C++': 'fas fa-code',
+                            'Devit.to': 'fas fa-code-branch',
+                            'Python': 'fab fa-python',
+                            'PHP': 'fab fa-php',
+                            'Tech': 'fas fa-microchip',
+                            'AI': 'fas fa-robot',
+                            'Java': 'fab fa-java',
+                            'Ruby': 'fas fa-gem',
+                            'Go': 'fas fa-code',
+                            'Rust': 'fas fa-cog',
+                            'Swift': 'fab fa-swift',
+                            'Kotlin': 'fas fa-mobile-alt',
+                            'React': 'fab fa-react',
+                            'Vue': 'fab fa-vuejs',
+                            'Angular': 'fab fa-angular',
+                            'Node.js': 'fab fa-node-js',
+                            'DevOps': 'fas fa-server',
+                            'Cloud Computing': 'fas fa-cloud',
+                            'Cybersecurity': 'fas fa-shield-alt',
+                            'Blockchain': 'fas fa-link',
+                            'Machine Learning': 'fas fa-brain',
+                            'Data Science': 'fas fa-chart-bar'
+                        };
+                        %>
+
+                        <% sortedCategories.forEach(([category, count]) => { 
+                            if(category !== 'all' && count > 0) { %>
+                                <a href="/category/<%= category %>" 
+                                   class="community-item">
+                                    <i class="<%= iconMap[category] || 'fas fa-users' %>"></i>
                                     <div class="community-info">
-                                        <span class="community-name">r/<%= community.name %></span>
-                                        <span class="community-members"><%= community.memberCount || 1 %> member<%= (community.memberCount || 1) !== 1 ? 's' : '' %></span>
+                                        <span class="community-name">r/<%= category %></span>
+                                        <span class="community-members"><%= count %> post<%= count !== 1 ? 's' : '' %></span>
                                     </div>
                                 </a>
-                            <% }); %>
-                        <% } %>
+                            <% }
+                        }); %>
                     </div>
                 </div>
             </div>
@@ -1753,19 +1820,22 @@
                     <h2>Create New Community</h2>
                     <span class="close" onclick="closeCreateCommunityModal()">&times;</span>
                 </div>
-                <form id="createCommunityForm" onsubmit="return false">
+                <form id="createCommunityForm" onsubmit="handleCreateCommunity(event)">
                     <div class="form-group">
                         <label for="communityName">Community Name</label>
-                        <input type="text" id="communityName" name="name" required placeholder="Enter community name" maxlength="50">
-                        <small class="form-text">Community names must be unique and cannot contain special characters</small>
+                        <input type="text" id="communityName" name="name" required 
+                               pattern="^[a-zA-Z0-9-_]+$"
+                               placeholder="Enter community name" maxlength="50">
+                        <small class="form-text">Community names must be unique and can only contain letters, numbers, hyphens and underscores</small>
                     </div>
                     <div class="form-group">
                         <label for="communityDescription">Description</label>
-                        <textarea id="communityDescription" name="description" required placeholder="Describe your community" maxlength="500"></textarea>
+                        <textarea id="communityDescription" name="description" required 
+                                  placeholder="Describe your community" maxlength="500"></textarea>
                         <small class="form-text">Describe what your community is about in 500 characters or less</small>
                     </div>
                     <div class="form-group">
-                        <label for="communityIcon">Icon (Font Awesome Class)</label>
+                        <label for="communityIcon">Icon</label>
                         <select id="communityIcon" name="icon">
                             <option value="fas fa-users">👥 Users (Default)</option>
                             <option value="fas fa-code">💻 Code</option>
@@ -1778,7 +1848,13 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="submit-btn" onclick="handleCreateCommunity()">
+                        <label>
+                            <input type="checkbox" id="isPrivate" name="isPrivate">
+                            Make this community private
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn">
                             <i class="fas fa-plus"></i> Create Community
                         </button>
                     </div>
