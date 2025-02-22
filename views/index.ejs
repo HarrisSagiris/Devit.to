@@ -2737,7 +2737,7 @@
                             bottom: 100%;
                             margin-bottom: 8px;
                             animation: fadeIn 0.2s ease-in-out;
-                            pointer-events: none; /* Add this to prevent popup from blocking hover */
+                            pointer-events: auto; /* Changed to auto to allow interaction with popup */
                         }
 
                         @keyframes fadeIn {
@@ -2751,10 +2751,10 @@
                             cursor: pointer;
                         }
 
-                        /* Change hover behavior to use hover-intent */
-                        .comment-username:hover .user-popup {
+                        /* Show popup on hover of either username or popup itself */
+                        .comment-username:hover .user-popup,
+                        .user-popup:hover {
                             display: block;
-                            pointer-events: auto; /* Re-enable pointer events when visible */
                         }
 
                         /* Add padding to create a hover buffer zone */
