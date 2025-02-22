@@ -262,6 +262,37 @@
                 font-size: 1.1rem;
             }
         }
+
+        .error-message {
+            color: var(--error);
+            background: rgba(244, 67, 54, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .loading::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -271,22 +302,24 @@
             <p>Welcome back! Sign in to continue your journey in the developer community.</p>
         </div>
 
+        <div id="error-message" class="error-message"></div>
+
         <div class="oauth-buttons">
-            <a href="/auth/github" class="github-button" onclick="handleGitHubAuth(event)">
+            <button type="button" class="github-button" onclick="handleGitHubAuth(event)">
                 <i class="fab fa-github"></i>
                 Continue with GitHub
-            </a>
-            <a href="/auth/twitter" class="twitter-button" onclick="handleTwitterAuth(event)">
+            </button>
+            <button type="button" class="twitter-button" onclick="handleTwitterAuth(event)">
                 <i class="fab fa-x-twitter"></i>
                 Continue with X
-            </a>
+            </button>
         </div>
 
         <div class="oauth-divider">
             <span>or</span>
         </div>
 
-        <form action="/login" method="post">
+        <form action="/login" method="post" onsubmit="handleFormSubmit(event)">
             <div class="input-group">
                 <input type="email" name="email" placeholder="Email address" required autocomplete="email">
                 <i class="fas fa-envelope"></i>
@@ -295,7 +328,7 @@
                 <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
                 <i class="fas fa-lock"></i>
             </div>
-            <button type="submit">
+            <button type="submit" id="submit-btn">
                 Sign In
                 <i class="fas fa-arrow-right"></i>
             </button>
@@ -305,31 +338,104 @@
     </div>
 
     <script>
-    function handleGitHubAuth(event) {
+    async function handleGitHubAuth(event) {
         event.preventDefault();
+        const button = event.currentTarget;
+        button.classList.add('loading');
         
-        // Store the current URL as the return destination
-        localStorage.setItem('authReturnTo', window.location.href);
-        
-        // Redirect to GitHub auth
-        window.location.href = '/auth/github';
+        try {
+            // Store return URL
+            localStorage.setItem('authReturnTo', window.location.href);
+            
+            // Start GitHub OAuth flow
+            const response = await fetch('/auth/github', {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+            
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                throw new Error('GitHub authentication failed');
+            }
+        } catch (error) {
+            showError('GitHub authentication failed. Please try again.');
+            button.classList.remove('loading');
+        }
     }
 
-    function handleTwitterAuth(event) {
+    async function handleTwitterAuth(event) {
         event.preventDefault();
+        const button = event.currentTarget;
+        button.classList.add('loading');
         
-        // Store the current URL as the return destination
-        localStorage.setItem('authReturnTo', window.location.href);
+        try {
+            // Store return URL
+            localStorage.setItem('authReturnTo', window.location.href);
+            
+            // Start Twitter OAuth flow
+            const response = await fetch('/auth/twitter', {
+                method: 'GET',
+                credentials: 'same-origin'
+            });
+            
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                throw new Error('Twitter authentication failed');
+            }
+        } catch (error) {
+            showError('Twitter authentication failed. Please try again.');
+            button.classList.remove('loading');
+        }
+    }
+
+    async function handleFormSubmit(event) {
+        event.preventDefault();
+        const form = event.target;
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.classList.add('loading');
         
-        // Redirect to Twitter auth
-        window.location.href = '/auth/twitter';
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Redirect to dashboard or stored return URL
+                const returnTo = localStorage.getItem('authReturnTo') || '/dashboard';
+                localStorage.removeItem('authReturnTo');
+                window.location.href = returnTo;
+            } else {
+                throw new Error(data.message || 'Login failed');
+            }
+        } catch (error) {
+            showError(error.message || 'Login failed. Please try again.');
+            submitBtn.classList.remove('loading');
+        }
+    }
+
+    function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
     }
 
     // Check for auth errors on page load
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('error')) {
-            alert('Authentication failed. Please try again.');
+            showError(decodeURIComponent(urlParams.get('error')));
         }
     };
     </script>
