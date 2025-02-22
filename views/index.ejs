@@ -2737,6 +2737,7 @@
                             bottom: 100%;
                             margin-bottom: 8px;
                             animation: fadeIn 0.2s ease-in-out;
+                            pointer-events: none; /* Add this to prevent popup from blocking hover */
                         }
 
                         @keyframes fadeIn {
@@ -2750,9 +2751,20 @@
                             cursor: pointer;
                         }
 
-                        .comment-username:hover .user-popup,
-                        .user-popup:hover {
+                        /* Change hover behavior to use hover-intent */
+                        .comment-username:hover .user-popup {
                             display: block;
+                            pointer-events: auto; /* Re-enable pointer events when visible */
+                        }
+
+                        /* Add padding to create a hover buffer zone */
+                        .user-popup::before {
+                            content: '';
+                            position: absolute;
+                            top: -20px; /* Create invisible bridge to prevent gap */
+                            left: 0;
+                            right: 0;
+                            height: 20px;
                         }
 
                         .user-popup-header {
