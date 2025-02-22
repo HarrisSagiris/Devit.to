@@ -1790,6 +1790,72 @@
             </div>
         </div>
 
+        <!-- Create Community Modal -->
+        <div id="createCommunityModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Create New Community</h2>
+                    <span class="close" onclick="closeCreateCommunityModal()">&times;</span>
+                </div>
+                <form id="createCommunityForm" onsubmit="handleCreateCommunity(event)">
+                    <div class="form-group">
+                        <label for="communityName">Community Name</label>
+                        <input type="text" id="communityName" name="name" required 
+                               pattern="^[a-zA-Z0-9-_]+$"
+                               placeholder="Enter community name" maxlength="50">
+                        <small class="form-text">Community names must be unique and can only contain letters, numbers, hyphens and underscores</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="communityDescription">Description</label>
+                        <textarea id="communityDescription" name="description" required 
+                                  placeholder="Describe your community" maxlength="500"></textarea>
+                        <small class="form-text">Describe what your community is about in 500 characters or less</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="communityIcon">Icon</label>
+                        <select id="communityIcon" name="icon">
+                            <option value="fas fa-users">👥 Users (Default)</option>
+                            <option value="fas fa-code">💻 Code</option>
+                            <option value="fas fa-book">📚 Book</option>
+                            <option value="fas fa-lightbulb">💡 Idea</option>
+                            <option value="fas fa-comments">💬 Discussion</option>
+                            <option value="fas fa-project-diagram">🔄 Project</option>
+                            <option value="fas fa-tools">🛠️ Tools</option>
+                            <option value="fas fa-graduation-cap">🎓 Learning</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-plus"></i> Create Community
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Join Communities Modal -->
+        <div id="joinCommunitiesModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Browse Communities</h2>
+                    <span class="close" onclick="closeJoinCommunitiesModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="search-communities">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="joinCommunitySearch" placeholder="Search communities..." 
+                               onkeyup="filterJoinCommunities()">
+                    </div>
+                    <div id="joinCommunitiesList" class="join-communities-list">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading communities...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
         async function updateMyCommunities() {
             try {
