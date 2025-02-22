@@ -2094,28 +2094,24 @@
                 position: fixed;
                 top: 100px;
                 right: 20px;
-                width: 300px;
-                background: rgba(30, 41, 59, 0.8);
-                backdrop-filter: blur(10px);
-                border-radius: 12px;
-                padding: 20px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 250px;
+                background: rgba(30, 41, 59, 0.3);
+                border-radius: 8px;
+                padding: 15px;
                 border: 1px solid rgba(255, 255, 255, 0.1);
-                z-index: 100;
             }
 
             .sidebar-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 20px;
-                padding-bottom: 10px;
+                margin-bottom: 15px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-bottom: 8px;
             }
 
             .sidebar-header h3 {
-                font-size: 1.1rem;
-                font-weight: 600;
+                font-size: 1rem;
                 color: var(--text);
                 margin: 0;
             }
@@ -2123,33 +2119,24 @@
             .live-indicator {
                 background: #00C853;
                 color: white;
-                padding: 4px 8px;
-                border-radius: 12px;
+                padding: 3px 6px;
+                border-radius: 8px;
                 font-size: 0.7rem;
-                font-weight: 600;
-                animation: pulse 2s infinite;
             }
 
             .stack-card {
                 display: flex;
                 align-items: center;
-                padding: 12px;
-                margin: 8px 0;
-                border-radius: 8px;
-                transition: all 0.2s ease;
+                padding: 8px;
+                margin: 5px 0;
+                border-radius: 6px;
                 background: rgba(255, 255, 255, 0.05);
             }
 
-            .stack-card:hover {
-                background: rgba(255, 255, 255, 0.1);
-                transform: translateX(-4px);
-            }
-
             .stack-rank {
-                font-size: 1.2rem;
-                font-weight: 700;
+                font-size: 1rem;
                 color: var(--text-muted);
-                width: 30px;
+                width: 25px;
             }
 
             .stack-info {
@@ -2157,29 +2144,18 @@
             }
 
             .stack-name {
-                font-weight: 600;
                 color: var(--text);
-                margin-bottom: 4px;
+                margin-bottom: 2px;
             }
 
             .stack-stats {
                 display: flex;
-                gap: 12px;
-                font-size: 0.85rem;
-            }
-
-            .trend {
-                font-weight: 600;
+                gap: 10px;
+                font-size: 0.8rem;
             }
 
             .users {
                 color: var(--text-muted);
-            }
-
-            @keyframes pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.5; }
-                100% { opacity: 1; }
             }
         </style>
         <style>
